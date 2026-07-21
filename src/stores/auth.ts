@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function fetchProfile() {
     try {
-      const { data } = await api.get('/api/me')
+      const { data } = await api.get('/auth/me')
       user.value = data
       roles.value = data.roles || []
     } catch {
