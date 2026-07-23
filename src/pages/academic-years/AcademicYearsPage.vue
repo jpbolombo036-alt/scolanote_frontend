@@ -47,7 +47,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const academicYears = ref([])
 const loading = ref(false)
@@ -63,7 +63,7 @@ async function loadAcademicYears() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/annees-academiques')
+    const response = await api.get('/api/annees-academiques')
     academicYears.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur lors du chargement'
@@ -85,9 +85,9 @@ function openEditForm(year) {
 async function saveAcademicYear(data) {
   try {
     if (editingYear.value) {
-      await axios.put(`/api/annees-academiques/${editingYear.value.id}`, data)
+      await api.put(`/api/annees-academiques/${editingYear.value.id}`, data)
     } else {
-      await axios.post('/api/annees-academiques', data)
+      await api.post('/api/annees-academiques', data)
     }
     showForm.value = false
     await loadAcademicYears()
@@ -99,7 +99,7 @@ async function saveAcademicYear(data) {
 async function deleteAcademicYear(id) {
   if (!confirm('Êtes-vous sûr de vouloir supprimer cette année scolaire ?')) return
   try {
-    await axios.delete(`/api/annees-academiques/${id}`)
+    await api.delete(`/api/annees-academiques/${id}`)
     await loadAcademicYears()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur lors de la suppression')

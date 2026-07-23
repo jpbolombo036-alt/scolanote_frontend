@@ -1,35 +1,55 @@
 <template>
-  <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+  <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0d1527] px-4 py-3 sm:px-6 transition-colors duration-200">
     <div class="flex flex-1 justify-between sm:hidden">
-      <button @click="$emit('prev')" :disabled="page === 0" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+      <button
+        @click="$emit('prev')"
+        :disabled="page === 0"
+        class="relative inline-flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 transition"
+      >
         Précédent
       </button>
-      <button @click="$emit('next')" :disabled="page >= totalPages - 1" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">
+      <button
+        @click="$emit('next')"
+        :disabled="page >= totalPages - 1"
+        class="relative ml-3 inline-flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 transition"
+      >
         Suivant
       </button>
     </div>
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div>
-        <p class="text-sm text-gray-700">
-          Affichage de <span class="font-medium">{{ startItem }}</span> à <span class="font-medium">{{ endItem }}</span> sur <span class="font-medium">{{ totalElements }}</span> résultats
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Affichage de <span class="font-bold text-slate-800 dark:text-slate-200">{{ startItem }}</span> à <span class="font-bold text-slate-800 dark:text-slate-200">{{ endItem }}</span> sur <span class="font-bold text-slate-800 dark:text-slate-200">{{ totalElements }}</span> résultats
         </p>
       </div>
       <div>
-        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-          <button @click="$emit('prev')" :disabled="page === 0" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0 disabled:opacity-50">
-            <span class="sr-only">Précédent</span>
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-            </svg>
+        <nav class="isolate inline-flex -space-x-px rounded-xl shadow-sm overflow-hidden" aria-label="Pagination">
+          <button
+            @click="$emit('prev')"
+            :disabled="page === 0"
+            class="relative inline-flex items-center px-3 py-2 text-slate-400 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 transition"
+          >
+            <ChevronLeft class="w-4 h-4" />
           </button>
-          <button v-for="pageNum in visiblePages" :key="pageNum" @click="$emit('goTo', pageNum)" :class="[page === pageNum ? 'bg-primary-50 text-primary-600' : 'text-gray-900 hover:bg-gray-50', 'relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:outline-offset-0']">
+          <button
+            v-for="pageNum in visiblePages"
+            :key="pageNum"
+            @click="$emit('goTo', pageNum)"
+            :class="[
+              page === pageNum
+                ? 'bg-emerald-500 text-slate-950 font-bold'
+                : 'bg-white dark:bg-[#0d1527] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
+              'relative inline-flex items-center px-3.5 py-2 text-xs font-semibold border border-slate-200 dark:border-slate-700/60 transition'
+            ]"
+          >
             {{ pageNum + 1 }}
           </button>
-          <button @click="$emit('next')" :disabled="page >= totalPages - 1" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0 disabled:opacity-50">
-            <span class="sr-only">Suivant</span>
-            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-            </svg>
+          <button
+            @click="$emit('next')"
+            :disabled="page >= totalPages - 1"
+            class="relative inline-flex items-center px-3 py-2 text-slate-400 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 transition"
+          >
+            <ChevronRight class="w-4 h-4" />
           </button>
         </nav>
       </div>
@@ -39,15 +59,16 @@
 
 <script setup>
 import { computed } from 'vue'
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 
 const props = defineProps({
-  page: Number,
-  size: Number,
-  totalElements: Number,
-  totalPages: Number
+  page: { type: Number, default: 0 },
+  size: { type: Number, default: 10 },
+  totalElements: { type: Number, default: 0 },
+  totalPages: { type: Number, default: 1 }
 })
 
-const startItem = computed(() => props.page * props.size + 1)
+const startItem = computed(() => (props.totalElements === 0 ? 0 : props.page * props.size + 1))
 const endItem = computed(() => Math.min((props.page + 1) * props.size, props.totalElements))
 
 const visiblePages = computed(() => {

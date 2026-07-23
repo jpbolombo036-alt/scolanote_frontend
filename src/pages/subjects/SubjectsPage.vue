@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const subjects = ref([])
 const loading = ref(false)
@@ -57,7 +57,7 @@ async function loadSubjects() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/matieres')
+    const response = await api.get('/api/matieres')
     subjects.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -79,9 +79,9 @@ function openEditForm(subject) {
 async function saveSubject(data) {
   try {
     if (editingSubject.value) {
-      await axios.put(`/api/matieres/${editingSubject.value.id}`, data)
+      await api.put(`/api/matieres/${editingSubject.value.id}`, data)
     } else {
-      await axios.post('/api/matieres', data)
+      await api.post('/api/matieres', data)
     }
     showForm.value = false
     await loadSubjects()
@@ -93,7 +93,7 @@ async function saveSubject(data) {
 async function deleteSubject(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/matieres/${id}`)
+    await api.delete(`/api/matieres/${id}`)
     await loadSubjects()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')

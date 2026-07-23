@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const assignments = ref([])
 const loading = ref(false)
@@ -59,7 +59,7 @@ async function loadAssignments() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/attributions-enseignement')
+    const response = await api.get('/api/attributions-enseignement')
     assignments.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -81,9 +81,9 @@ function openEditForm(assignment) {
 async function saveAssignment(data) {
   try {
     if (editingAssignment.value) {
-      await axios.put(`/api/attributions-enseignement/${editingAssignment.value.id}`, data)
+      await api.put(`/api/attributions-enseignement/${editingAssignment.value.id}`, data)
     } else {
-      await axios.post('/api/attributions-enseignement', data)
+      await api.post('/api/attributions-enseignement', data)
     }
     showForm.value = false
     await loadAssignments()
@@ -95,7 +95,7 @@ async function saveAssignment(data) {
 async function deleteAssignment(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/attributions-enseignement/${id}`)
+    await api.delete(`/api/attributions-enseignement/${id}`)
     await loadAssignments()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')

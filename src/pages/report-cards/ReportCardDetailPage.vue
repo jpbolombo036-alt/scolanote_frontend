@@ -93,7 +93,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import api, { API_BASE_URL } from '@/api/axios'
 
 const route = useRoute()
 const reportCard = ref(null)
@@ -102,7 +102,7 @@ const loading = ref(false)
 onMounted(async () => {
   loading.value = true
   try {
-    const response = await axios.get(`/api/bulletins/${route.params.id}`)
+    const response = await api.get(`/api/bulletins/${route.params.id}`)
     reportCard.value = response.data
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')
@@ -112,6 +112,6 @@ onMounted(async () => {
 })
 
 function downloadPdf() {
-  window.open(`/api/bulletins/${route.params.id}/pdf`, '_blank')
+  window.open(`${API_BASE_URL}/api/bulletins/${route.params.id}/pdf`, '_blank')
 }
 </script>

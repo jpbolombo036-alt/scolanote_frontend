@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const periods = ref([])
 const loading = ref(false)
@@ -65,7 +65,7 @@ async function loadPeriods() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/periodes')
+    const response = await api.get('/api/periodes')
     periods.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -87,9 +87,9 @@ function openEditForm(period) {
 async function savePeriod(data) {
   try {
     if (editingPeriod.value) {
-      await axios.put(`/api/periodes/${editingPeriod.value.id}`, data)
+      await api.put(`/api/periodes/${editingPeriod.value.id}`, data)
     } else {
-      await axios.post('/api/periodes', data)
+      await api.post('/api/periodes', data)
     }
     showForm.value = false
     await loadPeriods()
@@ -101,7 +101,7 @@ async function savePeriod(data) {
 async function deletePeriod(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/periodes/${id}`)
+    await api.delete(`/api/periodes/${id}`)
     await loadPeriods()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')

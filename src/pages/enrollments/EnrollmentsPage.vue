@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const enrollments = ref([])
 const loading = ref(false)
@@ -59,7 +59,7 @@ async function loadEnrollments() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/inscriptions')
+    const response = await api.get('/api/inscriptions')
     enrollments.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -81,9 +81,9 @@ function openEditForm(enrollment) {
 async function saveEnrollment(data) {
   try {
     if (editingEnrollment.value) {
-      await axios.put(`/api/inscriptions/${editingEnrollment.value.id}`, data)
+      await api.put(`/api/inscriptions/${editingEnrollment.value.id}`, data)
     } else {
-      await axios.post('/api/inscriptions', data)
+      await api.post('/api/inscriptions', data)
     }
     showForm.value = false
     await loadEnrollments()
@@ -95,7 +95,7 @@ async function saveEnrollment(data) {
 async function deleteEnrollment(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/inscriptions/${id}`)
+    await api.delete(`/api/inscriptions/${id}`)
     await loadEnrollments()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')

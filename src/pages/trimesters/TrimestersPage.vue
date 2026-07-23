@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const trimesters = ref([])
 const loading = ref(false)
@@ -59,7 +59,7 @@ async function loadTrimesters() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/trimestres')
+    const response = await api.get('/api/trimestres')
     trimesters.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -81,9 +81,9 @@ function openEditForm(trimester) {
 async function saveTrimester(data) {
   try {
     if (editingTrimester.value) {
-      await axios.put(`/api/trimestres/${editingTrimester.value.id}`, data)
+      await api.put(`/api/trimestres/${editingTrimester.value.id}`, data)
     } else {
-      await axios.post('/api/trimestres', data)
+      await api.post('/api/trimestres', data)
     }
     showForm.value = false
     await loadTrimesters()
@@ -95,7 +95,7 @@ async function saveTrimester(data) {
 async function deleteTrimester(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/trimestres/${id}`)
+    await api.delete(`/api/trimestres/${id}`)
     await loadTrimesters()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')

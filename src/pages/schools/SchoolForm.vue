@@ -1,52 +1,120 @@
 <template>
-  <div v-if="visible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">{{ school ? 'Modifier' : 'Créer' }} une école</h2>
-        <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">&times;</button>
+  <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+    <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl space-y-6">
+      
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800/80 pb-4">
+        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">
+          {{ school ? 'Modifier' : 'Créer' }} une école
+        </h2>
+        <button
+          @click="$emit('close')"
+          class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
       </div>
 
-      <form @submit.prevent="onSubmit">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Modal Form -->
+      <form @submit.prevent="onSubmit" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
-            <input v-model="form.nom" type="text" required class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Nom de l'école <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.nom"
+              type="text"
+              required
+              placeholder="Ex: Institut Saint-Joseph"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Code *</label>
-            <input v-model="form.code" type="text" required class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Code <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.code"
+              type="text"
+              required
+              placeholder="Ex: EP-001"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-            <input v-model="form.email" type="email" required class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Email <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.email"
+              type="email"
+              required
+              placeholder="contact@ecole.cd"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Province *</label>
-            <input v-model="form.province" type="text" required class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Province <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.province"
+              type="text"
+              required
+              placeholder="Ex: Kinshasa"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Commune/Territoire *</label>
-            <input v-model="form.communeTerritoire" type="text" required class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Commune / Territoire <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.communeTerritoire"
+              type="text"
+              required
+              placeholder="Ex: Gombe"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
-            <input v-model="form.adresse" type="text" class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Adresse complète</label>
+            <input
+              v-model="form.adresse"
+              type="text"
+              placeholder="Avenue, Numéro, Quartier..."
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
-            <input v-model="form.telephone" type="text" class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Téléphone</label>
+            <input
+              v-model="form.telephone"
+              type="text"
+              placeholder="+243..."
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Logo (URL/base64)</label>
-            <input v-model="form.logo" type="text" class="w-full border rounded-lg px-3 py-2" />
+            <label class="block mb-1.5 font-semibold">Logo (URL)</label>
+            <input
+              v-model="form.logo"
+              type="text"
+              placeholder="https://..."
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
           </div>
         </div>
 
-        <div v-if="error" class="mt-4 bg-red-50 text-red-600 p-3 rounded-lg">{{ error }}</div>
+        <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-3 rounded-xl text-xs font-medium">
+          {{ error }}
+        </div>
 
-        <div class="flex justify-end gap-2 mt-6">
-          <button type="button" @click="$emit('close')" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Annuler</button>
-          <button type="submit" :disabled="saving" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50">
+        <!-- Buttons -->
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+          <button
+            type="button"
+            @click="$emit('close')"
+            class="px-4 py-2.5 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            :disabled="saving"
+            class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition disabled:opacity-50"
+          >
             {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
           </button>
         </div>
@@ -57,10 +125,10 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
+import { X } from 'lucide-vue-next'
 
 const props = defineProps({
-  school: Object,
-  visible: Boolean
+  school: Object
 })
 
 const emit = defineEmits(['close', 'save'])
@@ -102,7 +170,7 @@ async function onSubmit() {
   try {
     await emit('save', { ...form })
   } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur'
+    error.value = e.response?.data?.message || 'Erreur lors de la sauvegarde'
   } finally {
     saving.value = false
   }

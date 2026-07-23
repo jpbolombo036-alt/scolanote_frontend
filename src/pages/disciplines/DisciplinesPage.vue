@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const disciplines = ref([])
 const loading = ref(false)
@@ -59,7 +59,7 @@ async function loadDisciplines() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/disciplines')
+    const response = await api.get('/api/disciplines')
     disciplines.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -81,9 +81,9 @@ function openEditForm(discipline) {
 async function saveDiscipline(data) {
   try {
     if (editingDiscipline.value) {
-      await axios.put(`/api/disciplines/${editingDiscipline.value.id}`, data)
+      await api.put(`/api/disciplines/${editingDiscipline.value.id}`, data)
     } else {
-      await axios.post('/api/disciplines', data)
+      await api.post('/api/disciplines', data)
     }
     showForm.value = false
     await loadDisciplines()
@@ -95,7 +95,7 @@ async function saveDiscipline(data) {
 async function deleteDiscipline(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/disciplines/${id}`)
+    await api.delete(`/api/disciplines/${id}`)
     await loadDisciplines()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')

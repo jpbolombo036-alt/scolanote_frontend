@@ -45,7 +45,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import api from '@/api/axios'
 
 const grades = ref([])
 const loading = ref(false)
@@ -61,7 +61,7 @@ async function loadGrades() {
   loading.value = true
   error.value = null
   try {
-    const response = await axios.get('/api/notes')
+    const response = await api.get('/api/notes')
     grades.value = response.data
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
@@ -83,9 +83,9 @@ function openEditForm(grade) {
 async function saveGrade(data) {
   try {
     if (editingGrade.value) {
-      await axios.put(`/api/notes/${editingGrade.value.id}`, data)
+      await api.put(`/api/notes/${editingGrade.value.id}`, data)
     } else {
-      await axios.post('/api/notes', data)
+      await api.post('/api/notes', data)
     }
     showForm.value = false
     await loadGrades()
@@ -97,7 +97,7 @@ async function saveGrade(data) {
 async function deleteGrade(id) {
   if (!confirm('Êtes-vous sûr ?')) return
   try {
-    await axios.delete(`/api/notes/${id}`)
+    await api.delete(`/api/notes/${id}`)
     await loadGrades()
   } catch (e) {
     alert(e.response?.data?.message || 'Erreur')
