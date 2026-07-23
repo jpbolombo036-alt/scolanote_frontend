@@ -137,7 +137,7 @@
       </header>
 
       <!-- PAGE VIEW CONTENT -->
-      <main class="flex-1 overflow-y-auto transition-colors duration-200" :class="isDark ? 'bg-[#090f1e] text-slate-100' : 'bg-slate-50 text-slate-900'">
+      <main class="flex-1 overflow-y-auto transition-colors duration-200 pt-20" :class="isDark ? 'bg-[#090f1e] text-slate-100' : 'bg-slate-50 text-slate-900'">
         <div class="p-6 lg:p-8">
           <router-view />
         </div>
