@@ -21,7 +21,7 @@ export async function getReportCardsByPeriod(periodId: number): Promise<ReportCa
   return response.data
 }
 
-export async function generatePdf(id: number): Promise<Blob> {
+export async function downloadPdf(id: number): Promise<Blob> {
   const response = await api.post(`/api/bulletins/${id}/pdf`, {}, { responseType: 'blob' })
   return response.data
 }

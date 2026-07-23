@@ -149,7 +149,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import api, { API_BASE_URL } from '@/api/axios'
+import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import { FileText, Sparkles, Search, RefreshCw, AlertCircle, Download } from 'lucide-vue-next'
 
@@ -228,7 +228,19 @@ async function generateBulletins() {
   }
 }
 
-function viewPdf(id) {
-  window.open(`${API_BASE_URL}/api/bulletins/${id}/pdf`, '_blank')
+async function viewPdf(id) {
+  try {
+    const blob = await api.post(`/api/bulletins/${id}/pdf`, {}, { responseType: 'blob' })
+    const url = window.URL.createObjectURL(blob.data)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `bulletin-${id}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (e) {
+    alert(e.response?.data?.message || 'Erreur lors du téléchargement du PDF')
+  }
 }
 </script>

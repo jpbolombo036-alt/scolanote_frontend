@@ -111,7 +111,19 @@ onMounted(async () => {
   }
 })
 
-function downloadPdf() {
-  window.open(`${API_BASE_URL}/api/bulletins/${route.params.id}/pdf`, '_blank')
+async function downloadPdf() {
+  try {
+    const blob = await api.post(`/api/bulletins/${route.params.id}/pdf`, {}, { responseType: 'blob' })
+    const url = window.URL.createObjectURL(blob.data)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `bulletin-${route.params.id}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (e) {
+    alert(e.response?.data?.message || 'Erreur lors du téléchargement du PDF')
+  }
 }
 </script>
