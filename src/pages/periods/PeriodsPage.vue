@@ -155,7 +155,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         const response = await api.get('/api/periodes')
         periods.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
       } catch (e) {
-        error.value = e.response?.data?.message || 'Erreur'
+        console.error('Erreur lors du chargement des périodes', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       } finally {
         loading.value = false
       }
@@ -181,7 +182,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadPeriods()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 

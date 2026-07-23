@@ -29,8 +29,13 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await api.get('/auth/me')
       user.value = data
       roles.value = data.roles || []
-    } catch {
-      logout()
+    } catch (e) {
+      const status = e.response?.status
+      if (status === 401 || status === 403) {
+        logout()
+      } else {
+        console.error('Erreur lors du chargement du profil utilisateur', e)
+      }
     }
   }
 

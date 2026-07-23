@@ -192,7 +192,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
           pagination.value.totalElements = response.data.length
         }
       } catch (e) {
-        error.value = e.response?.data?.message || 'Erreur lors du chargement des salles'
+        console.error('Erreur lors du chargement des salles', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement des salles'
       } finally {
         loading.value = false
       }
@@ -218,7 +219,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadClassrooms()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
       }
     }
 

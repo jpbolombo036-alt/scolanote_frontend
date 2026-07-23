@@ -151,7 +151,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         const response = await api.get('/api/annees-academiques')
         academicYears.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
       } catch (e) {
-        error.value = e.response?.data?.message || 'Erreur lors du chargement'
+        console.error('Erreur lors du chargement des années scolaires', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement'
       } finally {
         loading.value = false
       }
@@ -177,7 +178,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadAcademicYears()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
       }
     }
 
