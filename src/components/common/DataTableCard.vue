@@ -1,13 +1,15 @@
 <template>
-  <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl overflow-hidden">
-    <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800/80">
+  <div class="space-y-4">
+    <!-- Title Card -->
+    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <h2 class="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">{{ title }}</h2>
       <div class="flex items-center gap-2">
         <slot name="actions" />
       </div>
     </div>
 
-    <div class="p-4 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <!-- Search Card -->
+    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl px-4 lg:px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div class="relative w-full sm:w-96">
         <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
@@ -29,30 +31,33 @@
       </button>
     </div>
 
-    <div v-if="loading" class="py-16 text-center">
-      <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
-      <p class="text-xs text-slate-400 font-medium mt-3">{{ loadingText }}</p>
-    </div>
-    <div v-else-if="empty" class="py-12 text-center">
-      <EmptyState :message="emptyMessage" />
-    </div>
-    <div v-else class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-            <th v-for="column in columns" :key="column.key" :class="column.headerClass || 'px-6 py-4'">
-              {{ column.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-medium text-slate-700 dark:text-slate-300">
-          <slot />
-        </tbody>
-      </table>
-    </div>
+    <!-- Table Card -->
+    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl overflow-hidden">
+      <div v-if="loading" class="py-16 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
+        <p class="text-xs text-slate-400 font-medium mt-3">{{ loadingText }}</p>
+      </div>
+      <div v-else-if="empty" class="py-12 text-center">
+        <EmptyState :message="emptyMessage" />
+      </div>
+      <div v-else class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <th v-for="column in columns" :key="column.key" :class="column.headerClass || 'px-6 py-4'">
+                {{ column.label }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-medium text-slate-700 dark:text-slate-300">
+            <slot />
+          </tbody>
+        </table>
+      </div>
 
-    <div v-if="$slots.footer" class="border-t border-slate-100 dark:border-slate-800/80">
-      <slot name="footer" />
+      <div v-if="$slots.footer" class="border-t border-slate-100 dark:border-slate-800/80">
+        <slot name="footer" />
+      </div>
     </div>
   </div>
 </template>
