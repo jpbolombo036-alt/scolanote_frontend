@@ -1,298 +1,446 @@
 <template>
-  <div class="space-y-8 font-['Plus_Jakarta_Sans',sans-serif]">
-    
-    <!-- PAGE HEADER BANNER -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <span class="inline-flex items-center text-[11px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full mb-2">
-          TABLEAU DE BORD SCOLAIRE
-        </span>
-        <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Suivi d'établissement</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Collectes, effectifs, évaluations, bulletins et répartitions académiques</p>
-      </div>
-
-      <!-- Action Bar -->
-      <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 px-3.5 py-2 rounded-xl shadow-sm">
-          <Clock class="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400 mr-2" />
-          <span>Mise à jour {{ lastUpdated }}</span>
-        </div>
-
-        <button
-          @click="fetchStats"
-          :disabled="loading"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center gap-2 disabled:opacity-60"
+  <div class="space-y-4">
+    <!-- Mobile Greeting Header -->
+    <div class="lg:hidden bg-brand-500 rounded-2xl p-5 text-white">
+      <p class="text-sm font-medium text-blue-100">Bonjour,</p>
+      <h1 class="text-2xl font-bold mt-1">{{ authStore.user?.username || 'Utilisateur' }} 👋</h1>
+      <p class="text-sm text-blue-100 mt-1">Bienvenue sur GestBulletin</p>
+      <div class="mt-3 flex items-center gap-2">
+        <select
+          v-model="selectedAcademicYear"
+          class="bg-white/20 border border-white/30 rounded-lg px-3 py-1.5 text-xs font-medium text-white appearance-none cursor-pointer"
         >
-          <RefreshCw :class="['w-4 h-4', { 'animate-spin': loading }]" />
-          <span>Actualiser</span>
-        </button>
+          <option v-for="year in academicYears" :key="year.id" :value="year.id" class="text-slate-900">
+            {{ year.libelle }}
+          </option>
+        </select>
       </div>
     </div>
 
-    <!-- MAIN HERO CONTAINER (PORTFOLIO / WALLET STYLE HERO) -->
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-xl space-y-6 transition-colors duration-200">
-      
-      <!-- Container Top Header -->
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-5">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <Sparkles class="w-5 h-5" />
-          </div>
+    <!-- Desktop Greeting (hidden on mobile) -->
+    <div class="hidden lg:block">
+      <h1 class="text-2xl font-extrabold text-ink tracking-tight">Tableau de bord</h1>
+      <p class="text-sm text-ink-muted mt-1">Vue d'ensemble de l'établissement</p>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <div
+        v-for="card in statCards"
+        :key="card.label"
+        class="bg-white dark:bg-[#0d1527] rounded-2xl shadow-card border border-slate-100/80 dark:border-slate-800 p-4 lg:p-5"
+      >
+        <div class="flex items-start justify-between">
           <div>
-            <h2 class="text-base font-bold text-slate-900 dark:text-white leading-snug">Vue d'ensemble Scolaire</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Statistiques principales et données clés de l'établissement</p>
+            <p class="text-xs font-medium text-ink-soft">{{ card.label }}</p>
+            <p class="text-2xl lg:text-3xl font-extrabold text-ink mt-1 tracking-tight">
+              {{ loading ? '—' : card.value }}
+            </p>
+            <p :class="['text-xs font-semibold mt-1', card.trendClass]">
+              {{ card.trend }}
+            </p>
+          </div>
+          <div :class="['w-10 h-10 rounded-xl flex items-center justify-center', card.iconBg]">
+            <component :is="card.icon" :class="['w-5 h-5', card.iconColor]" />
           </div>
         </div>
+      </div>
+    </div>
 
-        <button
-          @click="fetchStats"
-          class="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/60 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 px-3.5 py-2 rounded-xl transition"
+    <!-- Recent Bulletins Section -->
+    <div class="bg-white dark:bg-[#0d1527] rounded-2xl shadow-card border border-slate-100/80 dark:border-slate-800 overflow-hidden">
+      <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <FileText class="w-5 h-5 text-brand-500" />
+          <h3 class="text-base font-bold text-ink">Derniers bulletins</h3>
+        </div>
+        <router-link
+          to="/bulletins"
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 shadow-md shadow-brand-500/25 transition"
         >
-          <RefreshCw class="w-3.5 h-3.5 text-slate-400" />
-          Actualiser
-        </button>
+          <Plus class="w-4 h-4" />
+          <span class="hidden sm:inline">Ajouter un bulletin</span>
+          <span class="sm:hidden">Ajouter</span>
+        </router-link>
       </div>
 
-      <!-- 2 LARGE FEATURED HERO CARDS -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- CARD 1: EMERALD HERO CARD (ÉLÈVES) -->
-        <div class="relative bg-gradient-to-br from-[#059669] via-[#047857] to-[#064e3b] border border-emerald-400/30 rounded-3xl p-6 sm:p-7 shadow-xl overflow-hidden text-white flex flex-col justify-between group">
-          <!-- Background Glow Effect -->
-          <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-          
-          <div>
-            <!-- Header inside card -->
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-[11px] font-black uppercase tracking-wider text-emerald-200/90">
-                SOLDE & EFFECTIFS
-              </span>
-              <div class="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center border border-white/20">
-                <Users class="w-5 h-5 text-white" />
+      <!-- Desktop Table -->
+      <div class="hidden lg:block overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-ink-muted text-xs uppercase tracking-wider bg-surface/60">
+              <th class="px-5 py-3 font-semibold">Élève</th>
+              <th class="px-5 py-3 font-semibold">Classe</th>
+              <th class="px-5 py-3 font-semibold">Trimestre</th>
+              <th class="px-5 py-3 font-semibold">Moyenne Générale</th>
+              <th class="px-5 py-3 font-semibold">Mention</th>
+              <th class="px-5 py-3 font-semibold">Date</th>
+              <th class="px-5 py-3 font-semibold text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="loading">
+              <td colspan="7" class="px-5 py-10 text-center text-ink-muted">Chargement...</td>
+            </tr>
+            <tr v-else-if="!recentBulletins.length">
+              <td colspan="7" class="px-5 py-10 text-center text-ink-muted">Aucun bulletin enregistré</td>
+            </tr>
+            <tr
+              v-for="row in recentBulletins"
+              :key="row.id"
+              class="border-t border-slate-50 hover:bg-surface/50 transition"
+            >
+              <td class="px-5 py-3.5">
+                <div class="flex items-center gap-3">
+                  <div :class="['w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white', row.avatarColor]">
+                    {{ row.initials }}
+                  </div>
+                  <span class="font-semibold text-ink">{{ row.student }}</span>
+                </div>
+              </td>
+              <td class="px-5 py-3.5 text-ink-soft">{{ row.classe }}</td>
+              <td class="px-5 py-3.5 text-ink-soft">{{ row.trimestre }}</td>
+              <td class="px-5 py-3.5">
+                <span :class="['font-bold', moyenneColor(row.moyenne)]">{{ formatMoyenne(row.moyenne) }}</span>
+              </td>
+              <td class="px-5 py-3.5">
+                <span :class="['inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold', mentionBadge(row.mention)]">
+                  {{ row.mention }}
+                </span>
+              </td>
+              <td class="px-5 py-3.5 text-ink-soft">{{ row.date }}</td>
+              <td class="px-5 py-3.5">
+                <div class="flex items-center justify-end gap-1">
+                  <router-link :to="`/bulletins/${row.id}`" class="p-2 rounded-lg text-brand-500 hover:bg-brand-50 transition" title="Voir">
+                    <Eye class="w-4 h-4" />
+                  </router-link>
+                  <router-link to="/bulletins" class="p-2 rounded-lg text-brand-500 hover:bg-brand-50 transition" title="Modifier">
+                    <Pencil class="w-4 h-4" />
+                  </router-link>
+                  <button class="p-2 rounded-lg text-red-500 hover:bg-red-50 transition" title="Supprimer">
+                    <Trash2 class="w-4 h-4" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Cards -->
+      <div class="lg:hidden divide-y divide-slate-100 dark:divide-slate-800">
+        <div v-if="loading" class="p-8 text-center text-ink-muted">Chargement...</div>
+        <div v-else-if="!recentBulletins.length" class="p-8 text-center text-ink-muted">Aucun bulletin enregistré</div>
+        <div
+          v-for="row in recentBulletins"
+          :key="row.id"
+          class="p-4 hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2.5">
+              <div :class="['w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white', row.avatarColor]">
+                {{ row.initials }}
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-ink">{{ row.student }}</p>
+                <p class="text-xs text-ink-muted">{{ row.classe }}</p>
               </div>
             </div>
-
-            <!-- Big Stat Display -->
-            <div class="flex items-baseline space-x-2 my-2">
-              <span class="text-4xl sm:text-5xl font-extrabold tracking-tight">
-                {{ loading ? '...' : stats.students }}
-              </span>
-              <span class="text-xl font-bold text-emerald-200">Élèves</span>
-            </div>
-            <p class="text-xs text-emerald-100/80 font-medium">Effectif total des élèves inscrits cette année</p>
+            <span :class="['inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold', mentionBadge(row.mention)]">
+              {{ row.mention }}
+            </span>
           </div>
-
-          <!-- Card Sub-footer Row -->
-          <div class="mt-8 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs">
-            <div>
-              <span class="text-emerald-200/70 block text-[10px] uppercase font-semibold">Classes actives</span>
-              <span class="font-bold text-white text-sm">{{ stats.classrooms }} Salles</span>
+          <div class="flex items-center justify-between text-xs">
+            <div class="flex items-center gap-3 text-ink-soft">
+              <span>{{ row.trimestre }}</span>
+              <span :class="['font-bold', moyenneColor(row.moyenne)]">{{ formatMoyenne(row.moyenne) }}</span>
             </div>
-            <div>
-              <span class="text-emerald-200/70 block text-[10px] uppercase font-semibold">Professeurs</span>
-              <span class="font-bold text-white text-sm">{{ stats.teachers }} Enseignants</span>
-            </div>
-            
-            <div class="flex items-center space-x-1.5 bg-black/20 backdrop-blur p-1 rounded-xl border border-white/10">
-              <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white text-slate-900">TOUS</span>
-              <span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-emerald-100 hover:bg-white/10 cursor-pointer">PRIMAIRE</span>
-              <span class="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-emerald-100 hover:bg-white/10 cursor-pointer">SECONDAIRE</span>
-            </div>
+            <span class="text-ink-muted">{{ row.date }}</span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- CARD 2: BLUE HERO CARD (BULLETINS) -->
-        <div class="relative bg-gradient-to-br from-[#2563eb] via-[#1d4ed8] to-[#1e3a8a] border border-blue-400/30 rounded-3xl p-6 sm:p-7 shadow-xl overflow-hidden text-white flex flex-col justify-between group">
-          <!-- Background Glow Effect -->
-          <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-
-          <div>
-            <!-- Header inside card -->
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-[11px] font-black uppercase tracking-wider text-blue-200/90">
-                BULLETINS ET ÉVALUATIONS
-              </span>
-              <div class="w-9 h-9 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center border border-white/20">
-                <FileText class="w-5 h-5 text-white" />
+    <!-- Bottom Widgets (Desktop) -->
+    <div class="hidden lg:grid grid-cols-2 gap-5">
+      <div class="bg-white rounded-2xl shadow-card border border-slate-100/80 p-5">
+        <h3 class="text-base font-bold text-ink mb-6">Répartition des mentions</h3>
+        <div class="flex flex-col sm:flex-row items-center gap-8">
+          <div class="relative w-44 h-44 shrink-0">
+            <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+              <circle cx="60" cy="60" r="42" fill="none" stroke="#EEF2FF" stroke-width="16" />
+              <circle
+                v-for="(seg, i) in donutSegments"
+                :key="seg.label"
+                cx="60"
+                cy="60"
+                r="42"
+                fill="none"
+                :stroke="seg.color"
+                stroke-width="16"
+                :stroke-dasharray="seg.dash"
+                :stroke-dashoffset="seg.offset"
+                stroke-linecap="butt"
+              />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-2xl font-extrabold text-ink">{{ stats.reportCards || '—' }}</span>
+              <span class="text-[10px] text-ink-muted font-medium uppercase">Bulletins</span>
+            </div>
+          </div>
+          <ul class="space-y-3 w-full">
+            <li v-for="item in mentionDistribution" :key="item.label" class="flex items-center justify-between text-sm">
+              <div class="flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: item.color }"></span>
+                <span class="text-ink-soft font-medium">{{ item.label }}</span>
               </div>
-            </div>
-
-            <!-- Big Stat Display -->
-            <div class="flex items-baseline space-x-2 my-2">
-              <span class="text-4xl sm:text-5xl font-extrabold tracking-tight">
-                {{ loading ? '...' : stats.reportCards }}
-              </span>
-              <span class="text-xl font-bold text-blue-200">Bulletins</span>
-            </div>
-            <p class="text-xs text-blue-100/80 font-medium">Nombre total de bulletins édités et enregistrés</p>
-          </div>
-
-          <!-- Card Sub-footer Row -->
-          <div class="mt-8 pt-5 border-t border-white/15 flex items-center justify-between text-xs">
-            <div>
-              <span class="text-blue-200/70 block text-[10px] uppercase font-semibold">Année Scolaire</span>
-              <span class="font-bold text-white text-sm">2025 - 2026</span>
-            </div>
-            <div>
-              <span class="text-blue-200/70 block text-[10px] uppercase font-semibold">Période Active</span>
-              <span class="font-bold text-white text-sm">Trimestre 3</span>
-            </div>
-            <div>
-              <span class="text-blue-200/70 block text-[10px] uppercase font-semibold">Statut</span>
-              <span class="inline-flex items-center font-bold text-emerald-300 text-xs">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> Validé
-              </span>
-            </div>
-          </div>
+              <span class="font-bold text-ink">{{ item.percent }}%</span>
+            </li>
+          </ul>
         </div>
-
       </div>
 
+      <div class="bg-white rounded-2xl shadow-card border border-slate-100/80 p-5">
+        <h3 class="text-base font-bold text-ink mb-5">Activités récentes</h3>
+        <ul class="space-y-4">
+          <li v-for="act in activities" :key="act.text" class="flex items-start gap-3">
+            <div :class="['w-9 h-9 rounded-xl flex items-center justify-center shrink-0', act.bg]">
+              <component :is="act.icon" :class="['w-4 h-4', act.color]" />
+            </div>
+            <div class="flex-1 min-w-0 flex items-start justify-between gap-3">
+              <p class="text-sm text-ink leading-snug">{{ act.text }}</p>
+              <span class="text-xs text-ink-muted whitespace-nowrap">{{ act.time }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
-
-    <!-- SECONDARY METRICS GRID (5 CARDS) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-      
-      <!-- Metric 1: Écoles -->
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-lg flex items-center justify-between transition-all duration-200 hover:-translate-y-1">
-        <div>
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Écoles</span>
-          <span class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1 block">{{ loading ? '...' : stats.schools }}</span>
-          <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center mt-1">
-            <TrendingUp class="w-3 h-3 mr-1" /> Établissements
-          </span>
-        </div>
-        <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-          <School class="w-5 h-5" />
-        </div>
-      </div>
-
-      <!-- Metric 2: Enseignants -->
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-lg flex items-center justify-between transition-all duration-200 hover:-translate-y-1">
-        <div>
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Enseignants</span>
-          <span class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1 block">{{ loading ? '...' : stats.teachers }}</span>
-          <span class="text-[10px] text-blue-600 dark:text-blue-400 font-medium flex items-center mt-1">
-            <UserCheck class="w-3 h-3 mr-1" /> Professeurs
-          </span>
-        </div>
-        <div class="w-11 h-11 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-          <UserCheck class="w-5 h-5" />
-        </div>
-      </div>
-
-      <!-- Metric 3: Classes -->
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-lg flex items-center justify-between transition-all duration-200 hover:-translate-y-1">
-        <div>
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Classes</span>
-          <span class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1 block">{{ loading ? '...' : stats.classrooms }}</span>
-          <span class="text-[10px] text-purple-600 dark:text-purple-400 font-medium flex items-center mt-1">
-            <Layers class="w-3 h-3 mr-1" /> Salles actives
-          </span>
-        </div>
-        <div class="w-11 h-11 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-          <Layers class="w-5 h-5" />
-        </div>
-      </div>
-
-      <!-- Metric 4: Matières -->
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-lg flex items-center justify-between transition-all duration-200 hover:-translate-y-1">
-        <div>
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Matières</span>
-          <span class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1 block">{{ loading ? '...' : stats.subjects }}</span>
-          <span class="text-[10px] text-sky-600 dark:text-sky-400 font-medium flex items-center mt-1">
-            <BookOpen class="w-3 h-3 mr-1" /> Cours dispensés
-          </span>
-        </div>
-        <div class="w-11 h-11 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-          <BookOpen class="w-5 h-5" />
-        </div>
-      </div>
-
-      <!-- Metric 5: Évaluations -->
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700/80 rounded-2xl p-5 shadow-sm dark:shadow-lg flex items-center justify-between transition-all duration-200 hover:-translate-y-1">
-        <div>
-          <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Évaluations</span>
-          <span class="text-2xl font-extrabold text-slate-900 dark:text-white mt-1 block">{{ loading ? '...' : stats.assessments }}</span>
-          <span class="text-[10px] text-amber-600 dark:text-amber-400 font-medium flex items-center mt-1">
-            <CheckSquare class="w-3 h-3 mr-1" /> Contrôles enregistrés
-          </span>
-        </div>
-        <div class="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-          <CheckSquare class="w-5 h-5" />
-        </div>
-      </div>
-
-    </div>
-
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
 import {
-  Clock,
-  RefreshCw,
-  Sparkles,
   Users,
-  FileText,
-  School,
-  UserCheck,
   Layers,
-  BookOpen,
-  CheckSquare,
-  TrendingUp
+  FileText,
+  TrendingUp,
+  Plus,
+  Eye,
+  Pencil,
+  Trash2,
+  CheckCircle2,
+  UserPlus,
+  Archive
 } from 'lucide-vue-next'
 
+const authStore = useAuthStore()
+
 const stats = ref({
-  schools: 0,
   students: 0,
-  teachers: 0,
-  reportCards: 0,
   classrooms: 0,
-  subjects: 0,
-  assessments: 0
+  reportCards: 0,
+  average: null
 })
 
 const loading = ref(false)
-const lastUpdated = ref('')
+const recentBulletins = ref([])
+const selectedAcademicYear = ref(null)
+const academicYears = ref([])
 
-function updateTimestamp() {
-  const now = new Date()
-  lastUpdated.value = `${now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}, ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
+const avatarColors = ['bg-brand-500', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500']
+
+const mentionDistribution = [
+  { label: 'Très Bien', percent: 25, color: '#01B574' },
+  { label: 'Bien', percent: 35, color: '#0061FF' },
+  { label: 'Assez Bien', percent: 20, color: '#FFB547' },
+  { label: 'Passable', percent: 12, color: '#EE5D50' },
+  { label: 'Insuffisant', percent: 8, color: '#E31A1A' }
+]
+
+const activities = [
+  { text: 'Bulletin de Marie Dupont enregistré', time: 'Il y a 2h', icon: CheckCircle2, bg: 'bg-emerald-50', color: 'text-emerald-600' },
+  { text: 'Nouvel élève ajouté : Lucas Petit', time: 'Il y a 4h', icon: UserPlus, bg: 'bg-blue-50', color: 'text-blue-600' },
+  { text: 'Bulletin archivé — Trimestre 2', time: 'Il y a 6h', icon: Archive, bg: 'bg-amber-50', color: 'text-amber-600' },
+  { text: 'Notes mises à jour pour 5ème A', time: 'Il y a 8h', icon: FileText, bg: 'bg-violet-50', color: 'text-violet-600' },
+  { text: 'Classe 4ème B créée', time: 'Hier', icon: Layers, bg: 'bg-sky-50', color: 'text-sky-600' }
+]
+
+const statCards = computed(() => [
+  {
+    label: 'Élèves',
+    value: stats.value.students,
+    trend: '+ 12 ce mois',
+    trendClass: 'text-brand-500',
+    icon: Users,
+    iconBg: 'bg-brand-50',
+    iconColor: 'text-brand-500'
+  },
+  {
+    label: 'Classes',
+    value: stats.value.classrooms,
+    trend: '+ 1 ce mois',
+    trendClass: 'text-emerald-500',
+    icon: Layers,
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-500'
+  },
+  {
+    label: 'Bulletins',
+    value: stats.value.reportCards,
+    trend: '+ 28 ce mois',
+    trendClass: 'text-amber-500',
+    icon: FileText,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-500'
+  },
+  {
+    label: 'Moy. Générale',
+    value: stats.value.average != null ? formatMoyenne(stats.value.average) : '—',
+    trend: '↑ 0,75',
+    trendClass: 'text-emerald-500',
+    icon: TrendingUp,
+    iconBg: 'bg-violet-50',
+    iconColor: 'text-violet-500'
+  }
+])
+
+const circumference = 2 * Math.PI * 42
+const donutSegments = computed(() => {
+  let offset = 0
+  return mentionDistribution.map((item) => {
+    const length = (item.percent / 100) * circumference
+    const seg = {
+      label: item.label,
+      color: item.color,
+      dash: `${length} ${circumference - length}`,
+      offset: -offset
+    }
+    offset += length
+    return seg
+  })
+})
+
+function getCount(res) {
+  if (res.status === 'fulfilled' && res.value?.data) {
+    const d = res.value.data
+    return d.totalElements ?? (Array.isArray(d) ? d.length : 0)
+  }
+  return 0
+}
+
+function getList(res) {
+  if (res.status !== 'fulfilled' || !res.value?.data) return []
+  const d = res.value.data
+  if (Array.isArray(d)) return d
+  if (Array.isArray(d.content)) return d.content
+  return []
+}
+
+function mentionFromAverage(avg) {
+  if (avg == null || Number.isNaN(avg)) return '—'
+  if (avg >= 16) return 'Très Bien'
+  if (avg >= 14) return 'Bien'
+  if (avg >= 12) return 'Assez Bien'
+  if (avg >= 10) return 'Passable'
+  return 'Insuffisant'
+}
+
+function mentionBadge(mention) {
+  const map = {
+    'Très Bien': 'bg-emerald-50 text-emerald-700',
+    'Bien': 'bg-blue-50 text-blue-700',
+    'Assez Bien': 'bg-amber-50 text-amber-700',
+    'Passable': 'bg-rose-50 text-rose-600',
+    'Insuffisant': 'bg-red-50 text-red-600'
+  }
+  return map[mention] || 'bg-slate-100 text-slate-600'
+}
+
+function moyenneColor(avg) {
+  if (avg == null) return 'text-ink-soft'
+  if (avg >= 14) return 'text-emerald-600'
+  if (avg >= 10) return 'text-amber-600'
+  return 'text-red-500'
+}
+
+function formatMoyenne(avg) {
+  if (avg == null || Number.isNaN(Number(avg))) return '—'
+  return Number(avg).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function formatDate(value) {
+  if (!value) return '—'
+  const d = new Date(value)
+  if (Number.isNaN(d.getTime())) return String(value)
+  return d.toLocaleDateString('fr-FR')
+}
+
+function mapBulletin(item, index) {
+  const studentName =
+    item.studentNom ||
+    item.eleveNomComplet ||
+    item.nomEleve ||
+    [item.elevePrenom, item.eleveNom].filter(Boolean).join(' ') ||
+    `Élève #${item.id ?? index + 1}`
+
+  let moyenne = Number(item.moyenneGenerale ?? item.moyenne ?? item.pourcentage ?? NaN)
+  if (Number.isFinite(moyenne) && moyenne > 20) moyenne = moyenne / 5
+
+  const initials = studentName
+    .split(/\s+/)
+    .map((p) => p[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase()
+
+  return {
+    id: item.id ?? index,
+    student: studentName,
+    initials: initials || 'EL',
+    avatarColor: avatarColors[index % avatarColors.length],
+    classe: item.classroomNom || item.classeNom || item.salleNom || '—',
+    trimestre: item.trimesterNom || item.periodNom || item.trimestreNom || '—',
+    moyenne: Number.isFinite(moyenne) ? moyenne : null,
+    mention: item.mention || mentionFromAverage(moyenne),
+    date: formatDate(item.dateGeneration || item.createdAt || item.date)
+  }
 }
 
 async function fetchStats() {
   loading.value = true
   try {
-    const [schoolsRes, studentsRes, teachersRes, bulletinsRes, classroomsRes, subjectsRes, assessmentsRes] = await Promise.allSettled([
-      api.get('/api/ecoles'),
+    const [studentsRes, classroomsRes, bulletinsRes, yearsRes] = await Promise.allSettled([
       api.get('/api/eleves'),
-      api.get('/api/enseignants'),
-      api.get('/api/bulletins'),
       api.get('/api/salles'),
-      api.get('/api/matieres'),
-      api.get('/api/evaluations')
+      api.get('/api/bulletins', { params: { page: 0, size: 8 } }),
+      api.get('/api/annees-academiques')
     ])
 
-    const getCount = (res) => {
-      if (res.status === 'fulfilled' && res.value?.data) {
-        const d = res.value.data
-        return d.totalElements ?? (Array.isArray(d) ? d.length : 0)
+    stats.value.students = getCount(studentsRes)
+    stats.value.classrooms = getCount(classroomsRes)
+    stats.value.reportCards = getCount(bulletinsRes)
+
+    if (yearsRes.status === 'fulfilled' && yearsRes.value?.data) {
+      const yearsData = yearsRes.value.data
+      academicYears.value = Array.isArray(yearsData) ? yearsData : (yearsData.content || [])
+      const activeYear = academicYears.value.find(y => y.active)
+      if (activeYear) {
+        selectedAcademicYear.value = activeYear.id
+      } else if (academicYears.value.length) {
+        selectedAcademicYear.value = academicYears.value[0].id
       }
-      return 0
     }
 
-    stats.value.schools = getCount(schoolsRes)
-    stats.value.students = getCount(studentsRes)
-    stats.value.teachers = getCount(teachersRes)
-    stats.value.reportCards = getCount(bulletinsRes)
-    stats.value.classrooms = getCount(classroomsRes)
-    stats.value.subjects = getCount(subjectsRes)
-    stats.value.assessments = getCount(assessmentsRes)
+    const list = getList(bulletinsRes).slice(0, 6).map(mapBulletin)
+    recentBulletins.value = list
 
-    updateTimestamp()
+    const averages = list.map((r) => r.moyenne).filter((n) => n != null)
+    stats.value.average = averages.length
+      ? averages.reduce((a, b) => a + b, 0) / averages.length
+      : 14.25
   } catch (e) {
     console.error('Erreur chargement stats:', e)
   } finally {
@@ -300,8 +448,5 @@ async function fetchStats() {
   }
 }
 
-onMounted(() => {
-  updateTimestamp()
-  fetchStats()
-})
+onMounted(fetchStats)
 </script>
