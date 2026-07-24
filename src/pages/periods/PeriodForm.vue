@@ -1,7 +1,6 @@
 <template>
   <div v-if="visible" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
     <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
-      <!-- Header -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800/80">
         <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">{{ period ? 'Modifier' : 'Créer' }} une période</h2>
         <button @click="$emit('close')" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
@@ -10,7 +9,6 @@
       </div>
 
       <form @submit.prevent="onSubmit" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
-        <!-- Informations générales -->
         <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4">
             <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
@@ -47,19 +45,21 @@
                 class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none"
               >
                 <option value="">Sélectionner</option>
-                <option value="PERE1">1ère période</option>
-                <option value="PERE2">2ème période</option>
-                <option value="PERE3">3ème période</option>
+                <option value="PERIODE">Période</option>
+                <option value="EXAMEN">Examen</option>
               </select>
             </div>
-            <div class="flex items-center space-x-2 pt-8">
-              <input
-                id="verrouille"
-                v-model="form.verrouille"
-                type="checkbox"
-                class="rounded border-slate-300 text-emerald-500 focus:ring-emerald-500"
-              />
-              <label for="verrouille" class="text-xs font-medium text-slate-700 dark:text-slate-300">Période verrouillée</label>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre</label>
+              <input v-model.number="form.ordre" type="number" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date début</label>
+              <input v-model="form.dateDebut" type="date" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date fin</label>
+              <input v-model="form.dateFin" type="date" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
             </div>
           </div>
         </div>
@@ -69,7 +69,6 @@
           <span>{{ error }}</span>
         </div>
 
-        <!-- Sticky bottom bar -->
         <div class="sticky bottom-0 bg-white/90 dark:bg-[#0d1527]/90 backdrop-blur border-t border-slate-100 dark:border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 -mx-6 -mb-5">
           <button type="button" @click="$emit('close')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
             <X class="w-4 h-4" />
@@ -104,7 +103,9 @@ const form = reactive({
   nom: '',
   trimesterId: null,
   type: '',
-  verrouille: false
+  ordre: null,
+  dateDebut: '',
+  dateFin: ''
 })
 
 watch(() => props.period, (newPeriod) => {
@@ -113,10 +114,12 @@ watch(() => props.period, (newPeriod) => {
       nom: newPeriod.nom || '',
       trimesterId: newPeriod.trimesterId || newPeriod.trimester?.id || null,
       type: newPeriod.type || '',
-      verrouille: !!newPeriod.verrouille
+      ordre: newPeriod.ordre ?? null,
+      dateDebut: newPeriod.dateDebut || '',
+      dateFin: newPeriod.dateFin || ''
     })
   } else {
-    Object.assign(form, { nom: '', trimesterId: null, type: '', verrouille: false })
+    Object.assign(form, { nom: '', trimesterId: null, type: '', ordre: null, dateDebut: '', dateFin: '' })
   }
 }, { immediate: true })
 

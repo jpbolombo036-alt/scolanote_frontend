@@ -21,14 +21,31 @@
             <input v-model="form.nom" type="text" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Code</label>
-            <input v-model="form.code" type="text" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
-          </div>
-          <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Année scolaire <span class="text-red-500">*</span></label>
             <select v-model="form.academicYearId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
               <option value="">Sélectionner</option>
               <option v-for="year in academicYears" :key="year.id" :value="year.id">{{ year.libelle }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Niveau <span class="text-red-500">*</span></label>
+            <select v-model="form.levelId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+              <option value="">Sélectionner</option>
+              <option v-for="level in levels" :key="level.id" :value="level.id">{{ level.nom }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Section <span class="text-red-500">*</span></label>
+            <select v-model="form.sectionId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+              <option value="">Sélectionner</option>
+              <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.nom }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Option</label>
+            <select v-model="form.optionId" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+              <option value="">Sélectionner</option>
+              <option v-for="option in options" :key="option.id" :value="option.id">{{ option.nom }}</option>
             </select>
           </div>
         </div>
@@ -57,25 +74,38 @@ const isEdit = !!route.params.id
 const saving = ref(false)
 const error = ref(null)
 const academicYears = ref([])
+const levels = ref([])
+const sections = ref([])
+const options = ref([])
 
 const form = reactive({
   nom: '',
-  code: '',
-  academicYearId: null
+  academicYearId: null,
+  levelId: null,
+  sectionId: null,
+  optionId: null
 })
 
 onMounted(async () => {
   try {
-    const [yearsRes, classRes] = await Promise.all([
+    const [yearsRes, levelsRes, sectionsRes, optionsRes, classRes] = await Promise.all([
       api.get('/api/annees-academiques').then(r => r.data),
+      api.get('/api/niveaux').then(r => r.data),
+      api.get('/api/sections').then(r => r.data),
+      api.get('/api/options').then(r => r.data),
       isEdit ? api.get(`/api/salles/${route.params.id}`).then(r => r.data) : Promise.resolve(null)
     ])
     academicYears.value = Array.isArray(yearsRes) ? yearsRes : (yearsRes.content || [])
+    levels.value = Array.isArray(levelsRes) ? levelsRes : (levelsRes.content || [])
+    sections.value = Array.isArray(sectionsRes) ? sectionsRes : (sectionsRes.content || [])
+    options.value = Array.isArray(optionsRes) ? optionsRes : (optionsRes.content || [])
     if (classRes) {
       Object.assign(form, {
         nom: classRes.nom || '',
-        code: classRes.code || '',
-        academicYearId: classRes.academicYearId || classRes.academicYear?.id || null
+        academicYearId: classRes.academicYearId || classRes.academicYear?.id || null,
+        levelId: classRes.levelId || classRes.level?.id || null,
+        sectionId: classRes.sectionId || classRes.section?.id || null,
+        optionId: classRes.optionId || classRes.option?.id || null
       })
     }
   } catch (e) {

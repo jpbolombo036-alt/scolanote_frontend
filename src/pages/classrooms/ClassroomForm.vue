@@ -10,7 +10,6 @@
       </div>
 
       <form @submit.prevent="onSubmit" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
-        <!-- Informations générales -->
         <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4">
             <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
@@ -31,21 +30,42 @@
               />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Code</label>
-              <input
-                v-model="form.code"
-                type="text"
-                placeholder="Ex: 6A"
-                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
-              />
-            </div>
-            <div>
               <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Année scolaire <span class="text-red-500">*</span></label>
               <div class="relative">
                 <Calendar class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <select v-model="form.academicYearId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
                   <option value="">Sélectionner</option>
                   <option v-for="year in academicYears" :key="year.id" :value="year.id">{{ year.libelle }}</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Niveau <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <Layers class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <select v-model="form.levelId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+                  <option value="">Sélectionner</option>
+                  <option v-for="level in levels" :key="level.id" :value="level.id">{{ level.nom }}</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Section <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <Users class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <select v-model="form.sectionId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+                  <option value="">Sélectionner</option>
+                  <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.nom }}</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Option</label>
+              <div class="relative">
+                <BookOpen class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <select v-model="form.optionId" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+                  <option value="">Sélectionner</option>
+                  <option v-for="option in options" :key="option.id" :value="option.id">{{ option.nom }}</option>
                 </select>
               </div>
             </div>
@@ -57,7 +77,6 @@
           <span>{{ error }}</span>
         </div>
 
-        <!-- Sticky bottom bar -->
         <div class="sticky bottom-0 bg-white/90 dark:bg-[#0d1527]/90 backdrop-blur border-t border-slate-100 dark:border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 -mx-6 -mb-5">
           <button type="button" @click="$emit('close')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
             <X class="w-4 h-4" />
@@ -75,7 +94,7 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { X, School, Calendar, AlertCircle, Check } from 'lucide-vue-next'
+import { X, School, Calendar, AlertCircle, Check, Layers, Users, BookOpen } from 'lucide-vue-next'
 
 const props = defineProps({
   classroom: Object,
@@ -87,32 +106,46 @@ const emit = defineEmits(['close', 'save'])
 const saving = ref(false)
 const error = ref(null)
 const academicYears = ref([])
+const levels = ref([])
+const sections = ref([])
+const options = ref([])
 
 const form = reactive({
   nom: '',
-  code: '',
-  academicYearId: null
+  academicYearId: null,
+  levelId: null,
+  sectionId: null,
+  optionId: null
 })
 
 watch(() => props.classroom, (newClassroom) => {
   if (newClassroom) {
     Object.assign(form, {
       nom: newClassroom.nom || '',
-      code: newClassroom.code || '',
-      academicYearId: newClassroom.academicYearId || newClassroom.academicYear?.id || null
+      academicYearId: newClassroom.academicYearId || newClassroom.academicYear?.id || null,
+      levelId: newClassroom.levelId || newClassroom.level?.id || null,
+      sectionId: newClassroom.sectionId || newClassroom.section?.id || null,
+      optionId: newClassroom.optionId || newClassroom.option?.id || null
     })
   } else {
-    Object.assign(form, { nom: '', code: '', academicYearId: null })
+    Object.assign(form, { nom: '', academicYearId: null, levelId: null, sectionId: null, optionId: null })
   }
 }, { immediate: true })
 
 onMounted(async () => {
   try {
-    const response = await fetch('/api/annees-academiques')
-    const data = await response.json()
-    academicYears.value = Array.isArray(data) ? data : (data.content || [])
+    const [yearsRes, levelsRes, sectionsRes, optionsRes] = await Promise.all([
+      fetch('/api/annees-academiques').then(r => r.json()),
+      fetch('/api/niveaux').then(r => r.json()),
+      fetch('/api/sections').then(r => r.json()),
+      fetch('/api/options').then(r => r.json())
+    ])
+    academicYears.value = Array.isArray(yearsRes) ? yearsRes : (yearsRes.content || [])
+    levels.value = Array.isArray(levelsRes) ? levelsRes : (levelsRes.content || [])
+    sections.value = Array.isArray(sectionsRes) ? sectionsRes : (sectionsRes.content || [])
+    options.value = Array.isArray(optionsRes) ? optionsRes : (optionsRes.content || [])
   } catch (e) {
-    console.error('Erreur lors du chargement des années scolaires', e)
+    console.error('Erreur lors du chargement', e)
   }
 })
 

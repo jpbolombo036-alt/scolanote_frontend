@@ -31,14 +31,21 @@
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Type</label>
             <select v-model="form.type" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
               <option value="">Sélectionner</option>
-              <option value="PERE1">1ère période</option>
-              <option value="PERE2">2ème période</option>
-              <option value="PERE3">3ème période</option>
+              <option value="PERIODE">Période</option>
+              <option value="EXAMEN">Examen</option>
             </select>
           </div>
-          <div class="flex items-center space-x-2 pt-8">
-            <input id="verrouille" v-model="form.verrouille" type="checkbox" class="rounded border-slate-300 text-emerald-500 focus:ring-emerald-500" />
-            <label for="verrouille" class="text-xs font-medium text-slate-700 dark:text-slate-300">Période verrouillée</label>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre</label>
+            <input v-model.number="form.ordre" type="number" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date début</label>
+            <input v-model="form.dateDebut" type="date" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date fin</label>
+            <input v-model="form.dateFin" type="date" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
           </div>
         </div>
 
@@ -71,7 +78,9 @@ const form = reactive({
   nom: '',
   trimesterId: null,
   type: '',
-  verrouille: false
+  ordre: null,
+  dateDebut: '',
+  dateFin: ''
 })
 
 onMounted(async () => {
@@ -86,7 +95,9 @@ onMounted(async () => {
         nom: periodRes.nom || '',
         trimesterId: periodRes.trimesterId || periodRes.trimester?.id || null,
         type: periodRes.type || '',
-        verrouille: !!periodRes.verrouille
+        ordre: periodRes.ordre ?? null,
+        dateDebut: periodRes.dateDebut || '',
+        dateFin: periodRes.dateFin || ''
       })
     }
   } catch (e) {
@@ -105,7 +116,7 @@ async function onSubmit() {
     }
     router.push('/periodes')
   } catch (e) {
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
   } finally {
     saving.value = false
   }
