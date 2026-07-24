@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
   const user = ref<UserResponse | null>(null)
   const roles = ref<string[]>([])
+  const schoolId = ref<number | null>(null)
 
   const isAuthenticated = computed(() => !!token.value)
   const isDirection = computed(() => roles.value.some(r => ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET'].includes(r)))
@@ -29,6 +30,7 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await api.get('/auth/me')
       user.value = data
       roles.value = data.roles || []
+      schoolId.value = data.schoolId ?? null
     } catch (e) {
       const status = e.response?.status
       if (status === 401 || status === 403) {
@@ -43,8 +45,9 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     user.value = null
     roles.value = []
+    schoolId.value = null
     localStorage.removeItem('token')
   }
 
-  return { token, user, roles, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, logout }
+  return { token, user, roles, schoolId, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, logout }
 })

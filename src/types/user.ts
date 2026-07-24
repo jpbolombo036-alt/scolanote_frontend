@@ -7,6 +7,7 @@ export interface User {
   enabled?: boolean
   createdAt?: string
   updatedAt?: string
+  schoolId?: number
 }
 
 export interface UserResponse {
@@ -18,4 +19,5 @@ export interface UserResponse {
   roles?: string[]
   createdAt?: string
   updatedAt?: string
+  schoolId?: number
 }
