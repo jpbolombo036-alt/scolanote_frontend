@@ -179,7 +179,7 @@
             </span>
           </div>
           <div class="flex items-center justify-between text-xs mb-3">
-            <span :class="grade.absence ? 'text-red-600' : 'text-emerald-600' font-medium">
+            <span :class="[grade.absence ? 'text-red-600' : 'text-emerald-600', 'font-medium']">
               {{ grade.absence ? 'Absent' : 'Présent' }}
             </span>
           </div>
@@ -248,14 +248,6 @@
 
   </div>
 </template>
-
-<script setup>
-import { ref, computed, onMounted } from 'vue'
-import api from '@/api/axios'
-import GradeForm from './GradeForm.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
-import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
