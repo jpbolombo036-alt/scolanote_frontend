@@ -105,6 +105,7 @@
     <TrimesterForm
       v-if="showForm"
       :trimester="editingTrimester"
+      :visible="showForm"
       @save="saveTrimester"
       @close="showForm = false"
     />
@@ -181,7 +182,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadTrimesters()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 
@@ -198,7 +200,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         trimesterToDelete.value = null
         await loadTrimesters()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 

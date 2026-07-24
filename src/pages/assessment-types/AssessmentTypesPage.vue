@@ -106,7 +106,8 @@
     <!-- ASSESSMENT TYPE FORM MODAL -->
     <AssessmentTypeForm
       v-if="showForm"
-      :assessment-type="editingType"
+      :assessmentType="editingAssessmentType"
+      :visible="showForm"
       @save="saveAssessmentType"
       @close="showForm = false"
     />
@@ -183,7 +184,8 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
         showForm.value = false
         await loadAssessmentTypes()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
       }
     }
 
@@ -200,7 +202,8 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
         typeToDelete.value = null
         await loadAssessmentTypes()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la suppression')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
       }
     }
 

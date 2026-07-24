@@ -98,6 +98,7 @@ import api, { API_BASE_URL } from '@/api/axios'
 const route = useRoute()
 const reportCard = ref(null)
 const loading = ref(false)
+const error = ref(null)
 
 onMounted(async () => {
   loading.value = true
@@ -105,7 +106,8 @@ onMounted(async () => {
     const response = await api.get(`/api/bulletins/${route.params.id}`)
     reportCard.value = response.data
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur')
+    console.error('Erreur lors du chargement du bulletin', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
   } finally {
     loading.value = false
   }
@@ -123,7 +125,8 @@ async function downloadPdf() {
     window.URL.revokeObjectURL(url)
     document.body.removeChild(a)
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur lors du téléchargement du PDF')
+    console.error('Erreur lors du téléchargement du PDF', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du téléchargement du PDF'
   }
 }
 </script>

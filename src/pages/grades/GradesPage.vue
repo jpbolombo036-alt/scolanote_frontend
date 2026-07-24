@@ -107,6 +107,27 @@
 
       <!-- Empty State -->
       <EmptyState v-else message="Aucune note trouvée" />
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400">
+          Page {{ currentPage + 1 }} / {{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
 
     <!-- Mobile Cards -->
@@ -183,12 +204,34 @@
 
       <!-- Empty State Mobile -->
       <EmptyState v-else message="Aucune note trouvée" />
+
+      <!-- Mobile Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          {{ currentPage + 1 }}/{{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
 
     <!-- GRADE FORM MODAL -->
     <GradeForm
       v-if="showForm"
       :grade="editingGrade"
+      :visible="showForm"
       @save="saveGrade"
       @close="showForm = false"
     />
@@ -215,7 +258,7 @@ import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
 import GradeForm from './GradeForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
@@ -232,6 +275,11 @@ const searchQuery = ref('')
 const showConfirm = ref(false)
 const gradeToDelete = ref(null)
 
+const currentPage = ref(0)
+const pageSize = ref(10)
+const totalPages = ref(0)
+const totalElements = ref(0)
+
 const filteredGrades = computed(() => {
   if (!searchQuery.value) return grades.value
   const q = searchQuery.value.toLowerCase()
@@ -244,14 +292,48 @@ async function loadGrades() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/notes')
-    grades.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+    const response = await api.get('/api/notes', {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value,
+        sort: 'id,desc'
+      }
+    })
+    const data = response.data
+    if (data.content) {
+      grades.value = data.content
+      totalPages.value = data.totalPages
+      totalElements.value = data.totalElements
+    } else {
+      grades.value = Array.isArray(data) ? data : (data.content || [])
+    }
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
   } finally {
     loading.value = false
   }
 }
+
+function nextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++
+    loadGrades()
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--
+    loadGrades()
+  }
+}
+
+function onSearchChange() {
+  currentPage.value = 0
+  loadGrades()
+}
+
+watch(searchQuery, onSearchChange)
 
 function openCreateForm() {
   editingGrade.value = null

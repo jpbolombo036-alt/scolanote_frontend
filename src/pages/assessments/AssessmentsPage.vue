@@ -111,6 +111,7 @@
     <AssessmentForm
       v-if="showForm"
       :assessment="editingAssessment"
+      :visible="showForm"
       @save="saveAssessment"
       @close="showForm = false"
     />
@@ -188,7 +189,8 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
         showForm.value = false
         await loadAssessments()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
       }
     }
 
@@ -205,7 +207,8 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
         assessmentToDelete.value = null
         await loadAssessments()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la suppression')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
       }
     }
 

@@ -123,7 +123,12 @@
     </div>
 
     <!-- CLASSROOM FORM MODAL -->
-    <!-- Form component not available yet -->
+    <ClassroomForm
+      v-if="showForm"
+      :classroom="editingClassroom"
+      @close="showForm = false"
+      @save="saveClassroom"
+    />
 
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
@@ -145,6 +150,7 @@ import Pagination from '@/components/common/Pagination.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import ClassroomForm from './ClassroomForm.vue'
 
     const classrooms = ref([])
     const loading = ref(false)
@@ -237,7 +243,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         classroomToDelete.value = null
         await loadClassrooms()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la suppression')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
       }
     }
 

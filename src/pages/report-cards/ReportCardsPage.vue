@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
     
-    <!-- PAGE HEADER BAR -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Desktop Header -->
+    <div class="hidden lg:flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Bulletins Scolaires</h1>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Génération et impression des bulletins de notes</p>
@@ -59,9 +59,8 @@
       <span>{{ error }}</span>
     </div>
 
-    <!-- DATA TABLE CONTAINER -->
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-xl overflow-hidden transition-colors duration-200">
-      
+    <!-- Desktop Table -->
+    <div class="hidden lg:block bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden">
       <!-- Table Header Bar / Search -->
       <div class="p-4 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="relative w-full sm:w-72">
@@ -142,13 +141,114 @@
       <!-- Empty State -->
       <EmptyState v-else message="Aucun bulletin généré" />
 
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400">
+          Page {{ currentPage + 1 }} / {{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Cards -->
+    <div class="lg:hidden space-y-3">
+      <!-- Search -->
+      <div class="relative">
+        <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Rechercher un bulletin..."
+          class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
+        />
+      </div>
+
+      <!-- Loading -->
+      <div v-if="loading" class="py-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
+        <p class="text-xs text-slate-400 font-medium mt-3">Chargement...</p>
+      </div>
+
+      <!-- Cards -->
+      <div v-else-if="filteredReportCards.length > 0" class="space-y-3">
+        <div
+          v-for="reportCard in filteredReportCards"
+          :key="reportCard.id"
+          class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 flex items-center justify-center font-bold text-xs">
+                {{ (reportCard.studentNom || '?').substring(0, 2).toUpperCase() }}
+              </div>
+              <div>
+                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ reportCard.studentNom || '-' }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ reportCard.classroomNom || reportCard.classroom?.nom || '-' }}</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 font-semibold text-[10px] border border-blue-500/20">
+              {{ reportCard.mention || 'Satisfaction' }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between text-xs mb-3">
+            <span class="text-slate-500 dark:text-slate-400">{{ reportCard.periodNom || reportCard.period?.nom || '-' }}</span>
+            <span class="font-extrabold text-emerald-600">{{ reportCard.pourcentage || reportCard.moyenne || 0 }}%</span>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button
+              @click="viewPdf(reportCard.id)"
+              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition"
+            >
+              <Download class="w-3.5 h-3.5" />
+              Télécharger PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State Mobile -->
+      <EmptyState v-else message="Aucun bulletin généré" />
+
+      <!-- Mobile Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          {{ currentPage + 1 }}/{{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import { FileText, Sparkles, Search, RefreshCw, AlertCircle, Download } from 'lucide-vue-next'
@@ -162,6 +262,11 @@ const loading = ref(false)
 const error = ref(null)
 const generating = ref(false)
 const searchQuery = ref('')
+
+const currentPage = ref(0)
+const pageSize = ref(10)
+const totalPages = ref(0)
+const totalElements = ref(0)
 
 const filteredReportCards = computed(() => {
   if (!searchQuery.value) return reportCards.value
@@ -199,14 +304,48 @@ async function loadReportCards() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/bulletins')
-    reportCards.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+    const response = await api.get('/api/bulletins', {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value,
+        sort: 'id,desc'
+      }
+    })
+    const data = response.data
+    if (data.content) {
+      reportCards.value = data.content
+      totalPages.value = data.totalPages
+      totalElements.value = data.totalElements
+    } else {
+      reportCards.value = Array.isArray(data) ? data : (data.content || [])
+    }
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur lors du chargement des bulletins'
   } finally {
     loading.value = false
   }
 }
+
+function nextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++
+    loadReportCards()
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--
+    loadReportCards()
+  }
+}
+
+function onSearchChange() {
+  currentPage.value = 0
+  loadReportCards()
+}
+
+watch(searchQuery, onSearchChange)
 
 async function generateBulletins() {
   if (!classroomId.value || !periodId.value) {
@@ -240,7 +379,8 @@ async function viewPdf(id) {
     window.URL.revokeObjectURL(url)
     document.body.removeChild(a)
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur lors du téléchargement du PDF')
+    console.error('Erreur lors du téléchargement du PDF', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du téléchargement du PDF'
   }
 }
 </script>

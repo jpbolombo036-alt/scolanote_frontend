@@ -1,11 +1,10 @@
 <template>
-  <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+  <div v-if="show" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
     <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl space-y-6">
       
-      <!-- Modal Header -->
       <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800/80 pb-4">
         <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">
-          {{ teacher ? 'Modifier' : 'Créer' }} un professeur
+          Créer un utilisateur
         </h2>
         <button
           @click="$emit('close')"
@@ -15,52 +14,15 @@
         </button>
       </div>
 
-      <!-- Modal Form -->
       <form @submit.prevent="onSubmit" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
           <div>
-            <label class="block mb-1.5 font-semibold">Nom <span class="text-red-500">*</span></label>
+            <label class="block mb-1.5 font-semibold">Nom d'utilisateur <span class="text-red-500">*</span></label>
             <input
-              v-model="form.nom"
+              v-model="form.username"
               type="text"
               required
-              placeholder="Ex: Kalala"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Postnom</label>
-            <input
-              v-model="form.postnom"
-              type="text"
-              placeholder="Ex: Ilunga"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Prénom</label>
-            <input
-              v-model="form.prenom"
-              type="text"
-              placeholder="Ex: David"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Spécialité</label>
-            <input
-              v-model="form.specialite"
-              type="text"
-              placeholder="Ex: Mathématiques / Physique"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Téléphone</label>
-            <input
-              v-model="form.telephone"
-              type="text"
-              placeholder="+243..."
+              placeholder="Ex: mkalala"
               class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
             />
           </div>
@@ -69,7 +31,36 @@
             <input
               v-model="form.email"
               type="email"
-              placeholder="prof@ecole.cd"
+              placeholder="Ex: m.kalala@ecole.cd"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
+          </div>
+          <div>
+            <label class="block mb-1.5 font-semibold">Téléphone</label>
+            <input
+              v-model="form.telephone"
+              type="text"
+              placeholder="Ex: +243891234567"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
+          </div>
+          <div>
+            <label class="block mb-1.5 font-semibold">Mot de passe <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.password"
+              type="text"
+              required
+              placeholder="Mot de passe initial"
+              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block mb-1.5 font-semibold">Rôle <span class="text-red-500">*</span></label>
+            <input
+              v-model="form.role"
+              type="text"
+              required
+              placeholder="Ex: ENSEIGNANT, ADMIN, SUPER_ADMIN, DIRECTEUR, PREFET"
               class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
             />
           </div>
@@ -79,7 +70,6 @@
           {{ error }}
         </div>
 
-        <!-- Buttons -->
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
           <button
             type="button"
@@ -93,7 +83,7 @@
             :disabled="saving"
             class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition disabled:opacity-50"
           >
-            {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+            {{ saving ? 'Création...' : 'Créer l\'utilisateur' }}
           </button>
         </div>
       </form>
@@ -102,54 +92,42 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive } from 'vue'
 import { X } from 'lucide-vue-next'
 
 const props = defineProps({
-  teacher: Object
+  show: Boolean
 })
 
-const emit = defineEmits(['close', 'save'])
+const emit = defineEmits(['close', 'created'])
 
 const saving = ref(false)
 const error = ref(null)
 
 const form = reactive({
-  nom: '',
-  postnom: '',
-  prenom: '',
-  specialite: '',
+  username: '',
+  email: '',
   telephone: '',
-  email: ''
+  password: '',
+  role: ''
 })
-
-watch(() => props.teacher, (newTeacher) => {
-  if (newTeacher) {
-    Object.assign(form, newTeacher)
-  } else {
-    Object.assign(form, { nom: '', postnom: '', prenom: '', specialite: '', telephone: '', email: '' })
-  }
-}, { immediate: true })
 
 async function onSubmit() {
   saving.value = true
   error.value = null
-  
-  if (!form.nom || !form.nom.trim()) {
-    error.value = 'Le nom est requis'
-    saving.value = false
-    return
-  }
-  if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-    error.value = 'L\'email n\'est pas valide'
-    saving.value = false
-    return
-  }
-  
   try {
-    await emit('save', { ...form })
+    const payload = {
+      username: form.username,
+      email: form.email || '',
+      telephone: form.telephone || '',
+      password: form.password,
+      role: form.role
+    }
+    await emit('created', payload)
+    emit('close')
   } catch (e) {
-    error.value = e.response?.data?.message || e.response?.data?.error || 'Erreur lors de la sauvegarde'
+    console.error('Erreur lors de la création de l\'utilisateur', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la création de l\'utilisateur'
   } finally {
     saving.value = false
   }

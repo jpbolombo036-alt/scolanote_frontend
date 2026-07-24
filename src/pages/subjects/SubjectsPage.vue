@@ -107,6 +107,7 @@
     <SubjectForm
       v-if="showForm"
       :subject="editingSubject"
+      :visible="showForm"
       @save="saveSubject"
       @close="showForm = false"
     />
@@ -184,7 +185,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadSubjects()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
       }
     }
 
@@ -201,7 +203,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         subjectToDelete.value = null
         await loadSubjects()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la suppression')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
       }
     }
 

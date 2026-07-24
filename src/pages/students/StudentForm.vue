@@ -180,10 +180,27 @@ watch(() => props.student, (newStudent) => {
 async function onSubmit() {
   saving.value = true
   error.value = null
+  
+  if (!form.matricule || !form.matricule.trim()) {
+    error.value = 'Le matricule est requis'
+    saving.value = false
+    return
+  }
+  if (!form.nom || !form.nom.trim()) {
+    error.value = 'Le nom est requis'
+    saving.value = false
+    return
+  }
+  if (form.sexe && !['M', 'F'].includes(form.sexe)) {
+    error.value = 'Le sexe doit être M ou F'
+    saving.value = false
+    return
+  }
+  
   try {
     await emit('save', { ...form })
   } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur lors de la sauvegarde'
+    error.value = e.response?.data?.message || e.response?.data?.error || 'Erreur lors de la sauvegarde'
   } finally {
     saving.value = false
   }

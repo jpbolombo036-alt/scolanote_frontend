@@ -1,153 +1,162 @@
 <template>
-  <div class="min-h-screen w-full flex flex-col lg:flex-row bg-[#f3f6fc] font-['Plus_Jakarta_Sans',sans-serif] overflow-x-hidden">
-    
-    <!-- LEFT PANEL: Hero & Branding (Visible on lg screens and up) -->
-    <div class="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#06183b] via-[#092b77] to-[#041235] text-white p-12 flex-col justify-between overflow-hidden select-none">
-      
-      <!-- Background Decorative Grid & Glow -->
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,#1d4ed8_0,transparent_50%)] opacity-40"></div>
-      <div class="absolute top-1/4 -left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute bottom-10 right-0 w-96 h-96 bg-sky-400/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="min-h-screen w-full flex font-sans overflow-hidden">
+    <!-- LEFT: Branding -->
+    <div class="hidden lg:flex lg:w-[45%] relative bg-brand-600 text-white flex-col justify-between overflow-hidden">
+      <!-- Curved right edge -->
+      <div class="absolute top-0 right-0 h-full w-24 bg-white" style="clip-path: ellipse(100% 70% at 100% 50%);"></div>
 
-      <!-- World map / Geometric SVG Overlay -->
-      <svg class="absolute inset-0 w-full h-full opacity-15 pointer-events-none stroke-current text-blue-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 800 800">
-        <path d="M150 200 C300 150, 450 300, 650 200 M100 400 C350 350, 450 500, 750 450 M200 650 C400 550, 500 700, 700 600" stroke-width="1.5" stroke-dasharray="6 6" />
-        <circle cx="200" cy="200" r="4" fill="currentColor" />
-        <circle cx="650" cy="200" r="4" fill="currentColor" />
-        <circle cx="350" cy="350" r="4" fill="currentColor" />
-        <circle cx="750" cy="450" r="4" fill="currentColor" />
-        <circle cx="400" cy="550" r="4" fill="currentColor" />
-      </svg>
-
-      <!-- Brand Header -->
-      <div class="relative z-10 flex items-center space-x-3.5">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 flex items-center justify-center shadow-lg shadow-blue-500/30 ring-2 ring-white/20">
-          <span class="text-white font-extrabold text-2xl tracking-wider">S</span>
+      <div class="relative z-10 p-10 xl:p-14">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur">
+            <GraduationCap class="w-7 h-7 text-white" />
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold leading-none">Gest Bulletin</h1>
+            <p class="text-sm text-blue-100 mt-1">Gestion de bulletins scolaires</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-2xl font-bold tracking-tight text-white leading-none">ScolaNote</h1>
-          <p class="text-xs text-blue-200/80 font-medium mt-1">Plateforme de gestion scolaire</p>
-        </div>
-      </div>
-
-      <!-- Hero Content -->
-      <div class="relative z-10 my-auto py-12 max-w-xl">
-        <h2 class="text-5xl xl:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
-          Gérez.<br />
-          Analysez.<br />
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-300">Développez.</span>
-        </h2>
-        <p class="text-base xl:text-lg text-blue-100/80 leading-relaxed font-normal">
-          Une plateforme tout-en-un pour gérer vos notes, bulletins, inscriptions, élèves, enseignants et établissements en toute simplicité.
+        <div class="w-12 h-1 bg-amber-400 rounded-full mb-5"></div>
+        <p class="text-blue-50/90 text-sm xl:text-base leading-relaxed max-w-sm">
+          Une plateforme simple et efficace pour gérer les notes et les bulletins scolaires.
         </p>
       </div>
 
-      <!-- Bottom Feature Badges -->
-      <div class="relative z-10 grid grid-cols-4 gap-4 pt-6 border-t border-white/10">
-        <!-- Badge 1: Évaluations -->
-        <div class="flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-blue-600/90 hover:bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/30 transition-transform duration-200 hover:-translate-y-1">
-            <GraduationCap class="w-6 h-6 text-white" />
-          </div>
-          <span class="text-xs font-semibold text-blue-100 mt-2.5">Évaluations</span>
-        </div>
+      <!-- Laptop mockup scene -->
+      <div class="relative z-10 px-8 xl:px-12 pb-10">
+        <div class="relative mx-auto max-w-md">
+          <!-- Desk surface -->
+          <div class="absolute bottom-0 left-0 right-0 h-24 bg-slate-200/90 rounded-t-3xl"></div>
 
-        <!-- Badge 2: Élèves -->
-        <div class="flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-500/90 hover:bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-transform duration-200 hover:-translate-y-1">
-            <Users class="w-6 h-6 text-white" />
+          <!-- Plant -->
+          <div class="absolute bottom-16 left-2 z-20">
+            <div class="w-6 h-8 bg-emerald-500 rounded-t-full"></div>
+            <div class="w-5 h-4 bg-white rounded-sm mx-auto -mt-0.5 border border-slate-200"></div>
           </div>
-          <span class="text-xs font-semibold text-blue-100 mt-2.5">Élèves</span>
-        </div>
 
-        <!-- Badge 3: Bulletins -->
-        <div class="flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-purple-600/90 hover:bg-purple-600 flex items-center justify-center shadow-lg shadow-purple-600/30 transition-transform duration-200 hover:-translate-y-1">
-            <FileText class="w-6 h-6 text-white" />
+          <!-- Books stack -->
+          <div class="absolute bottom-16 left-14 z-20 space-y-0.5">
+            <div class="w-12 h-2.5 bg-brand-700 rounded-sm"></div>
+            <div class="w-12 h-2.5 bg-amber-400 rounded-sm"></div>
+            <div class="w-12 h-2.5 bg-brand-500 rounded-sm"></div>
           </div>
-          <span class="text-xs font-semibold text-blue-100 mt-2.5">Bulletins</span>
-        </div>
 
-        <!-- Badge 4: Analyses -->
-        <div class="flex flex-col items-center text-center">
-          <div class="w-12 h-12 rounded-2xl bg-amber-500/90 hover:bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/30 transition-transform duration-200 hover:-translate-y-1">
-            <BarChart3 class="w-6 h-6 text-white" />
+          <!-- Pen holder -->
+          <div class="absolute bottom-16 right-16 z-20">
+            <div class="w-7 h-10 bg-brand-700 rounded-t-md flex justify-center gap-0.5 pt-1">
+              <div class="w-1 h-6 bg-slate-300 rounded-full -mt-2"></div>
+              <div class="w-1 h-5 bg-amber-300 rounded-full -mt-1"></div>
+              <div class="w-1 h-7 bg-rose-300 rounded-full -mt-3"></div>
+            </div>
           </div>
-          <span class="text-xs font-semibold text-blue-100 mt-2.5">Analyses</span>
+
+          <!-- Notebook -->
+          <div class="absolute bottom-14 right-4 z-20 w-14 h-10 bg-brand-500 rounded-sm shadow rotate-6 flex items-center justify-center">
+            <div class="w-8 h-0.5 bg-white/40"></div>
+          </div>
+
+          <!-- Laptop -->
+          <div class="relative z-10 mx-auto w-[85%] pt-4">
+            <div class="bg-slate-800 rounded-t-xl p-2 shadow-2xl">
+              <div class="bg-white rounded-lg overflow-hidden aspect-[16/11]">
+                <div class="flex h-full text-[7px]">
+                  <aside class="w-[28%] bg-brand-600 text-white p-2 space-y-1.5">
+                    <div class="flex items-center gap-1 mb-2">
+                      <div class="w-3 h-3 rounded bg-white/20"></div>
+                      <span class="font-bold text-[8px]">GestBulletin</span>
+                    </div>
+                    <div class="bg-white/20 rounded px-1.5 py-1 font-semibold">Tableau de bord</div>
+                    <div class="opacity-70 px-1.5">Élèves</div>
+                    <div class="opacity-70 px-1.5">Classes</div>
+                    <div class="opacity-70 px-1.5">Bulletins</div>
+                    <div class="opacity-70 px-1.5">Notes</div>
+                  </aside>
+                  <div class="flex-1 p-2 bg-surface">
+                    <div class="grid grid-cols-3 gap-1.5 mb-2">
+                      <div class="bg-white rounded p-1.5 shadow-sm">
+                        <p class="text-ink-muted text-[6px]">ÉLÈVES</p>
+                        <p class="text-brand-600 font-bold text-[11px]">152</p>
+                      </div>
+                      <div class="bg-white rounded p-1.5 shadow-sm">
+                        <p class="text-ink-muted text-[6px]">CLASSES</p>
+                        <p class="text-emerald-600 font-bold text-[11px]">8</p>
+                      </div>
+                      <div class="bg-white rounded p-1.5 shadow-sm">
+                        <p class="text-ink-muted text-[6px]">BULLETINS</p>
+                        <p class="text-amber-600 font-bold text-[11px]">320</p>
+                      </div>
+                    </div>
+                    <div class="bg-white rounded p-1.5 shadow-sm space-y-1">
+                      <p class="font-semibold text-ink text-[7px] mb-1">Derniers bulletins</p>
+                      <div v-for="row in mockRows" :key="row.name" class="flex items-center justify-between gap-1">
+                        <div class="flex items-center gap-1 min-w-0">
+                          <div :class="['w-3 h-3 rounded-full shrink-0', row.avatar]"></div>
+                          <span class="truncate text-ink">{{ row.name }}</span>
+                        </div>
+                        <span :class="['px-1 rounded text-[6px] font-semibold', row.badge]">{{ row.mention }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="h-2.5 bg-slate-700 rounded-b-xl mx-auto" style="width: 105%;"></div>
+            <div class="h-1 w-16 bg-slate-600 mx-auto rounded-b"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT PANEL: Login Form -->
-    <div class="w-full lg:w-1/2 flex flex-col justify-between items-center p-6 sm:p-12 min-h-screen relative">
-      
-      <!-- Mobile Top Brand Header -->
-      <div class="lg:hidden w-full max-w-md flex items-center justify-between mb-8">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-md">
-            S
-          </div>
-          <div>
-            <h1 class="text-lg font-bold text-slate-900">ScolaNote</h1>
-            <p class="text-xs text-slate-500">Gestion scolaire</p>
-          </div>
+    <!-- RIGHT: Form -->
+    <div class="w-full lg:w-[55%] bg-white flex flex-col min-h-screen relative">
+      <!-- Mobile brand -->
+      <div class="lg:hidden p-6 flex items-center gap-3 bg-brand-600 text-white">
+        <GraduationCap class="w-8 h-8" />
+        <div>
+          <p class="font-bold text-lg leading-none">Gest Bulletin</p>
+          <p class="text-xs text-blue-100 mt-0.5">Gestion de bulletins scolaires</p>
         </div>
       </div>
 
-      <!-- Main Login Card -->
-      <div class="my-auto w-full max-w-[440px]">
-        <div class="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(8,112,184,0.08)] border border-slate-100 p-8 sm:p-10 transition-all duration-300">
-          
-          <!-- Card Avatar / Header -->
-          <div class="text-center mb-8">
-            <div class="relative inline-flex mb-4">
-              <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-sky-400 text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-blue-500/30 ring-4 ring-blue-50">
-                S
-              </div>
-              <span class="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-amber-400 border-2 border-white rounded-full"></span>
+      <div class="flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 py-10">
+        <div class="w-full max-w-md mx-auto">
+          <div class="mb-8">
+            <div class="w-14 h-14 rounded-full bg-brand-50 flex items-center justify-center mb-4">
+              <Lock class="w-6 h-6 text-brand-500" />
             </div>
-            
-            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Connexion</h2>
-            <p class="text-xs text-slate-400 font-medium mt-1">Accédez à votre compte Scolanote</p>
+            <h2 class="text-3xl font-extrabold text-ink">Connexion</h2>
+            <p class="text-ink-soft text-sm mt-1">Connectez-vous à votre compte</p>
           </div>
 
-          <!-- Form -->
           <form @submit.prevent="login" class="space-y-5">
-            <!-- Email / Username Input -->
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                Email ou nom d'utilisateur <span class="text-red-500">*</span>
-              </label>
-              <div class="relative flex items-center">
-                <Mail class="w-5 h-5 text-slate-400 absolute left-4 pointer-events-none" />
+              <label class="block text-sm font-semibold text-ink mb-1.5">Nom d'utilisateur</label>
+              <div class="relative">
+                <User class="w-5 h-5 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   v-model="form.username"
                   type="text"
                   required
-                  placeholder="nom d'utilisateur"
-                  class="w-full bg-[#f0f4fb] hover:bg-[#ebf0f9] focus:bg-white text-slate-800 text-sm font-medium pl-11 pr-4 py-3.5 rounded-2xl border border-transparent focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200 placeholder-slate-400"
+                  placeholder="Entrez votre nom d'utilisateur"
+                  class="w-full h-12 pl-11 pr-4 rounded-xl bg-slate-50 border border-slate-200 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition"
                 />
               </div>
             </div>
 
-            <!-- Password Input -->
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1.5">
-                Mot de passe <span class="text-red-500">*</span>
-              </label>
-              <div class="relative flex items-center">
-                <Lock class="w-5 h-5 text-slate-400 absolute left-4 pointer-events-none" />
+              <label class="block text-sm font-semibold text-ink mb-1.5">Mot de passe</label>
+              <div class="relative">
+                <Lock class="w-5 h-5 text-ink-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   v-model="form.password"
                   :type="showPassword ? 'text' : 'password'"
                   required
-                  placeholder="••••••••"
-                  class="w-full bg-[#f0f4fb] hover:bg-[#ebf0f9] focus:bg-white text-slate-800 text-sm font-medium pl-11 pr-11 py-3.5 rounded-2xl border border-transparent focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200 placeholder-slate-400"
+                  placeholder="Entrez votre mot de passe"
+                  class="w-full h-12 pl-11 pr-11 rounded-xl bg-slate-50 border border-slate-200 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition"
                 />
                 <button
                   type="button"
+                  class="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink"
                   @click="showPassword = !showPassword"
-                  class="absolute right-4 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
                 >
                   <Eye v-if="!showPassword" class="w-5 h-5" />
                   <EyeOff v-else class="w-5 h-5" />
@@ -155,59 +164,53 @@
               </div>
             </div>
 
-            <!-- Options: Remember Me -->
-            <div class="flex items-center justify-between pt-1">
-              <label class="flex items-center space-x-2.5 cursor-pointer group">
-                <input
-                  v-model="rememberMe"
-                  type="checkbox"
-                  class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20 transition cursor-pointer"
-                />
-                <span class="text-xs font-medium text-slate-500 group-hover:text-slate-700 transition">Se souvenir de moi</span>
+            <div class="flex items-center justify-between text-sm">
+              <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input v-model="rememberMe" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500" />
+                <span class="text-brand-600 font-medium">Se souvenir de moi</span>
               </label>
+              <a href="#" class="text-brand-600 font-medium hover:underline">Mot de passe oublié ?</a>
             </div>
 
-            <!-- Error Banner -->
-            <div v-if="error" class="rounded-xl bg-red-50 text-red-600 p-3.5 text-xs font-medium border border-red-100 flex items-center space-x-2">
-              <span class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></span>
-              <span>{{ error }}</span>
+            <div v-if="error" class="rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm px-4 py-3">
+              {{ error }}
             </div>
 
-            <!-- Submit Button -->
             <button
               type="submit"
               :disabled="loading"
-              class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-[0.99] text-white font-semibold py-3.5 px-6 rounded-2xl text-sm shadow-lg shadow-blue-600/30 hover:shadow-blue-600/40 disabled:opacity-60 transition-all duration-200 flex items-center justify-between group"
+              class="w-full h-12 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm shadow-lg shadow-brand-500/30 disabled:opacity-60 transition inline-flex items-center justify-center gap-2"
             >
-              <Lock class="w-4 h-4 opacity-80" />
-              <span>{{ loading ? 'Connexion...' : 'Se connecter' }}</span>
-              <ArrowRight class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              <LogIn class="w-4 h-4" />
+              {{ loading ? 'Connexion...' : 'Se connecter' }}
             </button>
           </form>
 
-          <!-- Card Footer Links -->
-          <div class="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center space-x-4 text-xs font-medium text-slate-400">
-            <a href="#" class="inline-flex items-center hover:text-blue-600 transition">
-              <BookOpen class="w-4 h-4 mr-1.5" />
-              Documentation
-            </a>
-            <span class="text-slate-200">|</span>
-            <a href="#" class="inline-flex items-center hover:text-blue-600 transition">
-              <Shield class="w-4 h-4 mr-1.5" />
-              Politique de confidentialité
-            </a>
+          <div class="my-6 flex items-center gap-3">
+            <div class="flex-1 h-px bg-slate-200"></div>
+            <span class="text-xs text-ink-muted font-medium">ou</span>
+            <div class="flex-1 h-px bg-slate-200"></div>
           </div>
 
+          <button
+            type="button"
+            class="w-full h-12 rounded-xl border border-brand-500 text-brand-600 font-semibold text-sm hover:bg-brand-50 transition inline-flex items-center justify-center gap-2"
+            @click="fillAdminHint"
+          >
+            <Shield class="w-4 h-4" />
+            Se connecter en tant qu'administrateur
+          </button>
+
+          <p class="mt-8 text-center">
+            <router-link to="/" class="text-sm text-ink-soft hover:text-brand-600 transition">← Retour à l'accueil</router-link>
+          </p>
         </div>
       </div>
 
-      <!-- Page Bottom Copyright Footer -->
-      <div class="w-full text-center lg:text-right mt-6 text-xs text-slate-400 font-medium">
-        © 2026 Scolanote. Tous droits réservés. par <span class="font-bold text-slate-600">KANSA BUSINESS</span>
-      </div>
-
+      <p class="text-center lg:text-right text-xs text-ink-muted px-6 pb-6">
+        © {{ year }} GestBulletin. Tous droits réservés.
+      </p>
     </div>
-
   </div>
 </template>
 
@@ -216,31 +219,35 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
-  Mail,
+  GraduationCap,
   Lock,
+  User,
   Eye,
   EyeOff,
-  ArrowRight,
-  BookOpen,
-  Shield,
-  GraduationCap,
-  Users,
-  FileText,
-  BarChart3
+  LogIn,
+  Shield
 } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const year = new Date().getFullYear()
 
-const form = ref({
-  username: '',
-  password: ''
-})
-
+const form = ref({ username: '', password: '' })
 const rememberMe = ref(false)
 const showPassword = ref(false)
 const loading = ref(false)
 const error = ref(null)
+
+const mockRows = [
+  { name: 'Marie Dupont', mention: 'TB', badge: 'bg-emerald-100 text-emerald-700', avatar: 'bg-emerald-400' },
+  { name: 'Jean Martin', mention: 'B', badge: 'bg-blue-100 text-blue-700', avatar: 'bg-blue-400' },
+  { name: 'Sophie Leroy', mention: 'AB', badge: 'bg-amber-100 text-amber-700', avatar: 'bg-amber-400' },
+  { name: 'Lucas Petit', mention: 'P', badge: 'bg-rose-100 text-rose-700', avatar: 'bg-rose-400' }
+]
+
+function fillAdminHint() {
+  form.value.username = form.value.username || 'admin'
+}
 
 async function login() {
   loading.value = true

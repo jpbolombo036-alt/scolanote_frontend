@@ -1,9 +1,9 @@
 import { ref, watchEffect } from 'vue'
 
 const isDark = ref<boolean>(
-  localStorage.getItem('scolanote_theme')
-    ? localStorage.getItem('scolanote_theme') === 'dark'
-    : true // Default to dark theme as requested by Prosoc design
+  localStorage.getItem('gestbulletin_theme')
+    ? localStorage.getItem('gestbulletin_theme') === 'dark'
+    : false // GestBulletin default: light theme
 )
 
 export function useTheme() {
@@ -18,10 +18,10 @@ export function useTheme() {
   watchEffect(() => {
     if (isDark.value) {
       document.documentElement.classList.add('dark')
-      localStorage.setItem('scolanote_theme', 'dark')
+      localStorage.setItem('gestbulletin_theme', 'dark')
     } else {
       document.documentElement.classList.remove('dark')
-      localStorage.setItem('scolanote_theme', 'light')
+      localStorage.setItem('gestbulletin_theme', 'light')
     }
   })
 

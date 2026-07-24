@@ -105,6 +105,7 @@
     <DisciplineForm
       v-if="showForm"
       :discipline="editingDiscipline"
+      :visible="showForm"
       @save="saveDiscipline"
       @close="showForm = false"
     />
@@ -182,7 +183,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadDisciplines()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 
@@ -199,7 +201,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         disciplineToDelete.value = null
         await loadDisciplines()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 

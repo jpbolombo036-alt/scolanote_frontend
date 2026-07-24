@@ -121,6 +121,27 @@
 
       <!-- Empty State -->
       <EmptyState v-else message="Aucun élève trouvé" />
+
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400">
+          Page {{ currentPage + 1 }} / {{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
 
     <!-- Mobile Cards -->
@@ -201,6 +222,27 @@
 
       <!-- Empty State Mobile -->
       <EmptyState v-else message="Aucun élève trouvé" />
+
+      <!-- Mobile Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          {{ currentPage + 1 }}/{{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
 
     <!-- STUDENT FORM MODAL -->
@@ -225,7 +267,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
 import StudentForm from './StudentForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
@@ -242,6 +284,11 @@ const searchQuery = ref('')
 const showConfirm = ref(false)
 const studentToDelete = ref(null)
 
+const currentPage = ref(0)
+const pageSize = ref(10)
+const totalPages = ref(0)
+const totalElements = ref(0)
+
 const filteredStudents = computed(() => {
   if (!searchQuery.value) return students.value
   const q = searchQuery.value.toLowerCase()
@@ -256,14 +303,48 @@ async function loadStudents() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/eleves')
-    students.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+    const response = await api.get('/api/eleves', {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value,
+        sort: 'id,desc'
+      }
+    })
+    const data = response.data
+    if (data.content) {
+      students.value = data.content
+      totalPages.value = data.totalPages
+      totalElements.value = data.totalElements
+    } else {
+      students.value = Array.isArray(data) ? data : (data.content || [])
+    }
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur lors du chargement des élèves'
   } finally {
     loading.value = false
   }
 }
+
+function nextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++
+    loadStudents()
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--
+    loadStudents()
+  }
+}
+
+function onSearchChange() {
+  currentPage.value = 0
+  loadStudents()
+}
+
+watch(searchQuery, onSearchChange)
 
 function openCreateForm() {
   editingStudent.value = null

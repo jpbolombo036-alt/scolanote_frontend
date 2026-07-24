@@ -115,6 +115,7 @@
     <AttendanceForm
       v-if="showForm"
       :attendance="editingAttendance"
+      :visible="showForm"
       @save="saveAttendance"
       @close="showForm = false"
     />
@@ -192,7 +193,8 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
         showForm.value = false
         await loadAttendances()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
       }
     }
 
@@ -209,7 +211,8 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
         attendanceToDelete.value = null
         await loadAttendances()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la suppression')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
       }
     }
 

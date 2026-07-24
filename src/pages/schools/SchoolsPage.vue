@@ -228,7 +228,8 @@ async function saveSchool(schoolData) {
     showForm.value = false
     await loadSchools()
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+    console.error('Erreur lors de la sauvegarde', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
   }
 }
 
@@ -245,7 +246,8 @@ async function deleteSchool() {
     schoolToDelete.value = null
     await loadSchools()
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur lors de la suppression')
+    console.error('Erreur lors de la suppression', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
 

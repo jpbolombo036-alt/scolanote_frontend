@@ -107,6 +107,7 @@
     <EnrollmentForm
       v-if="showForm"
       :enrollment="editingEnrollment"
+      :visible="showForm"
       @save="saveEnrollment"
       @close="showForm = false"
     />
@@ -184,7 +185,8 @@ import { UserPlus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-
         showForm.value = false
         await loadEnrollments()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 
@@ -201,7 +203,8 @@ import { UserPlus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-
         enrollmentToDelete.value = null
         await loadEnrollments()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 

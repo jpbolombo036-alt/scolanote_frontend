@@ -108,7 +108,12 @@
     </div>
 
     <!-- PERIOD FORM MODAL -->
-    <!-- Form component not available yet -->
+    <PeriodForm
+      v-if="showForm"
+      :period="editingPeriod"
+      @close="showForm = false"
+      @save="savePeriod"
+    />
 
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
@@ -129,6 +134,7 @@ import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import PeriodForm from './PeriodForm.vue'
 
     const periods = ref([])
     const loading = ref(false)
@@ -200,7 +206,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         periodToDelete.value = null
         await loadPeriods()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 

@@ -98,10 +98,32 @@ onMounted(async () => {
 async function onSubmit() {
   saving.value = true
   error.value = null
+  
+  if (!form.assessmentId) {
+    error.value = 'Veuillez sélectionner une évaluation'
+    saving.value = false
+    return
+  }
+  if (!form.studentId) {
+    error.value = 'Veuillez sélectionner un élève'
+    saving.value = false
+    return
+  }
+  if (form.note === null || form.note === undefined || form.note === '') {
+    error.value = 'Veuillez entrer une note'
+    saving.value = false
+    return
+  }
+  if (Number(form.note) < 0 || Number(form.note) > 20) {
+    error.value = 'La note doit être comprise entre 0 et 20'
+    saving.value = false
+    return
+  }
+  
   try {
     await emit('save', { ...form })
   } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur'
+    error.value = e.response?.data?.message || e.response?.data?.error || 'Erreur lors de la sauvegarde'
   } finally {
     saving.value = false
   }

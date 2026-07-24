@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
     
-    <!-- PAGE HEADER BAR -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Desktop Header -->
+    <div class="hidden lg:flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Professeurs</h1>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gestion du corps enseignant et spécialités</p>
@@ -23,9 +23,8 @@
       <span>{{ error }}</span>
     </div>
 
-    <!-- DATA TABLE CONTAINER -->
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-xl overflow-hidden transition-colors duration-200">
-      
+    <!-- Desktop Table -->
+    <div class="hidden lg:block bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden">
       <!-- Table Header Bar / Search -->
       <div class="p-4 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="relative w-full sm:w-72">
@@ -110,9 +109,123 @@
       <!-- Empty State -->
       <EmptyState v-else message="Aucun enseignant trouvé" />
 
+      <!-- Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400">
+          Page {{ currentPage + 1 }} / {{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
     </div>
 
-    <!-- TEACHER FORM MODAL -->
+    <!-- Mobile Cards -->
+    <div class="lg:hidden space-y-3">
+      <!-- Search & Add Button -->
+      <div class="flex gap-2">
+        <div class="relative flex-1">
+          <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Rechercher un enseignant..."
+            class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
+          />
+        </div>
+        <button
+          @click="openCreateForm"
+          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center"
+        >
+          <UserCheck class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="loading" class="py-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
+        <p class="text-xs text-slate-400 font-medium mt-3">Chargement...</p>
+      </div>
+
+      <!-- Cards -->
+      <div v-else-if="filteredTeachers.length > 0" class="space-y-3">
+        <div
+          v-for="teacher in filteredTeachers"
+          :key="teacher.id"
+          class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm"
+        >
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-sm">
+                {{ (teacher.nom || 'P').substring(0, 1).toUpperCase() }}
+              </div>
+              <div>
+                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ teacher.nom }} {{ teacher.postnom || '' }}</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{{ teacher.specialite || 'Général' }}</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 font-semibold text-[10px] border border-blue-500/20">
+              {{ teacher.specialite ? teacher.specialite.substring(0, 3).toUpperCase() : 'GEN' }}
+            </span>
+          </div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+            {{ teacher.email || 'N/A' }}
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button
+              @click="openEditForm(teacher)"
+              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 transition"
+            >
+              <Edit3 class="w-3.5 h-3.5" />
+              Modifier
+            </button>
+            <button
+              @click="confirmDelete(teacher)"
+              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 transition"
+            >
+              <Trash2 class="w-3.5 h-3.5" />
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State Mobile -->
+      <EmptyState v-else message="Aucun enseignant trouvé" />
+
+      <!-- Mobile Pagination -->
+      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 0"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Précédent
+        </button>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+          {{ currentPage + 1 }}/{{ totalPages }}
+        </span>
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= totalPages - 1"
+          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        >
+          Suivant
+        </button>
+      </div>
+    </div>
+
     <TeacherForm
       v-if="showForm"
       :teacher="editingTeacher"
@@ -120,7 +233,6 @@
       @close="showForm = false"
     />
 
-    <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
       title="Supprimer l'enseignant"
@@ -134,7 +246,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
 import TeacherForm from './TeacherForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
@@ -151,6 +263,11 @@ const searchQuery = ref('')
 const showConfirm = ref(false)
 const teacherToDelete = ref(null)
 
+const currentPage = ref(0)
+const pageSize = ref(10)
+const totalPages = ref(0)
+const totalElements = ref(0)
+
 const filteredTeachers = computed(() => {
   if (!searchQuery.value) return teachers.value
   const q = searchQuery.value.toLowerCase()
@@ -165,14 +282,48 @@ async function loadTeachers() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/enseignants')
-    teachers.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+    const response = await api.get('/api/enseignants', {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value,
+        sort: 'id,desc'
+      }
+    })
+    const data = response.data
+    if (data.content) {
+      teachers.value = data.content
+      totalPages.value = data.totalPages
+      totalElements.value = data.totalElements
+    } else {
+      teachers.value = Array.isArray(data) ? data : (data.content || [])
+    }
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur lors du chargement des enseignants'
   } finally {
     loading.value = false
   }
 }
+
+function nextPage() {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++
+    loadTeachers()
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 0) {
+    currentPage.value--
+    loadTeachers()
+  }
+}
+
+function onSearchChange() {
+  currentPage.value = 0
+  loadTeachers()
+}
+
+watch(searchQuery, onSearchChange)
 
 function openCreateForm() {
   editingTeacher.value = null
@@ -194,7 +345,8 @@ async function saveTeacher(data) {
     showForm.value = false
     await loadTeachers()
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur lors de la sauvegarde')
+    console.error('Erreur lors de la sauvegarde', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
   }
 }
 
@@ -211,7 +363,8 @@ async function deleteTeacher() {
     teacherToDelete.value = null
     await loadTeachers()
   } catch (e) {
-    alert(e.response?.data?.message || 'Erreur lors de la suppression')
+    console.error('Erreur lors de la suppression', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
 

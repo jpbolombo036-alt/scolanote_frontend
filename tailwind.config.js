@@ -8,18 +8,49 @@ export default {
   theme: {
     extend: {
       colors: {
+        brand: {
+          50: '#EEF4FF',
+          100: '#D9E8FF',
+          200: '#BCD6FF',
+          300: '#8EBBFF',
+          400: '#5896FF',
+          500: '#0061FF',
+          600: '#0050D1',
+          700: '#0041A8',
+          800: '#003580',
+          900: '#002966',
+        },
+        surface: {
+          DEFAULT: '#F4F7FE',
+          card: '#FFFFFF',
+        },
+        ink: {
+          DEFAULT: '#1B2559',
+          muted: '#A3AED0',
+          soft: '#707EAE',
+        },
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#EEF4FF',
+          100: '#D9E8FF',
+          200: '#BCD6FF',
+          300: '#8EBBFF',
+          400: '#5896FF',
+          500: '#0061FF',
+          600: '#0050D1',
+          700: '#0041A8',
+          800: '#003580',
+          900: '#002966',
         }
+      },
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        card: '0 4px 12px rgba(0, 0, 0, 0.05)',
+        soft: '0 10px 30px rgba(0, 61, 168, 0.08)',
+      },
+      borderRadius: {
+        xl2: '12px',
       }
     },
   },

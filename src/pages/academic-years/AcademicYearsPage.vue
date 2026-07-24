@@ -104,7 +104,12 @@
     </div>
 
     <!-- ACADEMIC YEAR FORM MODAL -->
-    <!-- Form component not available yet -->
+    <AcademicYearForm
+      v-if="showForm"
+      :academicYear="editingAcademicYear"
+      @close="showForm = false"
+      @save="saveAcademicYear"
+    />
 
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
@@ -125,12 +130,13 @@ import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import AcademicYearForm from './AcademicYearForm.vue'
 
     const academicYears = ref([])
     const loading = ref(false)
     const error = ref(null)
     const showForm = ref(false)
-    const editingYear = ref(null)
+    const editingAcademicYear = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -159,19 +165,19 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
     }
 
     function openCreateForm() {
-      editingYear.value = null
+      editingAcademicYear.value = null
       showForm.value = true
     }
 
     function openEditForm(year) {
-      editingYear.value = year
+      editingAcademicYear.value = year
       showForm.value = true
     }
 
     async function saveAcademicYear(data) {
       try {
-        if (editingYear.value) {
-          await api.put(`/api/annees-academiques/${editingYear.value.id}`, data)
+        if (editingAcademicYear.value) {
+          await api.put(`/api/annees-academiques/${editingAcademicYear.value.id}`, data)
         } else {
           await api.post('/api/annees-academiques', data)
         }
@@ -196,7 +202,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         yearToDelete.value = null
         await loadAcademicYears()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur lors de la suppression')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
       }
     }
 

@@ -105,6 +105,7 @@
     <TeachingAssignmentForm
       v-if="showForm"
       :assignment="editingAssignment"
+      :visible="showForm"
       @save="saveAssignment"
       @close="showForm = false"
     />
@@ -183,7 +184,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         showForm.value = false
         await loadAssignments()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la sauvegarde', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 
@@ -200,7 +202,8 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
         assignmentToDelete.value = null
         await loadAssignments()
       } catch (e) {
-        alert(e.response?.data?.message || 'Erreur')
+        console.error('Erreur lors de la suppression', e)
+        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
       }
     }
 
