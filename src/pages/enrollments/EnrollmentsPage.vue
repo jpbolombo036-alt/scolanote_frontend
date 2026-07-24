@@ -1,13 +1,7 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
 
-    <!-- PAGE HEADER BAR -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Inscriptions</h1>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gestion des inscriptions élèves</p>
-      </div>
-    </div>
+
 
     <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">

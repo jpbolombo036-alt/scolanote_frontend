@@ -1,11 +1,7 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
     <!-- PAGE HEADER BAR -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Classes</h1>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gestion des salles et classes</p>
-      </div>
+    <div class="flex items-center justify-end gap-4">
       <button
         @click="openCreateForm"
         class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
@@ -14,7 +10,6 @@
         <span>Nouvelle classe</span>
       </button>
     </div>
-
     <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
       <AlertCircle class="w-5 h-5 shrink-0" />

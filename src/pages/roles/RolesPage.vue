@@ -1,13 +1,7 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
 
-    <!-- PAGE HEADER BAR -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Rôles & Permissions</h1>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Niveaux d'accès et rôles du système</p>
-      </div>
-    </div>
+
 
     <!-- DATA TABLE CARD -->
     <DataTableCard
