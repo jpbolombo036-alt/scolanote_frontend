@@ -1,29 +1,16 @@
 <template>
   <div class="space-y-4">
-    <!-- Mobile Greeting Header -->
     <div class="lg:hidden bg-brand-500 rounded-2xl p-5 text-white">
       <p class="text-sm font-medium text-blue-100">Bonjour,</p>
       <h1 class="text-2xl font-bold mt-1">{{ authStore.user?.username || 'Utilisateur' }} 👋</h1>
       <p class="text-sm text-blue-100 mt-1">Bienvenue sur GestBulletin</p>
-      <div class="mt-3 flex items-center gap-2">
-        <select
-          v-model="selectedAcademicYear"
-          class="bg-white/20 border border-white/30 rounded-lg px-3 py-1.5 text-xs font-medium text-white appearance-none cursor-pointer"
-        >
-          <option v-for="year in academicYears" :key="year.id" :value="year.id" class="text-slate-900">
-            {{ year.libelle }}
-          </option>
-        </select>
-      </div>
     </div>
 
-    <!-- Desktop Greeting (hidden on mobile) -->
     <div class="hidden lg:block">
       <h1 class="text-2xl font-extrabold text-ink tracking-tight">Tableau de bord</h1>
       <p class="text-sm text-ink-muted mt-1">Vue d'ensemble de l'établissement</p>
     </div>
 
-    <!-- Stat Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
       <div
         v-for="card in statCards"
@@ -47,7 +34,6 @@
       </div>
     </div>
 
-    <!-- Recent Bulletins Section -->
     <div class="bg-white dark:bg-[#0d1527] rounded-2xl shadow-card border border-slate-100/80 dark:border-slate-800 overflow-hidden">
       <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100">
         <div class="flex items-center gap-2">
@@ -64,7 +50,6 @@
         </router-link>
       </div>
 
-      <!-- Desktop Table -->
       <div class="hidden lg:block overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
@@ -127,7 +112,6 @@
         </table>
       </div>
 
-      <!-- Mobile Cards -->
       <div class="lg:hidden divide-y divide-slate-100 dark:divide-slate-800">
         <div v-if="loading" class="p-8 text-center text-ink-muted">Chargement...</div>
         <div v-else-if="!recentBulletins.length" class="p-8 text-center text-ink-muted">Aucun bulletin enregistré</div>
@@ -161,7 +145,6 @@
       </div>
     </div>
 
-    <!-- Bottom Widgets (Desktop) -->
     <div class="hidden lg:grid grid-cols-2 gap-5">
       <div class="bg-white rounded-2xl shadow-card border border-slate-100/80 p-5">
         <h3 class="text-base font-bold text-ink mb-6">Répartition des mentions</h3>
@@ -247,8 +230,6 @@ const stats = ref({
 
 const loading = ref(false)
 const recentBulletins = ref([])
-const selectedAcademicYear = ref(null)
-const academicYears = ref([])
 
 const avatarColors = ['bg-brand-500', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500']
 
@@ -323,31 +304,6 @@ const donutSegments = computed(() => {
   })
 })
 
-function getCount(res) {
-  if (res.status === 'fulfilled' && res.value?.data) {
-    const d = res.value.data
-    return d.totalElements ?? (Array.isArray(d) ? d.length : 0)
-  }
-  return 0
-}
-
-function getList(res) {
-  if (res.status !== 'fulfilled' || !res.value?.data) return []
-  const d = res.value.data
-  if (Array.isArray(d)) return d
-  if (Array.isArray(d.content)) return d.content
-  return []
-}
-
-function mentionFromAverage(avg) {
-  if (avg == null || Number.isNaN(avg)) return '—'
-  if (avg >= 16) return 'Très Bien'
-  if (avg >= 14) return 'Bien'
-  if (avg >= 12) return 'Assez Bien'
-  if (avg >= 10) return 'Passable'
-  return 'Insuffisant'
-}
-
 function mentionBadge(mention) {
   const map = {
     'Très Bien': 'bg-emerald-50 text-emerald-700',
@@ -371,78 +327,40 @@ function formatMoyenne(avg) {
   return Number(avg).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function formatDate(value) {
-  if (!value) return '—'
-  const d = new Date(value)
-  if (Number.isNaN(d.getTime())) return String(value)
-  return d.toLocaleDateString('fr-FR')
-}
-
-function mapBulletin(item, index) {
-  const studentName =
-    item.studentNom ||
-    item.eleveNomComplet ||
-    item.nomEleve ||
-    [item.elevePrenom, item.eleveNom].filter(Boolean).join(' ') ||
-    `Élève #${item.id ?? index + 1}`
-
-  let moyenne = Number(item.moyenneGenerale ?? item.moyenne ?? item.pourcentage ?? NaN)
-  if (Number.isFinite(moyenne) && moyenne > 20) moyenne = moyenne / 5
-
-  const initials = studentName
-    .split(/\s+/)
-    .map((p) => p[0])
-    .join('')
-    .substring(0, 2)
-    .toUpperCase()
-
-  return {
-    id: item.id ?? index,
-    student: studentName,
-    initials: initials || 'EL',
-    avatarColor: avatarColors[index % avatarColors.length],
-    classe: item.classroomNom || item.classeNom || item.salleNom || '—',
-    trimestre: item.trimesterNom || item.periodNom || item.trimestreNom || '—',
-    moyenne: Number.isFinite(moyenne) ? moyenne : null,
-    mention: item.mention || mentionFromAverage(moyenne),
-    date: formatDate(item.dateGeneration || item.createdAt || item.date)
-  }
-}
-
 async function fetchStats() {
   loading.value = true
   try {
-    const [studentsRes, classroomsRes, bulletinsRes, yearsRes] = await Promise.allSettled([
-      api.get('/api/eleves'),
-      api.get('/api/salles'),
-      api.get('/api/bulletins', { params: { page: 0, size: 8 } }),
-      api.get('/api/annees-academiques')
-    ])
+    const { data } = await api.get('/api/dashboard')
 
-    stats.value.students = getCount(studentsRes)
-    stats.value.classrooms = getCount(classroomsRes)
-    stats.value.reportCards = getCount(bulletinsRes)
+    stats.value.students = data?.stats?.students ?? 0
+    stats.value.classrooms = data?.stats?.classrooms ?? 0
+    stats.value.reportCards = data?.stats?.reportCards ?? 0
+    stats.value.average = data?.stats?.average ?? null
 
-    if (yearsRes.status === 'fulfilled' && yearsRes.value?.data) {
-      const yearsData = yearsRes.value.data
-      academicYears.value = Array.isArray(yearsData) ? yearsData : (yearsData.content || [])
-      const activeYear = academicYears.value.find(y => y.active)
-      if (activeYear) {
-        selectedAcademicYear.value = activeYear.id
-      } else if (academicYears.value.length) {
-        selectedAcademicYear.value = academicYears.value[0].id
+    const list = (data?.recentBulletins || []).slice(0, 6)
+    recentBulletins.value = list.map((row, index) => {
+      const studentName = row.student || `Élève #${row.id ?? index + 1}`
+      const initials = studentName
+        .split(/\s+/)
+        .map((p) => p[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase()
+
+      return {
+        id: row.id ?? index,
+        student: studentName,
+        initials: initials || 'EL',
+        avatarColor: avatarColors[index % avatarColors.length],
+        classe: row.classe || '—',
+        trimestre: row.trimestre || '—',
+        moyenne: row.moyenne,
+        mention: row.mention || '—',
+        date: row.date || '—'
       }
-    }
-
-    const list = getList(bulletinsRes).slice(0, 6).map(mapBulletin)
-    recentBulletins.value = list
-
-    const averages = list.map((r) => r.moyenne).filter((n) => n != null)
-    stats.value.average = averages.length
-      ? averages.reduce((a, b) => a + b, 0) / averages.length
-      : 14.25
+    })
   } catch (e) {
-    console.error('Erreur chargement stats:', e)
+    console.error('Erreur chargement dashboard:', e)
   } finally {
     loading.value = false
   }
