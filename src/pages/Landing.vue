@@ -100,72 +100,11 @@
 
           <!-- Hero visual -->
           <div class="relative flex justify-center lg:justify-end">
-            <div class="absolute right-0 top-8 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-brand-500/90 -z-0"></div>
-            <div class="absolute right-8 top-16 w-24 h-24 opacity-30" style="background-image: radial-gradient(circle, #fff 1.5px, transparent 1.5px); background-size: 12px 12px;"></div>
-
-            <div class="relative z-10 w-full max-w-md">
-              <!-- Woman + laptop composition -->
-              <div class="relative bg-gradient-to-b from-slate-100 to-white rounded-3xl p-6 shadow-soft border border-slate-100">
-                <div class="flex items-end gap-4">
-                  <div class="flex-1">
-                    <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden bg-brand-100 mx-auto mb-3 shadow-md">
-                      <img
-                        src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=faces"
-                        alt="Professionnelle GestBulletin"
-                        class="w-full h-full object-cover"
-                      />
-                    </div>
-                    <!-- Laptop mockup -->
-                    <div class="bg-slate-800 rounded-t-lg p-1.5 shadow-xl">
-                      <div class="bg-white rounded-md overflow-hidden aspect-[16/10]">
-                        <div class="flex h-full">
-                          <div class="w-1/4 bg-brand-600 p-1.5 space-y-1">
-                            <div class="h-1.5 w-8 bg-white/80 rounded"></div>
-                            <div class="h-1 w-full bg-white/30 rounded"></div>
-                            <div class="h-1 w-full bg-white/20 rounded"></div>
-                            <div class="h-1 w-full bg-white/20 rounded"></div>
-                          </div>
-                          <div class="flex-1 p-2 space-y-1.5">
-                            <div class="grid grid-cols-3 gap-1">
-                              <div class="bg-brand-50 rounded p-1">
-                                <p class="text-[6px] text-brand-600 font-bold">1 254</p>
-                                <p class="text-[5px] text-ink-muted">Élèves</p>
-                              </div>
-                              <div class="bg-emerald-50 rounded p-1">
-                                <p class="text-[6px] text-emerald-600 font-bold">48</p>
-                                <p class="text-[5px] text-ink-muted">Classes</p>
-                              </div>
-                              <div class="bg-amber-50 rounded p-1">
-                                <p class="text-[6px] text-amber-600 font-bold">890</p>
-                                <p class="text-[5px] text-ink-muted">Bulletins</p>
-                              </div>
-                            </div>
-                            <div class="h-8 bg-gradient-to-r from-brand-100 to-brand-50 rounded flex items-end gap-0.5 px-1 pb-1">
-                              <div class="w-1 bg-brand-400 rounded-t" style="height:40%"></div>
-                              <div class="w-1 bg-brand-500 rounded-t" style="height:65%"></div>
-                              <div class="w-1 bg-brand-400 rounded-t" style="height:50%"></div>
-                              <div class="w-1 bg-brand-600 rounded-t" style="height:80%"></div>
-                              <div class="w-1 bg-brand-400 rounded-t" style="height:55%"></div>
-                              <div class="w-1 bg-brand-500 rounded-t" style="height:70%"></div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="h-2 bg-slate-700 rounded-b-lg mx-auto" style="width:108%"></div>
-                  </div>
-                  <!-- Plant + books -->
-                  <div class="pb-4 shrink-0">
-                    <div class="w-8 h-10 bg-emerald-500 rounded-t-full mx-auto"></div>
-                    <div class="w-6 h-5 bg-white border border-slate-200 rounded-sm mx-auto -mt-1"></div>
-                    <div class="mt-2 space-y-0.5">
-                      <div class="w-10 h-2 bg-brand-600 rounded-sm"></div>
-                      <div class="w-10 h-2 bg-brand-400 rounded-sm"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <img
+              src="/images/landing-hero.png"
+              alt="Illustration GestBulletin"
+              class="relative z-10 w-full max-w-md drop-shadow-2xl"
+            />
           </div>
         </div>
       </div>
