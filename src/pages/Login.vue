@@ -24,84 +24,11 @@
       <!-- Laptop mockup scene -->
       <div class="relative z-10 px-8 xl:px-12 pb-10">
         <div class="relative mx-auto max-w-md">
-          <!-- Desk surface -->
-          <div class="absolute bottom-0 left-0 right-0 h-24 bg-slate-200/90 rounded-t-3xl"></div>
-
-          <!-- Plant -->
-          <div class="absolute bottom-16 left-2 z-20">
-            <div class="w-6 h-8 bg-emerald-500 rounded-t-full"></div>
-            <div class="w-5 h-4 bg-white rounded-sm mx-auto -mt-0.5 border border-slate-200"></div>
-          </div>
-
-          <!-- Books stack -->
-          <div class="absolute bottom-16 left-14 z-20 space-y-0.5">
-            <div class="w-12 h-2.5 bg-brand-700 rounded-sm"></div>
-            <div class="w-12 h-2.5 bg-amber-400 rounded-sm"></div>
-            <div class="w-12 h-2.5 bg-brand-500 rounded-sm"></div>
-          </div>
-
-          <!-- Pen holder -->
-          <div class="absolute bottom-16 right-16 z-20">
-            <div class="w-7 h-10 bg-brand-700 rounded-t-md flex justify-center gap-0.5 pt-1">
-              <div class="w-1 h-6 bg-slate-300 rounded-full -mt-2"></div>
-              <div class="w-1 h-5 bg-amber-300 rounded-full -mt-1"></div>
-              <div class="w-1 h-7 bg-rose-300 rounded-full -mt-3"></div>
-            </div>
-          </div>
-
-          <!-- Notebook -->
-          <div class="absolute bottom-14 right-4 z-20 w-14 h-10 bg-brand-500 rounded-sm shadow rotate-6 flex items-center justify-center">
-            <div class="w-8 h-0.5 bg-white/40"></div>
-          </div>
-
-          <!-- Laptop -->
-          <div class="relative z-10 mx-auto w-[85%] pt-4">
-            <div class="bg-slate-800 rounded-t-xl p-2 shadow-2xl">
-              <div class="bg-white rounded-lg overflow-hidden aspect-[16/11]">
-                <div class="flex h-full text-[7px]">
-                  <aside class="w-[28%] bg-brand-600 text-white p-2 space-y-1.5">
-                    <div class="flex items-center gap-1 mb-2">
-                      <div class="w-3 h-3 rounded bg-white/20"></div>
-                      <span class="font-bold text-[8px]">GestBulletin</span>
-                    </div>
-                    <div class="bg-white/20 rounded px-1.5 py-1 font-semibold">Tableau de bord</div>
-                    <div class="opacity-70 px-1.5">Élèves</div>
-                    <div class="opacity-70 px-1.5">Classes</div>
-                    <div class="opacity-70 px-1.5">Bulletins</div>
-                    <div class="opacity-70 px-1.5">Notes</div>
-                  </aside>
-                  <div class="flex-1 p-2 bg-surface">
-                    <div class="grid grid-cols-3 gap-1.5 mb-2">
-                      <div class="bg-white rounded p-1.5 shadow-sm">
-                        <p class="text-ink-muted text-[6px]">ÉLÈVES</p>
-                        <p class="text-brand-600 font-bold text-[11px]">152</p>
-                      </div>
-                      <div class="bg-white rounded p-1.5 shadow-sm">
-                        <p class="text-ink-muted text-[6px]">CLASSES</p>
-                        <p class="text-emerald-600 font-bold text-[11px]">8</p>
-                      </div>
-                      <div class="bg-white rounded p-1.5 shadow-sm">
-                        <p class="text-ink-muted text-[6px]">BULLETINS</p>
-                        <p class="text-amber-600 font-bold text-[11px]">320</p>
-                      </div>
-                    </div>
-                    <div class="bg-white rounded p-1.5 shadow-sm space-y-1">
-                      <p class="font-semibold text-ink text-[7px] mb-1">Derniers bulletins</p>
-                      <div v-for="row in mockRows" :key="row.name" class="flex items-center justify-between gap-1">
-                        <div class="flex items-center gap-1 min-w-0">
-                          <div :class="['w-3 h-3 rounded-full shrink-0', row.avatar]"></div>
-                          <span class="truncate text-ink">{{ row.name }}</span>
-                        </div>
-                        <span :class="['px-1 rounded text-[6px] font-semibold', row.badge]">{{ row.mention }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="h-2.5 bg-slate-700 rounded-b-xl mx-auto" style="width: 105%;"></div>
-            <div class="h-1 w-16 bg-slate-600 mx-auto rounded-b"></div>
-          </div>
+          <img
+            src="/images/login-hero.png"
+            alt="Illustration login"
+            class="w-full h-auto drop-shadow-2xl"
+          />
         </div>
       </div>
     </div>
