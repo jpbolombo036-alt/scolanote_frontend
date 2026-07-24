@@ -107,14 +107,6 @@
 
     </div>
 
-    <!-- PERIOD FORM MODAL -->
-    <PeriodForm
-      v-if="showForm"
-      :period="editingPeriod"
-      @close="showForm = false"
-      @save="savePeriod"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -134,13 +126,13 @@ import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import PeriodForm from './PeriodForm.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const periods = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingPeriod = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -169,28 +161,11 @@ import PeriodForm from './PeriodForm.vue'
     }
 
     function openCreateForm() {
-      editingPeriod.value = null
-      showForm.value = true
+      router.push('/periodes/form')
     }
 
     function openEditForm(period) {
-      editingPeriod.value = period
-      showForm.value = true
-    }
-
-    async function savePeriod(data) {
-      try {
-        if (editingPeriod.value) {
-          await api.put(`/api/periodes/${editingPeriod.value.id}`, data)
-        } else {
-          await api.post('/api/periodes', data)
-        }
-        showForm.value = false
-        await loadPeriods()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
-      }
+      router.push(`/periodes/form/${period.id}`)
     }
 
     function confirmDelete(period) {

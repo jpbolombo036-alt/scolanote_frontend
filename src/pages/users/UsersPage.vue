@@ -191,12 +191,6 @@
       <EmptyState v-else message="Aucun utilisateur trouvé" />
     </div>
 
-    <UserCreateForm
-      :show="showForm"
-      @close="showForm = false"
-      @created="createUser"
-    />
-
   </div>
 </template>
 
@@ -205,13 +199,14 @@ import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import { Search, RefreshCw, UserPlus } from 'lucide-vue-next'
-import UserCreateForm from './UserCreateForm.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const users = ref([])
 const loading = ref(false)
 const error = ref(null)
 const searchQuery = ref('')
-const showForm = ref(false)
 
 const filteredUsers = computed(() => {
   if (!searchQuery.value) return users.value
@@ -237,12 +232,7 @@ async function loadUsers() {
 }
 
 function openCreateForm() {
-  showForm.value = true
-}
-
-async function createUser(payload) {
-  await api.post('/auth/register-agent', payload)
-  await loadUsers()
+  router.push('/users/nouveau')
 }
 
 onMounted(() => {

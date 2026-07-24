@@ -101,15 +101,6 @@
 
     </div>
 
-    <!-- TRIMESTER FORM MODAL -->
-    <TrimesterForm
-      v-if="showForm"
-      :trimester="editingTrimester"
-      :visible="showForm"
-      @save="saveTrimester"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -126,16 +117,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import TrimesterForm from './TrimesterForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const trimesters = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingTrimester = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -163,28 +154,11 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
     }
 
     function openCreateForm() {
-      editingTrimester.value = null
-      showForm.value = true
+      router.push('/trimestres/form')
     }
 
     function openEditForm(trimester) {
-      editingTrimester.value = trimester
-      showForm.value = true
-    }
-
-    async function saveTrimester(data) {
-      try {
-        if (editingTrimester.value) {
-          await api.put(`/api/trimestres/${editingTrimester.value.id}`, data)
-        } else {
-          await api.post('/api/trimestres', data)
-        }
-        showForm.value = false
-        await loadTrimesters()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
-      }
+      router.push(`/trimestres/form/${trimester.id}`)
     }
 
     function confirmDelete(trimester) {

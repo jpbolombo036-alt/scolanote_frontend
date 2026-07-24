@@ -1,127 +1,147 @@
 <template>
-  <div class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl space-y-6">
-      
-      <!-- Modal Header -->
-      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800/80 pb-4">
-        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">
-          {{ student ? 'Modifier' : 'Créer' }} un élève
-        </h2>
-        <button
-          @click="$emit('close')"
-          class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
-        >
+  <div v-if="visible" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+    <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800/80">
+        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white">{{ student ? 'Modifier' : 'Créer' }} un élève</h2>
+        <button @click="$emit('close')" class="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition">
           <X class="w-5 h-5" />
         </button>
       </div>
 
-      <!-- Modal Form -->
-      <form @submit.prevent="onSubmit" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
-          <div>
-            <label class="block mb-1.5 font-semibold">Matricule <span class="text-red-500">*</span></label>
-            <input
-              v-model="form.matricule"
-              type="text"
-              required
-              placeholder="Ex: ELE-2026-001"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
+      <form @submit.prevent="onSubmit" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+        <!-- Informations générales -->
+        <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+              <Users class="w-4 h-4" />
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Informations générales</h3>
           </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Nom <span class="text-red-500">*</span></label>
-            <input
-              v-model="form.nom"
-              type="text"
-              required
-              placeholder="Ex: Kasongo"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Postnom</label>
-            <input
-              v-model="form.postnom"
-              type="text"
-              placeholder="Ex: Mukendi"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Prénom</label>
-            <input
-              v-model="form.prenom"
-              type="text"
-              placeholder="Ex: Jean"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Sexe</label>
-            <select
-              v-model="form.sexe"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            >
-              <option value="">Sélectionner</option>
-              <option value="M">Masculin</option>
-              <option value="F">Féminin</option>
-            </select>
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Date de naissance</label>
-            <input
-              v-model="form.dateNaissance"
-              type="date"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Lieu de naissance</label>
-            <input
-              v-model="form.lieuNaissance"
-              type="text"
-              placeholder="Ex: Kinshasa"
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div>
-            <label class="block mb-1.5 font-semibold">Téléphone parent</label>
-            <input
-              v-model="form.telephoneParent"
-              type="text"
-              placeholder="+243..."
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
-          </div>
-          <div class="md:col-span-2">
-            <label class="block mb-1.5 font-semibold">Adresse complète</label>
-            <input
-              v-model="form.adresse"
-              type="text"
-              placeholder="Adresse résidentielle..."
-              class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition"
-            />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Matricule <span class="text-red-500">*</span></label>
+              <input
+                v-model="form.matricule"
+                type="text"
+                required
+                placeholder="Ex: ELE-2026-001"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nom <span class="text-red-500">*</span></label>
+              <input
+                v-model="form.nom"
+                type="text"
+                required
+                placeholder="Ex: Kasongo"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Postnom</label>
+              <input
+                v-model="form.postnom"
+                type="text"
+                placeholder="Ex: Mukendi"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Prénom</label>
+              <input
+                v-model="form.prenom"
+                type="text"
+                placeholder="Ex: Jean"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Sexe</label>
+              <select
+                v-model="form.sexe"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none"
+              >
+                <option value="">Sélectionner</option>
+                <option value="M">Masculin</option>
+                <option value="F">Féminin</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date de naissance</label>
+              <input
+                v-model="form.dateNaissance"
+                type="date"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Lieu de naissance</label>
+              <input
+                v-model="form.lieuNaissance"
+                type="text"
+                placeholder="Ex: Kinshasa"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
           </div>
         </div>
 
-        <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-3 rounded-xl text-xs font-medium">
-          {{ error }}
+        <!-- Contact -->
+        <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+              <Phone class="w-4 h-4" />
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Contact</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Téléphone parent</label>
+              <input
+                v-model="form.telephoneParent"
+                type="text"
+                placeholder="+243..."
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Email parent</label>
+              <input
+                v-model="form.emailParent"
+                type="email"
+                placeholder="parent@exemple.com"
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Adresse</label>
+              <input
+                v-model="form.adresse"
+                type="text"
+                placeholder="Adresse résidentielle..."
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+          </div>
         </div>
 
-        <!-- Buttons -->
-        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-          <button
-            type="button"
-            @click="$emit('close')"
-            class="px-4 py-2.5 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-          >
+        <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
+          <AlertCircle class="w-5 h-5 shrink-0" />
+          <span>{{ error }}</span>
+        </div>
+
+        <!-- Sticky bottom bar -->
+        <div class="sticky bottom-0 bg-white/90 dark:bg-[#0d1527]/90 backdrop-blur border-t border-slate-100 dark:border-slate-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 -mx-6 -mb-5">
+          <button type="button" @click="$emit('close')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <X class="w-4 h-4" />
             Annuler
           </button>
-          <button
-            type="submit"
-            :disabled="saving"
-            class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs shadow-lg shadow-emerald-500/20 transition disabled:opacity-50"
-          >
+          <button type="submit" :disabled="saving" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-brand-500/25 transition disabled:opacity-50">
+            <Check class="w-4 h-4" />
             {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
           </button>
         </div>
@@ -132,10 +152,11 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
-import { X } from 'lucide-vue-next'
+import { X, Users, Phone, AlertCircle, Check } from 'lucide-vue-next'
 
 const props = defineProps({
-  student: Object
+  student: Object,
+  visible: Boolean
 })
 
 const emit = defineEmits(['close', 'save'])
@@ -200,7 +221,7 @@ async function onSubmit() {
   try {
     await emit('save', { ...form })
   } catch (e) {
-    error.value = e.response?.data?.message || e.response?.data?.error || 'Erreur lors de la sauvegarde'
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
   } finally {
     saving.value = false
   }

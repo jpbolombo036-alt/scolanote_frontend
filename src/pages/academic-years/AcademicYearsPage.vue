@@ -103,14 +103,6 @@
 
     </div>
 
-    <!-- ACADEMIC YEAR FORM MODAL -->
-    <AcademicYearForm
-      v-if="showForm"
-      :academicYear="editingAcademicYear"
-      @close="showForm = false"
-      @save="saveAcademicYear"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -130,13 +122,13 @@ import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import AcademicYearForm from './AcademicYearForm.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const academicYears = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingAcademicYear = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -165,28 +157,11 @@ import AcademicYearForm from './AcademicYearForm.vue'
     }
 
     function openCreateForm() {
-      editingAcademicYear.value = null
-      showForm.value = true
+      router.push('/annees-academiques/form')
     }
 
     function openEditForm(year) {
-      editingAcademicYear.value = year
-      showForm.value = true
-    }
-
-    async function saveAcademicYear(data) {
-      try {
-        if (editingAcademicYear.value) {
-          await api.put(`/api/annees-academiques/${editingAcademicYear.value.id}`, data)
-        } else {
-          await api.post('/api/annees-academiques', data)
-        }
-        showForm.value = false
-        await loadAcademicYears()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-      }
+      router.push(`/annees-academiques/form/${year.id}`)
     }
 
     function confirmDelete(year) {

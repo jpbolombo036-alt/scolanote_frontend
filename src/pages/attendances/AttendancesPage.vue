@@ -111,15 +111,6 @@
 
     </div>
 
-    <!-- ATTENDANCE FORM MODAL -->
-    <AttendanceForm
-      v-if="showForm"
-      :attendance="editingAttendance"
-      :visible="showForm"
-      @save="saveAttendance"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -136,16 +127,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import AttendanceForm from './AttendanceForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const attendances = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingAttendance = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -174,28 +165,11 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
     }
 
     function openCreateForm() {
-      editingAttendance.value = null
-      showForm.value = true
+      router.push('/presences/form')
     }
 
     function openEditForm(attendance) {
-      editingAttendance.value = attendance
-      showForm.value = true
-    }
-
-    async function saveAttendance(data) {
-      try {
-        if (editingAttendance.value) {
-          await api.put(`/api/presences/${editingAttendance.value.id}`, data)
-        } else {
-          await api.post('/api/presences', data)
-        }
-        showForm.value = false
-        await loadAttendances()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-      }
+      router.push(`/presences/form/${attendance.id}`)
     }
 
     function confirmDelete(attendance) {

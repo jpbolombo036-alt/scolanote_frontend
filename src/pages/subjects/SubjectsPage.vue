@@ -103,15 +103,6 @@
 
     </div>
 
-    <!-- SUBJECT FORM MODAL -->
-    <SubjectForm
-      v-if="showForm"
-      :subject="editingSubject"
-      :visible="showForm"
-      @save="saveSubject"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -128,16 +119,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import SubjectForm from './SubjectForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const subjects = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingSubject = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -166,28 +157,11 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
     }
 
     function openCreateForm() {
-      editingSubject.value = null
-      showForm.value = true
+      router.push('/matieres/form')
     }
 
     function openEditForm(subject) {
-      editingSubject.value = subject
-      showForm.value = true
-    }
-
-    async function saveSubject(data) {
-      try {
-        if (editingSubject.value) {
-          await api.put(`/api/matieres/${editingSubject.value.id}`, data)
-        } else {
-          await api.post('/api/matieres', data)
-        }
-        showForm.value = false
-        await loadSubjects()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-      }
+      router.push(`/matieres/form/${subject.id}`)
     }
 
     function confirmDelete(subject) {

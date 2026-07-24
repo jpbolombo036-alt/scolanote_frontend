@@ -226,13 +226,6 @@
       </div>
     </div>
 
-    <TeacherForm
-      v-if="showForm"
-      :teacher="editingTeacher"
-      @save="saveTeacher"
-      @close="showForm = false"
-    />
-
     <ConfirmDialog
       :show="showConfirm"
       title="Supprimer l'enseignant"
@@ -248,16 +241,16 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
-import TeacherForm from './TeacherForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
+import { useRouter } from 'vue-router'
 import { UserCheck, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+
+const router = useRouter()
 
 const teachers = ref([])
 const loading = ref(false)
 const error = ref(null)
-const showForm = ref(false)
-const editingTeacher = ref(null)
 const searchQuery = ref('')
 
 const showConfirm = ref(false)
@@ -326,28 +319,11 @@ function onSearchChange() {
 watch(searchQuery, onSearchChange)
 
 function openCreateForm() {
-  editingTeacher.value = null
-  showForm.value = true
+  router.push('/enseignants/form')
 }
 
 function openEditForm(teacher) {
-  editingTeacher.value = teacher
-  showForm.value = true
-}
-
-async function saveTeacher(data) {
-  try {
-    if (editingTeacher.value) {
-      await api.put(`/api/enseignants/${editingTeacher.value.id}`, data)
-    } else {
-      await api.post('/api/enseignants', data)
-    }
-    showForm.value = false
-    await loadTeachers()
-  } catch (e) {
-    console.error('Erreur lors de la sauvegarde', e)
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-  }
+  router.push(`/enseignants/form/${teacher.id}`)
 }
 
 function confirmDelete(teacher) {

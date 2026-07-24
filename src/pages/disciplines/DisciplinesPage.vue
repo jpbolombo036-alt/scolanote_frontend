@@ -101,15 +101,6 @@
 
     </div>
 
-    <!-- DISCIPLINE FORM MODAL -->
-    <DisciplineForm
-      v-if="showForm"
-      :discipline="editingDiscipline"
-      :visible="showForm"
-      @save="saveDiscipline"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -126,16 +117,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import DisciplineForm from './DisciplineForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const disciplines = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingDiscipline = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -164,28 +155,11 @@ import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-
     }
 
     function openCreateForm() {
-      editingDiscipline.value = null
-      showForm.value = true
+      router.push('/disciplines/form')
     }
 
     function openEditForm(discipline) {
-      editingDiscipline.value = discipline
-      showForm.value = true
-    }
-
-    async function saveDiscipline(data) {
-      try {
-        if (editingDiscipline.value) {
-          await api.put(`/api/disciplines/${editingDiscipline.value.id}`, data)
-        } else {
-          await api.post('/api/disciplines', data)
-        }
-        showForm.value = false
-        await loadDisciplines()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
-      }
+      router.push(`/disciplines/form/${discipline.id}`)
     }
 
     function confirmDelete(discipline) {

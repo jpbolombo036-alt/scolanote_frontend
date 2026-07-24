@@ -122,14 +122,6 @@
       />
     </div>
 
-    <!-- CLASSROOM FORM MODAL -->
-    <ClassroomForm
-      v-if="showForm"
-      :classroom="editingClassroom"
-      @close="showForm = false"
-      @save="saveClassroom"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -150,13 +142,13 @@ import Pagination from '@/components/common/Pagination.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import ClassroomForm from './ClassroomForm.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const classrooms = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingClassroom = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -206,28 +198,11 @@ import ClassroomForm from './ClassroomForm.vue'
     }
 
     function openCreateForm() {
-      editingClassroom.value = null
-      showForm.value = true
+      router.push('/salles/form')
     }
 
     function openEditForm(classroom) {
-      editingClassroom.value = classroom
-      showForm.value = true
-    }
-
-    async function saveClassroom(data) {
-      try {
-        if (editingClassroom.value) {
-          await api.put(`/api/salles/${editingClassroom.value.id}`, data)
-        } else {
-          await api.post('/api/salles', data)
-        }
-        showForm.value = false
-        await loadClassrooms()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-      }
+      router.push(`/salles/form/${classroom.id}`)
     }
 
     function confirmDelete(classroom) {

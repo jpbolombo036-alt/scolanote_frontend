@@ -227,15 +227,6 @@
       </div>
     </div>
 
-    <!-- GRADE FORM MODAL -->
-    <GradeForm
-      v-if="showForm"
-      :grade="editingGrade"
-      :visible="showForm"
-      @save="saveGrade"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -252,16 +243,16 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
-import GradeForm from './GradeForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const grades = ref([])
 const loading = ref(false)
 const error = ref(null)
-const showForm = ref(false)
-const editingGrade = ref(null)
 const searchQuery = ref('')
 
 const showConfirm = ref(false)
@@ -328,28 +319,11 @@ function onSearchChange() {
 watch(searchQuery, onSearchChange)
 
 function openCreateForm() {
-  editingGrade.value = null
-  showForm.value = true
+  router.push('/notes/form')
 }
 
 function openEditForm(grade) {
-  editingGrade.value = grade
-  showForm.value = true
-}
-
-async function saveGrade(data) {
-  try {
-    if (editingGrade.value) {
-      await api.put(`/api/notes/${editingGrade.value.id}`, data)
-    } else {
-      await api.post('/api/notes', data)
-    }
-    showForm.value = false
-    await loadGrades()
-  } catch (e) {
-    console.error('Erreur lors de la sauvegarde', e)
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
-  }
+  router.push(`/notes/form/${grade.id}`)
 }
 
 function confirmDelete(grade) {

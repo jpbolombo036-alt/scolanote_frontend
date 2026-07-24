@@ -43,12 +43,11 @@
 
       <div class="pt-2 flex justify-end">
         <button
-          @click="generateBulletins"
-          :disabled="generating"
-          class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-95 text-white font-bold px-5 py-3 rounded-xl text-xs shadow-lg shadow-blue-600/25 transition flex items-center gap-2 disabled:opacity-60"
+          @click="router.push('/bulletins/nouveau')"
+          class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:scale-95 text-white font-bold px-5 py-3 rounded-xl text-xs shadow-lg shadow-blue-600/25 transition flex items-center gap-2"
         >
-          <Sparkles :class="['w-4 h-4', { 'animate-spin': generating }]" />
-          <span>{{ generating ? 'Génération en cours...' : 'Générer les bulletins' }}</span>
+          <Sparkles class="w-4 h-4" />
+          <span>Générer un bulletin</span>
         </button>
       </div>
     </div>
@@ -252,15 +251,15 @@ import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
 import EmptyState from '@/components/common/EmptyState.vue'
 import { FileText, Sparkles, Search, RefreshCw, AlertCircle, Download } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const reportCards = ref([])
 const classrooms = ref([])
 const periods = ref([])
-const classroomId = ref('')
-const periodId = ref('')
 const loading = ref(false)
 const error = ref(null)
-const generating = ref(false)
 const searchQuery = ref('')
 
 const currentPage = ref(0)
@@ -346,26 +345,6 @@ function onSearchChange() {
 }
 
 watch(searchQuery, onSearchChange)
-
-async function generateBulletins() {
-  if (!classroomId.value || !periodId.value) {
-    alert('Veuillez sélectionner une classe et une période')
-    return
-  }
-  generating.value = true
-  error.value = null
-  try {
-    await api.post('/api/bulletins/generer', {
-      classroomId: classroomId.value,
-      periodId: periodId.value
-    })
-    await loadReportCards()
-  } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur lors de la génération'
-  } finally {
-    generating.value = false
-  }
-}
 
 async function viewPdf(id) {
   try {

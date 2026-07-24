@@ -125,13 +125,6 @@
     </div>
 
     <!-- SCHOOL FORM MODAL -->
-    <SchoolForm
-      v-if="showForm"
-      :school="editingSchool"
-      @save="saveSchool"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -148,17 +141,17 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import SchoolForm from './SchoolForm.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const schools = ref([])
 const loading = ref(false)
 const error = ref(null)
-const showForm = ref(false)
-const editingSchool = ref(null)
 const searchQuery = ref('')
 
 const showConfirm = ref(false)
@@ -209,28 +202,11 @@ async function loadSchools() {
 }
 
 function openCreateForm() {
-  editingSchool.value = null
-  showForm.value = true
+  router.push('/ecoles/form')
 }
 
 function openEditForm(school) {
-  editingSchool.value = school
-  showForm.value = true
-}
-
-async function saveSchool(schoolData) {
-  try {
-    if (editingSchool.value) {
-      await api.put(`/api/ecoles/${editingSchool.value.id}`, schoolData)
-    } else {
-      await api.post('/api/ecoles', schoolData)
-    }
-    showForm.value = false
-    await loadSchools()
-  } catch (e) {
-    console.error('Erreur lors de la sauvegarde', e)
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-  }
+  router.push(`/ecoles/form/${school.id}`)
 }
 
 function confirmDelete(school) {

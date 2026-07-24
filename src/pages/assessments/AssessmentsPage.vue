@@ -107,15 +107,6 @@
 
     </div>
 
-    <!-- ASSESSMENT FORM MODAL -->
-    <AssessmentForm
-      v-if="showForm"
-      :assessment="editingAssessment"
-      :visible="showForm"
-      @save="saveAssessment"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -132,16 +123,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import AssessmentForm from './AssessmentForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const assessments = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingAssessment = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -170,28 +161,11 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
     }
 
     function openCreateForm() {
-      editingAssessment.value = null
-      showForm.value = true
+      router.push('/evaluations/form')
     }
 
     function openEditForm(assessment) {
-      editingAssessment.value = assessment
-      showForm.value = true
-    }
-
-    async function saveAssessment(data) {
-      try {
-        if (editingAssessment.value) {
-          await api.put(`/api/evaluations/${editingAssessment.value.id}`, data)
-        } else {
-          await api.post('/api/evaluations', data)
-        }
-        showForm.value = false
-        await loadAssessments()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-      }
+      router.push(`/evaluations/form/${assessment.id}`)
     }
 
     function confirmDelete(assessment) {

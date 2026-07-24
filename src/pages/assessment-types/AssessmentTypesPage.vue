@@ -103,15 +103,6 @@
 
     </div>
 
-    <!-- ASSESSMENT TYPE FORM MODAL -->
-    <AssessmentTypeForm
-      v-if="showForm"
-      :assessmentType="editingAssessmentType"
-      :visible="showForm"
-      @save="saveAssessmentType"
-      @close="showForm = false"
-    />
-
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
@@ -128,16 +119,16 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import AssessmentTypeForm from './AssessmentTypeForm.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
     const assessmentTypes = ref([])
     const loading = ref(false)
     const error = ref(null)
-    const showForm = ref(false)
-    const editingType = ref(null)
     const searchQuery = ref('')
 
     const showConfirm = ref(false)
@@ -165,28 +156,11 @@ import { Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
     }
 
     function openCreateForm() {
-      editingType.value = null
-      showForm.value = true
+      router.push('/types-evaluations/form')
     }
 
     function openEditForm(type) {
-      editingType.value = type
-      showForm.value = true
-    }
-
-    async function saveAssessmentType(data) {
-      try {
-        if (editingType.value) {
-          await api.put(`/api/types-evaluations/${editingType.value.id}`, data)
-        } else {
-          await api.post('/api/types-evaluations', data)
-        }
-        showForm.value = false
-        await loadAssessmentTypes()
-      } catch (e) {
-        console.error('Erreur lors de la sauvegarde', e)
-        error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
-      }
+      router.push(`/types-evaluations/form/${type.id}`)
     }
 
     function confirmDelete(type) {
