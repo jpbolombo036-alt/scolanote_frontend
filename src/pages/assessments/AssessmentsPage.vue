@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des évaluations"
-      subtitle="Consultez et gémez vos évaluations"
       searchPlaceholder="Rechercher une évaluation..."
       v-model:search="searchQuery"
       :loading="loading"

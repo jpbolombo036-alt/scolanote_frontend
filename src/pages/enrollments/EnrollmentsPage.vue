@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des inscriptions"
-      subtitle="Consultez et gérez vos inscriptions"
       searchPlaceholder="Rechercher une inscription..."
       v-model:search="searchQuery"
       :loading="loading"

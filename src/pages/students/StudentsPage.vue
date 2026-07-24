@@ -36,7 +36,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des élèves"
-      subtitle="Consultez et gérez vos élèves"
       searchPlaceholder="Rechercher un élève..."
       v-model:search="searchQuery"
       :loading="loading"

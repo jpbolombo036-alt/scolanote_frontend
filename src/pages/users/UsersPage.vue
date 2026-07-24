@@ -38,7 +38,6 @@
     <div class="hidden lg:block">
       <DataTableCard
         title="Liste des utilisateurs"
-        subtitle="Consultez et gémez vos utilisateurs"
         searchPlaceholder="Rechercher un utilisateur..."
         v-model:search="searchQuery"
         :loading="loading"

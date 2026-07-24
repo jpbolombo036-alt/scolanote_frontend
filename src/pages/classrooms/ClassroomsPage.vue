@@ -24,7 +24,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des classes"
-      subtitle="Consultez et gérez vos classes"
       searchPlaceholder="Rechercher une classe..."
       v-model:search="searchQuery"
       :loading="loading"

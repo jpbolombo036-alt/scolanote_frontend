@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des affectations"
-      subtitle="Consultez et gémez vos affectations"
       searchPlaceholder="Rechercher une affectation..."
       v-model:search="searchQuery"
       :loading="loading"

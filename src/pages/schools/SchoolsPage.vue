@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des écoles"
-      subtitle="Consultez et gérez vos écoles"
       searchPlaceholder="Rechercher une école..."
       v-model:search="searchQuery"
       :loading="loading"

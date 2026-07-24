@@ -65,7 +65,6 @@
     <div class="hidden lg:block">
       <DataTableCard
         title="Liste des bulletins"
-        subtitle="Consultez vos bulletins générés"
         searchPlaceholder="Rechercher un bulletin..."
         v-model:search="searchQuery"
         :loading="loading"

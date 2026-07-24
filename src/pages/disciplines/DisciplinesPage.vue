@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des disciplines"
-      subtitle="Consultez et gérez vos disciplines"
       searchPlaceholder="Rechercher une discipline..."
       v-model:search="searchQuery"
       :loading="loading"

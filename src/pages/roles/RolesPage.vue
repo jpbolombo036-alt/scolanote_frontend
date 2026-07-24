@@ -12,7 +12,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des rôles"
-      subtitle="Consultez et gérez vos rôles"
       searchPlaceholder="Rechercher un rôle..."
       v-model:search="searchQuery"
       :loading="loading"

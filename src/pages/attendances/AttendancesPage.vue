@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des présences"
-      subtitle="Consultez et gérez vos présences"
       searchPlaceholder="Rechercher une présence..."
       v-model:search="searchQuery"
       :loading="loading"

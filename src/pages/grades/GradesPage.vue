@@ -19,7 +19,6 @@
     <div class="hidden lg:block">
       <DataTableCard
         title="Liste des notes"
-        subtitle="Consultez et gémez vos notes"
         searchPlaceholder="Rechercher une note..."
         v-model:search="searchQuery"
         :loading="loading"

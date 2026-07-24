@@ -18,7 +18,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des types d'évaluation"
-      subtitle="Consultez et gémez vos types"
       searchPlaceholder="Rechercher un type..."
       v-model:search="searchQuery"
       :loading="loading"

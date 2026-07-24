@@ -17,7 +17,6 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des années scolaires"
-      subtitle="Consultez et gérez vos années scolaires"
       searchPlaceholder="Rechercher une année..."
       v-model:search="searchQuery"
       :loading="loading"

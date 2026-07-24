@@ -1,11 +1,8 @@
 <template>
   <div class="space-y-4">
     <!-- Title Card -->
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div>
-        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">{{ title }}</h2>
-        <p v-if="subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ subtitle }}</p>
-      </div>
+    <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <h2 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ title }}</h2>
       <div class="flex items-center gap-2">
         <slot name="actions" />
       </div>
@@ -72,7 +69,6 @@ import { Search, RefreshCw } from 'lucide-vue-next'
 
 defineProps({
   title: String,
-  subtitle: String,
   searchPlaceholder: {
     type: String,
     default: 'Rechercher...'
