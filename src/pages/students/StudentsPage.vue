@@ -1,20 +1,11 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-    
     <!-- PAGE HEADER BAR -->
     <div class="hidden lg:flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Élèves</h1>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Gestion des dossiers élèves et effectifs</p>
       </div>
-
-      <button
-        @click="openCreateForm"
-        class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
-      >
-        <UserPlus class="w-4 h-4" />
-        <span>Nouvel élève</span>
-      </button>
     </div>
 
     <!-- ERROR BANNER -->
@@ -23,227 +14,122 @@
       <span>{{ error }}</span>
     </div>
 
-    <!-- Desktop Table -->
-    <div class="hidden lg:block bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl overflow-hidden">
-      <!-- Table Header Bar / Search -->
-      <div class="p-4 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="relative w-full sm:w-72">
-          <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Rechercher un élève..."
-            class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-2.5 rounded-xl outline-none focus:border-emerald-500 transition"
-          />
-        </div>
-
-        <button
-          @click="loadStudents"
-          class="p-2.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 rounded-xl transition"
-          title="Actualiser la liste"
-        >
-          <RefreshCw :class="['w-4 h-4', { 'animate-spin': loading }]" />
-        </button>
+    <!-- Mobile Header + Search -->
+    <div class="lg:hidden flex gap-2">
+      <div class="relative flex-1">
+        <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Rechercher un élève..."
+          class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
+        />
       </div>
-
-      <!-- Loading Spinner -->
-      <div v-if="loading" class="py-16 text-center">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 font-medium mt-3">Chargement des élèves...</p>
-      </div>
-
-      <!-- Table Content -->
-      <div v-else-if="filteredStudents.length > 0" class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              <th class="px-6 py-4">Matricule</th>
-              <th class="px-6 py-4">Élève</th>
-              <th class="px-6 py-4">Sexe</th>
-              <th class="px-6 py-4">Date de naissance</th>
-              <th class="px-6 py-4">Téléphone parent</th>
-              <th class="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-medium text-slate-700 dark:text-slate-300">
-            <tr
-              v-for="student in filteredStudents"
-              :key="student.id"
-              class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
-            >
-              <td class="px-6 py-4">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
-                  {{ student.matricule || '-' }}
-                </span>
-              </td>
-              <td class="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
-                  {{ (student.nom || 'E').substring(0, 1).toUpperCase() }}
-                </div>
-                <div>
-                  <span>{{ student.nom }} {{ student.postnom || '' }} {{ student.prenom || '' }}</span>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <span :class="[
-                  'px-2 py-0.5 rounded-full text-[10px] font-bold',
-                  student.sexe === 'M'
-                    ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-                    : 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20'
-                ]">
-                  {{ student.sexe === 'M' ? 'Masculin' : (student.sexe === 'F' ? 'Féminin' : '-') }}
-                </span>
-              </td>
-              <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ student.dateNaissance || '-' }}</td>
-              <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ student.telephoneParent || '-' }}</td>
-              <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end space-x-2">
-                  <button
-                    @click="openEditForm(student)"
-                    class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
-                    title="Modifier"
-                  >
-                    <Edit3 class="w-4 h-4" />
-                  </button>
-                  <button
-                    @click="confirmDelete(student)"
-                    class="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
-                    title="Supprimer"
-                  >
-                    <Trash2 class="w-4 h-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Empty State -->
-      <EmptyState v-else message="Aucun élève trouvé" />
-
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800">
-        <button
-          @click="prevPage"
-          :disabled="currentPage === 0"
-          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Précédent
-        </button>
-        <span class="text-xs text-slate-500 dark:text-slate-400">
-          Page {{ currentPage + 1 }} / {{ totalPages }}
-        </span>
-        <button
-          @click="nextPage"
-          :disabled="currentPage >= totalPages - 1"
-          class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Suivant
-        </button>
-      </div>
+      <button
+        @click="openCreateForm"
+        class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center"
+      >
+        <UserPlus class="w-5 h-5" />
+      </button>
     </div>
 
-    <!-- Mobile Cards -->
-    <div class="lg:hidden space-y-3">
-      <!-- Search & Add Button -->
-      <div class="flex gap-2">
-        <div class="relative flex-1">
-          <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Rechercher un élève..."
-            class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
-          />
-        </div>
+    <!-- DATA TABLE CARD -->
+    <DataTableCard
+      title="Liste des élèves"
+      subtitle="Consultez et gérez vos élèves"
+      searchPlaceholder="Rechercher un élève..."
+      v-model:search="searchQuery"
+      :loading="loading"
+      :empty="!filteredStudents.length && !loading"
+      empty-message="Aucun élève trouvé"
+      :columns="columns"
+      @refresh="loadStudents"
+    >
+      <template #actions>
         <button
           @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center"
+          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
-          <UserPlus class="w-5 h-5" />
+          <UserPlus class="w-4 h-4" />
+          <span class="hidden sm:inline">Nouvel élève</span>
+          <span class="sm:hidden">Ajouter</span>
         </button>
-      </div>
+      </template>
 
-      <!-- Loading -->
-      <div v-if="loading" class="py-12 text-center">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 font-medium mt-3">Chargement...</p>
-      </div>
-
-      <!-- Cards -->
-      <div v-else-if="filteredStudents.length > 0" class="space-y-3">
-        <div
+      <template #default>
+        <tr
           v-for="student in filteredStudents"
           :key="student.id"
-          class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm"
+          class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
-                {{ (student.nom || 'E').substring(0, 1).toUpperCase() }}
-              </div>
-              <div>
-                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ student.nom }} {{ student.postnom || '' }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ student.matricule || '-' }}</p>
-              </div>
-            </div>
-            <span :class="[
-              'px-2 py-0.5 rounded-md text-[10px] font-bold',
-              student.sexe === 'M'
-                ? 'bg-blue-500/10 text-blue-600'
-                : 'bg-pink-500/10 text-pink-600'
-            ]">
-              {{ student.sexe === 'M' ? 'M' : (student.sexe === 'F' ? 'F' : '-') }}
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
+              {{ student.matricule || '-' }}
             </span>
-          </div>
-          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3">
-            <span>{{ student.dateNaissance || 'N/A' }}</span>
-            <span>{{ student.telephoneParent || 'N/A' }}</span>
-          </div>
-          <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <button
-              @click="openEditForm(student)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 transition"
-            >
-              <Edit3 class="w-3.5 h-3.5" />
-              Modifier
-            </button>
-            <button
-              @click="confirmDelete(student)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 transition"
-            >
-              <Trash2 class="w-3.5 h-3.5" />
-              Supprimer
-            </button>
-          </div>
+          </td>
+          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
+              {{ (student.nom || 'E').substring(0, 1).toUpperCase() }}
+            </div>
+            <div>
+              <span>{{ student.nom }} {{ student.postnom || '' }} {{ student.prenom || '' }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span :class="[
+              'px-2 py-0.5 rounded-full text-[10px] font-bold',
+              student.sexe === 'M'
+                ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20'
+                : 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20'
+            ]">
+              {{ student.sexe === 'M' ? 'Masculin' : (student.sexe === 'F' ? 'Féminin' : '-') }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ student.dateNaissance || '-' }}</td>
+          <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ student.telephoneParent || '-' }}</td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end space-x-2">
+              <button
+                @click="openEditForm(student)"
+                class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
+                title="Modifier"
+              >
+                <Edit3 class="w-4 h-4" />
+              </button>
+              <button
+                @click="confirmDelete(student)"
+                class="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
+                title="Supprimer"
+              >
+                <Trash2 class="w-4 h-4" />
+              </button>
+            </div>
+          </td>
+        </tr>
+      </template>
+
+      <template #footer>
+        <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4">
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 0"
+            class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            Précédent
+          </button>
+          <span class="text-xs text-slate-500 dark:text-slate-400">
+            Page {{ currentPage + 1 }} / {{ totalPages }}
+          </span>
+          <button
+            @click="nextPage"
+            :disabled="currentPage >= totalPages - 1"
+            class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            Suivant
+          </button>
         </div>
-      </div>
-
-      <!-- Empty State Mobile -->
-      <EmptyState v-else message="Aucun élève trouvé" />
-
-      <!-- Mobile Pagination -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
-        <button
-          @click="prevPage"
-          :disabled="currentPage === 0"
-          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Précédent
-        </button>
-        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          {{ currentPage + 1 }}/{{ totalPages }}
-        </span>
-        <button
-          @click="nextPage"
-          :disabled="currentPage >= totalPages - 1"
-          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Suivant
-        </button>
-      </div>
-    </div>
+      </template>
+    </DataTableCard>
 
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
@@ -254,13 +140,13 @@
       @cancel="showConfirm = false"
       @confirm="deleteStudent"
     />
-
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import api from '@/api/axios'
+import DataTableCard from '@/components/common/DataTableCard.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { useRouter } from 'vue-router'
@@ -280,6 +166,15 @@ const currentPage = ref(0)
 const pageSize = ref(10)
 const totalPages = ref(0)
 const totalElements = ref(0)
+
+const columns = [
+  { key: 'matricule', label: 'Matricule' },
+  { key: 'nom', label: 'Élève' },
+  { key: 'sexe', label: 'Sexe' },
+  { key: 'dateNaissance', label: 'Date de naissance' },
+  { key: 'telephoneParent', label: 'Téléphone parent' },
+  { key: 'actions', label: 'Actions', headerClass: 'text-right' }
+]
 
 const filteredStudents = computed(() => {
   if (!searchQuery.value) return students.value
@@ -331,12 +226,10 @@ function prevPage() {
   }
 }
 
-function onSearchChange() {
+watch(searchQuery, () => {
   currentPage.value = 0
   loadStudents()
-}
-
-watch(searchQuery, onSearchChange)
+})
 
 function openCreateForm() {
   router.push('/eleves/form')

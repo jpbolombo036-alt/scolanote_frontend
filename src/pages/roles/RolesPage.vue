@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-    
+
     <!-- PAGE HEADER BAR -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
@@ -9,81 +9,66 @@
       </div>
     </div>
 
-    <!-- DATA TABLE CONTAINER -->
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-xl overflow-hidden transition-colors duration-200">
-      
-      <!-- Table Header Bar / Search -->
-      <div class="p-4 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="relative w-full sm:w-72">
-          <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Rechercher un rôle..."
-            class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-2.5 rounded-xl outline-none focus:border-emerald-500 transition"
-          />
-        </div>
-
+    <!-- DATA TABLE CARD -->
+    <DataTableCard
+      title="Liste des rôles"
+      subtitle="Consultez et gérez vos rôles"
+      searchPlaceholder="Rechercher un rôle..."
+      v-model:search="searchQuery"
+      :loading="loading"
+      :empty="!filteredRoles.length && !loading"
+      empty-message="Aucun rôle trouvé"
+      :columns="columns"
+      @refresh="loadRoles"
+    >
+      <template #actions>
         <button
-          @click="loadRoles"
-          class="p-2.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/60 rounded-xl transition"
-          title="Actualiser"
+          @click="openCreateForm"
+          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
-          <RefreshCw :class="['w-4 h-4', { 'animate-spin': loading }]" />
+          <Plus class="w-4 h-4" />
+          <span>Nouveau rôle</span>
         </button>
-      </div>
+      </template>
 
-      <!-- Loading Spinner -->
-      <div v-if="loading" class="py-16 text-center">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 font-medium mt-3">Chargement des rôles...</p>
-      </div>
-
-      <!-- Table Content -->
-      <div v-else-if="filteredRoles.length > 0" class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-50/80 dark:bg-slate-800/40 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              <th class="px-6 py-4">ID</th>
-              <th class="px-6 py-4">Nom du Rôle</th>
-              <th class="px-6 py-4">Badge</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-medium text-slate-700 dark:text-slate-300">
-            <tr
-              v-for="role in filteredRoles"
-              :key="role.id"
-              class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
-            >
-              <td class="px-6 py-4 font-mono font-semibold text-slate-400">#{{ role.id }}</td>
-              <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ role.nom || role.name || '-' }}</td>
-              <td class="px-6 py-4">
-                <span class="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] border border-emerald-500/20">
-                  {{ role.nom || role.name || 'ROLE' }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Empty State -->
-      <EmptyState v-else message="Aucun rôle trouvé" />
-
-    </div>
-
+      <template #default>
+        <tr
+          v-for="role in filteredRoles"
+          :key="role.id"
+          class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
+        >
+          <td class="px-6 py-4 font-mono font-semibold text-slate-400">#{{ role.id }}</td>
+          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ role.nom || role.name || '-' }}</td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] border border-emerald-500/20">
+              {{ role.nom || role.name || 'ROLE' }}
+            </span>
+          </td>
+        </tr>
+      </template>
+    </DataTableCard>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
-import EmptyState from '@/components/common/EmptyState.vue'
-import { Search, RefreshCw } from 'lucide-vue-next'
+import DataTableCard from '@/components/common/DataTableCard.vue'
+import { Plus, Search, RefreshCw } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const roles = ref([])
 const loading = ref(false)
+const error = ref(null)
 const searchQuery = ref('')
+
+const columns = [
+  { key: 'id', label: 'ID' },
+  { key: 'nom', label: 'Nom du Rôle' },
+  { key: 'badge', label: 'Badge' }
+]
 
 const filteredRoles = computed(() => {
   if (!searchQuery.value) return roles.value
@@ -101,6 +86,10 @@ async function loadRoles() {
   } finally {
     loading.value = false
   }
+}
+
+function openCreateForm() {
+  router.push('/roles/form')
 }
 
 onMounted(() => {
