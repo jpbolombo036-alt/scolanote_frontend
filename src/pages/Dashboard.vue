@@ -205,9 +205,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeRouteUpdate } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
+import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import {
   Users,
   Layers,
