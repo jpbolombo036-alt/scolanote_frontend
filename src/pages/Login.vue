@@ -1,12 +1,20 @@
 <template>
   <div class="min-h-screen w-full flex font-sans overflow-hidden">
-    <!-- LEFT: Branding -->
-    <div class="hidden lg:flex lg:w-[45%] relative bg-brand-600 text-white flex-col justify-between overflow-hidden">
-      <!-- Curved right edge -->
-      <div class="absolute top-0 right-0 h-full w-24 bg-white" style="clip-path: ellipse(100% 70% at 100% 50%);"></div>
+    <!-- LEFT: Branding + photo -->
+    <div class="hidden lg:flex lg:w-[45%] relative bg-brand-600 text-white flex-col overflow-hidden">
+      <!-- Courbe blanche à droite -->
+      <div
+        class="absolute top-0 right-0 h-full w-28 bg-white pointer-events-none"
+        style="clip-path: ellipse(100% 65% at 100% 50%);"
+      ></div>
 
-      <div class="relative z-10 p-10 xl:p-14">
-        <div class="flex items-center gap-3 mb-6">
+      <!-- Cercles décoratifs -->
+      <div class="absolute -left-20 top-1/3 w-72 h-72 rounded-full border border-white/10 pointer-events-none"></div>
+      <div class="absolute -left-10 top-1/3 w-56 h-56 rounded-full border border-white/10 pointer-events-none"></div>
+      <div class="absolute bottom-10 right-24 w-40 h-40 rounded-full border border-white/10 pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col h-full p-10 xl:p-12">
+        <div class="flex items-center gap-3 mb-5">
           <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur">
             <GraduationCap class="w-7 h-7 text-white" />
           </div>
@@ -15,27 +23,26 @@
             <p class="text-sm text-blue-100 mt-1">Gestion de bulletins scolaires</p>
           </div>
         </div>
+
         <div class="w-12 h-1 bg-amber-400 rounded-full mb-5"></div>
-        <p class="text-blue-50/90 text-sm xl:text-base leading-relaxed max-w-sm">
+
+        <p class="text-blue-50/90 text-sm xl:text-base leading-relaxed max-w-sm mb-8">
           Une plateforme simple et efficace pour gérer les notes et les bulletins scolaires.
         </p>
-      </div>
 
-      <!-- Laptop mockup scene -->
-      <div class="relative z-10 px-8 xl:px-12 pb-10">
-        <div class="relative mx-auto max-w-md">
+        <!-- Photo fournie -->
+        <div class="mt-auto flex-1 flex items-end justify-center min-h-0 pb-2">
           <img
             src="/images/login-hero.png"
-            alt="Illustration login"
-            class="w-full h-auto drop-shadow-2xl"
+            alt="GestBulletin — aperçu de la plateforme"
+            class="w-full max-w-lg object-contain drop-shadow-2xl select-none pointer-events-none"
           />
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: Form -->
+    <!-- RIGHT: Formulaire -->
     <div class="w-full lg:w-[55%] bg-white flex flex-col min-h-screen relative">
-      <!-- Mobile brand -->
       <div class="lg:hidden p-6 flex items-center gap-3 bg-brand-600 text-white">
         <GraduationCap class="w-8 h-8" />
         <div>
@@ -93,7 +100,11 @@
 
             <div class="flex items-center justify-between text-sm">
               <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-                <input v-model="rememberMe" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500" />
+                <input
+                  v-model="rememberMe"
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-slate-300 text-brand-500 focus:ring-brand-500"
+                />
                 <span class="text-brand-600 font-medium">Se souvenir de moi</span>
               </label>
               <a href="#" class="text-brand-600 font-medium hover:underline">Mot de passe oublié ?</a>
@@ -129,7 +140,9 @@
           </button>
 
           <p class="mt-8 text-center">
-            <router-link to="/" class="text-sm text-ink-soft hover:text-brand-600 transition">← Retour à l'accueil</router-link>
+            <router-link to="/" class="text-sm text-ink-soft hover:text-brand-600 transition">
+              ← Retour à l'accueil
+            </router-link>
           </p>
         </div>
       </div>
@@ -164,13 +177,6 @@ const rememberMe = ref(false)
 const showPassword = ref(false)
 const loading = ref(false)
 const error = ref(null)
-
-const mockRows = [
-  { name: 'Marie Dupont', mention: 'TB', badge: 'bg-emerald-100 text-emerald-700', avatar: 'bg-emerald-400' },
-  { name: 'Jean Martin', mention: 'B', badge: 'bg-blue-100 text-blue-700', avatar: 'bg-blue-400' },
-  { name: 'Sophie Leroy', mention: 'AB', badge: 'bg-amber-100 text-amber-700', avatar: 'bg-amber-400' },
-  { name: 'Lucas Petit', mention: 'P', badge: 'bg-rose-100 text-rose-700', avatar: 'bg-rose-400' }
-]
 
 function fillAdminHint() {
   form.value.username = form.value.username || 'admin'

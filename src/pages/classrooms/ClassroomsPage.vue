@@ -1,26 +1,14 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-    <!-- PAGE HEADER BAR -->
-    <div class="flex items-center justify-end gap-4">
-      <button
-        @click="openCreateForm"
-        class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
-      >
-        <Plus class="w-4 h-4" />
-        <span>Nouvelle classe</span>
-      </button>
-    </div>
-    <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
       <AlertCircle class="w-5 h-5 shrink-0" />
       <span>{{ error }}</span>
     </div>
 
-    <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Classes"
       subtitle="Gestion des classes et liste des classes"
-      searchPlaceholder="Rechercher une classe..."
+      search-placeholder="Rechercher une classe..."
       v-model:search="searchQuery"
       :loading="loading"
       :empty="!filteredClassrooms.length && !loading"
@@ -45,19 +33,21 @@
           :key="classroom.id"
           class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
-          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-xs shrink-0">
-              {{ (classroom.nom || 'C').substring(0, 2).toUpperCase() }}
+          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-xs shrink-0">
+                {{ classroomInitials(classroom) }}
+              </div>
+              <span>{{ classroom.nom || '—' }}</span>
             </div>
-            <span>{{ classroom.nom }}</span>
           </td>
           <td class="px-6 py-4">
             <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono text-[11px]">
-              {{ classroom.code || '-' }}
+              {{ classroom.code || classroom.id || '—' }}
             </span>
           </td>
-          <td class="px-6 py-4">{{ classroom.academicYear?.libelle || classroom.academicYearId || '-' }}</td>
-          <td class="px-6 py-4">{{ classroom.level?.nom || classroom.levelId || '-' }}</td>
+          <td class="px-6 py-4">{{ classroom.academicYear?.libelle || classroom.academicYearLibelle || classroom.academicYearId || '—' }}</td>
+          <td class="px-6 py-4">{{ classroom.level?.nom || classroom.levelNom || classroom.levelId || '—' }}</td>
           <td class="px-6 py-4 text-right">
             <div class="flex items-center justify-end space-x-2">
               <button
@@ -81,6 +71,7 @@
 
       <template #footer>
         <Pagination
+          v-if="pagination.totalPages > 1"
           :page="pagination.page"
           :size="pagination.size"
           :totalElements="pagination.totalElements"
@@ -92,11 +83,10 @@
       </template>
     </DataTableCard>
 
-    <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
       title="Supprimer la classe"
-      :message="`Êtes-vous sûr de vouloir supprimer '${classroomToDelete?.nom}' ?`"
+      :message="`Êtes-vous sûr de vouloir supprimer '${classroomToDelete?.nom || 'cette classe'}' ?`"
       confirmText="Supprimer"
       @cancel="showConfirm = false"
       @confirm="deleteClassroom"
@@ -105,22 +95,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
-import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { Plus, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
 
 const router = useRouter()
+const route = useRoute()
 
 const classrooms = ref([])
 const loading = ref(false)
 const error = ref(null)
 const searchQuery = ref('')
-
 const showConfirm = ref(false)
 const classroomToDelete = ref(null)
 
@@ -136,40 +125,68 @@ const columns = [
   { key: 'code', label: 'Code' },
   { key: 'academicYear', label: 'Année scolaire' },
   { key: 'level', label: 'Niveau' },
-  { key: 'actions', label: 'Actions', headerClass: 'text-right' }
+  { key: 'actions', label: 'Actions', headerClass: 'px-6 py-4 text-right' }
 ]
 
 const filteredClassrooms = computed(() => {
   if (!searchQuery.value) return classrooms.value
   const q = searchQuery.value.toLowerCase()
-  return classrooms.value.filter(c =>
-    (c.nom && c.nom.toLowerCase().includes(q)) ||
-    (c.code && String(c.code).toLowerCase().includes(q))
-  )
+  return classrooms.value.filter(c => {
+    const nom = String(c.nom || '').toLowerCase()
+    const code = String(c.code || c.id || '').toLowerCase()
+    return nom.includes(q) || code.includes(q)
+  })
 })
+
+function parseList(data) {
+  if (Array.isArray(data)) return data
+  if (Array.isArray(data?.content)) return data.content
+  return []
+}
+
+function classroomInitials(classroom) {
+  const label = String(classroom?.nom || 'C').trim()
+  return label.substring(0, 2).toUpperCase() || 'CL'
+}
 
 async function loadClassrooms() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/salles', {
-      params: {
-        page: pagination.value.page,
-        size: pagination.value.size
+    let list = []
+    let totalPages = 1
+    let totalElements = 0
+
+    try {
+      const response = await api.get('/api/salles', {
+        params: {
+          page: pagination.value.page,
+          size: pagination.value.size,
+          sort: 'id,desc'
+        }
+      })
+      const data = response.data
+      if (data?.content) {
+        list = data.content
+        totalPages = Math.max(1, data.totalPages ?? 1)
+        totalElements = data.totalElements ?? list.length
+      } else {
+        list = parseList(data)
+        totalElements = list.length
       }
-    })
-    if (response.data.content) {
-      classrooms.value = response.data.content
-      pagination.value.totalPages = response.data.totalPages || 1
-      pagination.value.totalElements = response.data.totalElements || classrooms.value.length
-    } else if (Array.isArray(response.data)) {
-      classrooms.value = response.data
-      pagination.value.totalPages = 1
-      pagination.value.totalElements = response.data.length
+    } catch (paginatedError) {
+      const response = await api.get('/api/salles/all')
+      list = parseList(response.data)
+      totalPages = 1
+      totalElements = list.length
     }
+
+    classrooms.value = list
+    pagination.value.totalPages = totalPages
+    pagination.value.totalElements = totalElements
   } catch (e) {
-    console.error('Erreur lors du chargement des salles', e)
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement des salles'
+    classrooms.value = []
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement des classes'
   } finally {
     loading.value = false
   }
@@ -196,7 +213,6 @@ async function deleteClassroom() {
     classroomToDelete.value = null
     await loadClassrooms()
   } catch (e) {
-    console.error('Erreur lors de la suppression', e)
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
@@ -207,7 +223,14 @@ function onPageChange(page) {
   loadClassrooms()
 }
 
-onMounted(() => {
-  loadClassrooms()
-})
+watch(
+  () => route.path,
+  (path, previous) => {
+    if (path === '/salles' && previous?.startsWith('/salles/form')) {
+      loadClassrooms()
+    }
+  }
+)
+
+onMounted(loadClassrooms)
 </script>

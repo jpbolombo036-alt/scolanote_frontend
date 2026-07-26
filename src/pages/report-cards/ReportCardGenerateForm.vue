@@ -22,51 +22,29 @@
             <h3 class="text-sm font-bold text-slate-900 dark:text-white">Informations générales</h3>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Élève *</label>
-              <div class="relative">
-                <User class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <select v-model="form.studentId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
-                  <option value="">Sélectionner</option>
-                  <option v-for="s in students" :key="s.id" :value="s.id">{{ s.nom }} {{ s.postnom }}</option>
-                </select>
-              </div>
-            </div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div>
+               <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Classe *</label>
+               <div class="relative">
+                 <School class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                 <select v-model="form.classroomId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+                   <option value="">Sélectionner</option>
+                   <option v-for="c in classrooms" :key="c.id" :value="c.id">{{ c.nom }}</option>
+                 </select>
+               </div>
+             </div>
 
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Classe *</label>
-              <div class="relative">
-                <School class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <select v-model="form.classroomId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
-                  <option value="">Sélectionner</option>
-                  <option v-for="c in classrooms" :key="c.id" :value="c.id">{{ c.nom }}</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Année scolaire *</label>
-              <div class="relative">
-                <Calendar class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <select v-model="form.academicYearId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
-                  <option value="">Sélectionner</option>
-                  <option v-for="y in academicYears" :key="y.id" :value="y.id">{{ y.libelle }}</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Trimestre *</label>
-              <div class="relative">
-                <Clock class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <select v-model="form.trimesterId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
-                  <option value="">Sélectionner</option>
-                  <option v-for="t in trimesters" :key="t.id" :value="t.id">{{ t.nom }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
+             <div>
+               <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Période *</label>
+               <div class="relative">
+                 <Clock class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                 <select v-model="form.periodId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl pl-10 pr-10 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+                   <option value="">Sélectionner</option>
+                   <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.nom }}</option>
+                 </select>
+               </div>
+             </div>
+           </div>
         </div>
 
         <!-- Notes par matière -->
@@ -147,7 +125,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { X, User, School, Calendar, Clock, BookOpen, Info, AlertCircle, FileText, Check } from 'lucide-vue-next'
+import { X, User, School, Clock, BookOpen, Info, AlertCircle, FileText, Check } from 'lucide-vue-next'
 
 const props = defineProps({
   visible: Boolean
@@ -159,16 +137,12 @@ const saving = ref(false)
 const error = ref(null)
 const classrooms = ref([])
 const periods = ref([])
-const academicYears = ref([])
-const trimesters = ref([])
 const students = ref([])
 const subjects = ref([])
 
 const form = reactive({
-  studentId: '',
   classroomId: '',
-  academicYearId: '',
-  trimesterId: ''
+  periodId: ''
 })
 
 const getWeightedGrade = (grade, coefficient) => {
@@ -188,17 +162,13 @@ const getGradeColor = (grade) => {
 
 onMounted(async () => {
   try {
-    const [classroomsRes, periodsRes, yearsRes, trimestersRes, studentsRes] = await Promise.all([
+    const [classroomsRes, periodsRes, studentsRes] = await Promise.all([
       fetch('/api/salles').then(r => r.json()),
       fetch('/api/periodes').then(r => r.json()),
-      fetch('/api/annees-academiques').then(r => r.json()),
-      fetch('/api/trimestres').then(r => r.json()),
       fetch('/api/eleves').then(r => r.json())
     ])
     classrooms.value = Array.isArray(classroomsRes) ? classroomsRes : (classroomsRes.content || [])
     periods.value = Array.isArray(periodsRes) ? periodsRes : (periodsRes.content || [])
-    academicYears.value = Array.isArray(yearsRes) ? yearsRes : (yearsRes.content || [])
-    trimesters.value = Array.isArray(trimestersRes) ? trimestersRes : (trimestersRes.content || [])
     students.value = Array.isArray(studentsRes) ? studentsRes : (studentsRes.content || [])
 
     subjects.value = [

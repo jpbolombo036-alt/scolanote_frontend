@@ -50,168 +50,86 @@
       <span>{{ error }}</span>
     </div>
 
-    <!-- Mobile Search -->
-    <div class="lg:hidden relative">
-      <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Rechercher un bulletin..."
-        class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
-      />
-    </div>
-
-    <!-- Desktop Table -->
-    <div class="hidden lg:block">
-      <DataTableCard
-        title="Liste des bulletins"
-        searchPlaceholder="Rechercher un bulletin..."
-        v-model:search="searchQuery"
-        :loading="loading"
-        :empty="!filteredReportCards.length && !loading"
-        empty-message="Aucun bulletin généré"
-        :columns="columns"
-        @refresh="loadReportCards"
-      >
-        <template #default>
-          <tr
-            v-for="reportCard in filteredReportCards"
-            :key="reportCard.id"
-            class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
-          >
-            <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">
-              {{ reportCard.studentNom || reportCard.student?.nom || '-' }}
-            </td>
-            <td class="px-6 py-4">{{ reportCard.classroomNom || reportCard.classroom?.nom || '-' }}</td>
-            <td class="px-6 py-4">{{ reportCard.periodNom || reportCard.period?.nom || '-' }}</td>
-            <td class="px-6 py-4">
-              <span class="font-extrabold text-emerald-600 dark:text-emerald-400">
-                {{ reportCard.pourcentage || reportCard.moyenne || 0 }}%
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold text-[11px] border border-blue-500/20">
-                {{ reportCard.mention || 'Satisfaction' }}
-              </span>
-            </td>
-            <td class="px-6 py-4 font-mono font-bold">{{ reportCard.rang || '-' }}</td>
-            <td class="px-6 py-4 text-right">
-              <button
-                @click="viewPdf(reportCard.id)"
-                class="p-2 text-slate-500 hover:text-blue-500 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition inline-flex items-center gap-1 font-bold text-xs"
-              >
-                <Download class="w-4 h-4" />
-                <span>PDF</span>
-              </button>
-            </td>
-          </tr>
-        </template>
-
-        <template #footer>
-          <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4">
-            <button
-              @click="prevPage"
-              :disabled="currentPage === 0"
-              class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Précédent
-            </button>
-            <span class="text-xs text-slate-500 dark:text-slate-400">
-              Page {{ currentPage + 1 }} / {{ totalPages }}
-            </span>
-            <button
-              @click="nextPage"
-              :disabled="currentPage >= totalPages - 1"
-              class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              Suivant
-            </button>
-          </div>
-        </template>
-      </DataTableCard>
-    </div>
-
-    <!-- Mobile Cards -->
-    <div class="lg:hidden space-y-3">
-      <!-- Loading -->
-      <div v-if="loading" class="py-12 text-center">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 font-medium mt-3">Chargement...</p>
-      </div>
-
-      <!-- Cards -->
-      <div v-else-if="filteredReportCards.length > 0" class="space-y-3">
-        <div
+    <DataTableCard
+      title="Liste des bulletins"
+      subtitle="Gestion des bulletins et liste des bulletins"
+      searchPlaceholder="Rechercher un bulletin..."
+      v-model:search="searchQuery"
+      :loading="loading"
+      :empty="!filteredReportCards.length && !loading"
+      empty-message="Aucun bulletin généré"
+      :columns="columns"
+      @refresh="loadReportCards"
+    >
+      <template #default>
+        <tr
           v-for="reportCard in filteredReportCards"
           :key="reportCard.id"
-          class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm"
+          class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 flex items-center justify-center font-bold text-xs">
-                {{ (reportCard.studentNom || '?').substring(0, 2).toUpperCase() }}
-              </div>
-              <div>
-                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ reportCard.studentNom || '-' }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">{{ reportCard.classroomNom || reportCard.classroom?.nom || '-' }}</p>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 font-semibold text-[10px] border border-blue-500/20">
+          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">
+            {{ reportCard.studentNom || reportCard.student?.nom || '-' }}
+          </td>
+          <td class="px-6 py-4">{{ reportCard.classroomNom || reportCard.classroom?.nom || '-' }}</td>
+          <td class="px-6 py-4">{{ reportCard.periodNom || reportCard.period?.nom || '-' }}</td>
+          <td class="px-6 py-4">
+            <span class="font-extrabold text-emerald-600 dark:text-emerald-400">
+              {{ reportCard.pourcentage || reportCard.moyenne || 0 }}%
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold text-[11px] border border-blue-500/20">
               {{ reportCard.mention || 'Satisfaction' }}
             </span>
-          </div>
-          <div class="flex items-center justify-between text-xs mb-3">
-            <span class="text-slate-500 dark:text-slate-400">{{ reportCard.periodNom || reportCard.period?.nom || '-' }}</span>
-            <span class="font-extrabold text-emerald-600">{{ reportCard.pourcentage || reportCard.moyenne || 0 }}%</span>
-          </div>
-          <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          </td>
+          <td class="px-6 py-4 font-mono font-bold">{{ reportCard.rang || '-' }}</td>
+          <td class="px-6 py-4 text-right">
             <button
               @click="viewPdf(reportCard.id)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 transition"
+              class="p-2 text-slate-500 hover:text-blue-500 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition inline-flex items-center gap-1 font-bold text-xs"
             >
-              <Download class="w-3.5 h-3.5" />
-              Télécharger PDF
+              <Download class="w-4 h-4" />
+              <span>PDF</span>
             </button>
-          </div>
+          </td>
+        </tr>
+      </template>
+
+      <template #footer>
+        <div v-if="totalPages > 1" class="flex items-center justify-between px-6 py-4">
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 0"
+            class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            Précédent
+          </button>
+          <span class="text-xs text-slate-500 dark:text-slate-400">
+            Page {{ currentPage + 1 }} / {{ totalPages }}
+          </span>
+          <button
+            @click="nextPage"
+            :disabled="currentPage >= totalPages - 1"
+            class="px-4 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            Suivant
+          </button>
         </div>
-      </div>
-
-      <!-- Empty State Mobile -->
-      <EmptyState v-else message="Aucun bulletin généré" />
-
-      <!-- Mobile Pagination -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
-        <button
-          @click="prevPage"
-          :disabled="currentPage === 0"
-          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Précédent
-        </button>
-        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          {{ currentPage + 1 }}/{{ totalPages }}
-        </span>
-        <button
-          @click="nextPage"
-          :disabled="currentPage >= totalPages - 1"
-          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Suivant
-        </button>
-      </div>
-    </div>
+      </template>
+    </DataTableCard>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
-import { FileText, Sparkles, Search, RefreshCw, AlertCircle, Download } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { FileText, Sparkles, AlertCircle, Download } from 'lucide-vue-next'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const reportCards = ref([])
 const classrooms = ref([])
@@ -245,6 +163,12 @@ const filteredReportCards = computed(() => {
     (r.classroomNom && r.classroomNom.toLowerCase().includes(q)) ||
     (r.periodNom && r.periodNom.toLowerCase().includes(q))
   )
+})
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.path === '/bulletins' && from.path.startsWith('/bulletins/nouveau')) {
+    await loadReportCards()
+  }
 })
 
 onMounted(async () => {

@@ -12,6 +12,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des matières"
+      subtitle="Gestion des matières et liste des matières"
       searchPlaceholder="Rechercher une matière..."
       v-model:search="searchQuery"
       :loading="loading"

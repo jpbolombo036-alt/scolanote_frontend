@@ -2,8 +2,8 @@
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ isEdit ? 'Modifier' : 'Créer' }} un type d'évaluation</h1>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Accueil / Types d'évaluation / {{ isEdit ? 'Modifier' : 'Nouveau type' }}</p>
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ isEdit ? 'Modifier' : 'Créer' }} un niveau</h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Accueil / Niveaux / {{ isEdit ? 'Modifier' : 'Nouveau niveau' }}</p>
       </div>
       <button @click="$router.back()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Retour</button>
     </div>
@@ -16,13 +16,13 @@
     <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl p-6 md:p-8 max-w-3xl">
       <form @submit.prevent="onSubmit" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
+          <div class="md:col-span-2">
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nom <span class="text-red-500">*</span></label>
             <input v-model="form.nom" type="text" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Coefficient <span class="text-red-500">*</span></label>
-            <input v-model.number="form.coefficient" type="number" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre</label>
+            <input v-model.number="form.ordre" type="number" min="1" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
           </div>
         </div>
 
@@ -52,14 +52,19 @@ const error = ref(null)
 
 const form = reactive({
   nom: '',
-  coefficient: 1
+  ordre: null
 })
 
 onMounted(async () => {
-  if (!isEdit) return
   try {
-    const response = await api.get(`/api/types-evaluations/${route.params.id}`)
-    Object.assign(form, response.data)
+    if (isEdit) {
+      const res = await api.get(`/api/niveaux/${route.params.id}`)
+      const level = res.data
+      Object.assign(form, {
+        nom: level.nom || '',
+        ordre: level.ordre || null
+      })
+    }
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur lors du chargement'
   }
@@ -71,13 +76,13 @@ async function onSubmit() {
   try {
     const payload = { ...form }
     if (isEdit) {
-      await api.put(`/api/types-evaluations/${route.params.id}`, payload)
+      await api.put(`/api/niveaux/${route.params.id}`, payload)
     } else {
-      await api.post('/api/types-evaluations', payload)
+      await api.post('/api/niveaux', payload)
     }
-    router.push('/types-evaluations')
+    router.push('/niveaux')
   } catch (e) {
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
   } finally {
     saving.value = false
   }

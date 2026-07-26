@@ -12,6 +12,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des écoles"
+      subtitle="Gestion des écoles et liste des écoles"
       searchPlaceholder="Rechercher une école..."
       v-model:search="searchQuery"
       :loading="loading"
@@ -98,14 +99,16 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const schools = ref([])
 const loading = ref(false)
@@ -199,6 +202,12 @@ function onPageChange(page) {
   pagination.value.page = page
   loadSchools()
 }
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.path === '/ecoles' && from.path.startsWith('/ecoles/form')) {
+    await loadSchools()
+  }
+})
 
 onMounted(() => {
   loadSchools()

@@ -1,18 +1,15 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-
-
-
     <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
       <AlertCircle class="w-5 h-5 shrink-0" />
       <span>{{ error }}</span>
     </div>
 
-    <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des affectations"
-      searchPlaceholder="Rechercher une affectation..."
+      subtitle="Gestion des affectations et liste des affectations"
+      search-placeholder="Rechercher une affectation..."
       v-model:search="searchQuery"
       :loading="loading"
       :empty="!filteredAssignments.length && !loading"
@@ -26,7 +23,8 @@
           class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plus class="w-4 h-4" />
-          <span>Nouvelle affectation</span>
+          <span class="hidden sm:inline">Nouvelle affectation</span>
+          <span class="sm:hidden">Ajouter</span>
         </button>
       </template>
 
@@ -59,6 +57,19 @@
           </td>
         </tr>
       </template>
+
+      <template #footer>
+        <Pagination
+          v-if="pagination.totalPages > 1"
+          :page="pagination.page"
+          :size="pagination.size"
+          :totalElements="pagination.totalElements"
+          :totalPages="pagination.totalPages"
+          @prev="onPageChange(pagination.page - 1)"
+          @next="onPageChange(pagination.page + 1)"
+          @goTo="onPageChange"
+        />
+      </template>
     </DataTableCard>
 
     <!-- CONFIRM DELETE DIALOG -->
@@ -77,8 +88,9 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
+import Pagination from '@/components/common/Pagination.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { Plus, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -90,6 +102,13 @@ const searchQuery = ref('')
 
 const showConfirm = ref(false)
 const assignmentToDelete = ref(null)
+
+const pagination = ref({
+  page: 0,
+  size: 10,
+  totalPages: 1,
+  totalElements: 0
+})
 
 const columns = [
   { key: 'teacher', label: 'Professeur' },
@@ -112,10 +131,24 @@ async function loadAssignments() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/attributions-enseignement')
-    assignments.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+    const response = await api.get('/api/attributions-enseignement', {
+      params: {
+        page: pagination.value.page,
+        size: pagination.value.size
+      }
+    })
+    if (response.data.content) {
+      assignments.value = response.data.content
+      pagination.value.totalPages = response.data.totalPages || 1
+      pagination.value.totalElements = response.data.totalElements || assignments.value.length
+    } else if (Array.isArray(response.data)) {
+      assignments.value = response.data
+      pagination.value.totalPages = 1
+      pagination.value.totalElements = response.data.length
+    }
   } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur'
+    console.error('Erreur lors du chargement des affectations', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement des affectations'
   } finally {
     loading.value = false
   }
@@ -145,6 +178,12 @@ async function deleteAssignment() {
     console.error('Erreur lors de la suppression', e)
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
   }
+}
+
+function onPageChange(page) {
+  if (page < 0 || page >= pagination.value.totalPages) return
+  pagination.value.page = page
+  loadAssignments()
 }
 
 onMounted(() => {

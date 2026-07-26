@@ -68,6 +68,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
 import { AlertCircle } from 'lucide-vue-next'
@@ -90,6 +91,12 @@ const form = reactive({
   date: '',
   noteMax: 20,
   publie: false
+})
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.path === '/evaluations' && from.path.startsWith('/evaluations/form')) {
+    await loadAssessments()
+  }
 })
 
 onMounted(async () => {
@@ -115,10 +122,11 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
+    const payload = { ...form }
     if (isEdit) {
-      await api.put(`/api/evaluations/${route.params.id}`, form)
+      await api.put(`/api/evaluations/${route.params.id}`, payload)
     } else {
-      await api.post('/api/evaluations', form)
+      await api.post('/api/evaluations', payload)
     }
     router.push('/evaluations')
   } catch (e) {

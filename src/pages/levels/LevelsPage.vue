@@ -2,7 +2,6 @@
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
 
 
-
     <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
       <AlertCircle class="w-5 h-5 shrink-0" />
@@ -11,15 +10,15 @@
 
     <!-- DATA TABLE CARD -->
     <DataTableCard
-      title="Liste des disciplines"
-      subtitle="Gestion des disciplines et liste des disciplines"
-      searchPlaceholder="Rechercher une discipline..."
+      title="Liste des niveaux"
+      subtitle="Gestion des niveaux et liste des niveaux"
+      searchPlaceholder="Rechercher un niveau..."
       v-model:search="searchQuery"
       :loading="loading"
-      :empty="!filteredDisciplines.length && !loading"
-      empty-message="Aucune discipline trouvée"
+      :empty="!filteredLevels.length && !loading"
+      empty-message="Aucun niveau trouvé"
       :columns="columns"
-      @refresh="loadDisciplines"
+      @refresh="loadLevels"
     >
       <template #actions>
         <button
@@ -27,30 +26,30 @@
           class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plus class="w-4 h-4" />
-          <span>Nouvelle discipline</span>
+          <span class="hidden sm:inline">Nouveau niveau</span>
+          <span class="sm:hidden">Ajouter</span>
         </button>
       </template>
 
       <template #default>
         <tr
-          v-for="discipline in filteredDisciplines"
-          :key="discipline.id"
+          v-for="level in filteredLevels"
+          :key="level.id"
           class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
-          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ discipline.student?.nom || discipline.studentNom || '-' }}</td>
-          <td class="px-6 py-4">{{ discipline.conduite || '-' }}</td>
-          <td class="px-6 py-4">{{ discipline.application || '-' }}</td>
+          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ level.nom }}</td>
+          <td class="px-6 py-4">{{ level.ordre ?? '-' }}</td>
           <td class="px-6 py-4 text-right">
             <div class="flex items-center justify-end space-x-2">
               <button
-                @click="openEditForm(discipline)"
+                @click="openEditForm(level)"
                 class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
                 title="Modifier"
               >
                 <Edit3 class="w-4 h-4" />
               </button>
               <button
-                @click="confirmDelete(discipline)"
+                @click="confirmDelete(level)"
                 class="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
                 title="Supprimer"
               >
@@ -65,97 +64,88 @@
     <!-- CONFIRM DELETE DIALOG -->
     <ConfirmDialog
       :show="showConfirm"
-      title="Supprimer la discipline"
-      :message="`Êtes-vous sûr de vouloir supprimer cette discipline ?`"
+      title="Supprimer le niveau"
+      :message="`Êtes-vous sûr de vouloir supprimer le niveau '${levelToDelete?.nom}' ?`"
       confirmText="Supprimer"
       @cancel="showConfirm = false"
-      @confirm="deleteDiscipline"
+      @confirm="deleteLevel"
     />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 
-const disciplines = ref([])
+const levels = ref([])
 const loading = ref(false)
 const error = ref(null)
 const searchQuery = ref('')
 
 const showConfirm = ref(false)
-const disciplineToDelete = ref(null)
+const levelToDelete = ref(null)
 
 const columns = [
-  { key: 'student', label: 'Élève' },
-  { key: 'conduite', label: 'Conduite' },
-  { key: 'application', label: 'Application' },
+  { key: 'nom', label: 'Nom' },
+  { key: 'ordre', label: 'Ordre' },
   { key: 'actions', label: 'Actions', headerClass: 'text-right' }
 ]
 
-const filteredDisciplines = computed(() => {
-  if (!searchQuery.value) return disciplines.value
+const filteredLevels = computed(() => {
+  if (!searchQuery.value) return levels.value
   const q = searchQuery.value.toLowerCase()
-  return disciplines.value.filter(d =>
-    (d.student?.nom && d.student.nom.toLowerCase().includes(q)) ||
-    (d.conduite && d.conduite.toLowerCase().includes(q))
+  return levels.value.filter(l =>
+    (l.nom && l.nom.toLowerCase().includes(q))
   )
 })
 
-async function loadDisciplines() {
+async function loadLevels() {
   loading.value = true
   error.value = null
   try {
-    const response = await api.get('/api/disciplines')
-    disciplines.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+    const response = await api.get('/api/niveaux')
+    levels.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
   } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur'
+    console.error('Erreur lors du chargement des niveaux', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement des niveaux'
   } finally {
     loading.value = false
   }
 }
 
 function openCreateForm() {
-  router.push('/disciplines/form')
+  router.push('/niveaux/form')
 }
 
-function openEditForm(discipline) {
-  router.push(`/disciplines/form/${discipline.id}`)
+function openEditForm(level) {
+  router.push(`/niveaux/form/${level.id}`)
 }
 
-function confirmDelete(discipline) {
-  disciplineToDelete.value = discipline
+function confirmDelete(level) {
+  levelToDelete.value = level
   showConfirm.value = true
 }
 
-async function deleteDiscipline() {
-  if (!disciplineToDelete.value) return
+async function deleteLevel() {
+  if (!levelToDelete.value) return
   try {
-    await api.delete(`/api/disciplines/${disciplineToDelete.value.id}`)
+    await api.delete(`/api/niveaux/${levelToDelete.value.id}`)
     showConfirm.value = false
-    disciplineToDelete.value = null
-    await loadDisciplines()
+    levelToDelete.value = null
+    await loadLevels()
   } catch (e) {
     console.error('Erreur lors de la suppression', e)
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
 
-onBeforeRouteUpdate(async (to, from) => {
-  if (to.path === '/disciplines' && from.path.startsWith('/disciplines/form')) {
-    await loadDisciplines()
-  }
-})
-
 onMounted(() => {
-  loadDisciplines()
+  loadLevels()
 })
 </script>

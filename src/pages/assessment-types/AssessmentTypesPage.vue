@@ -12,6 +12,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des types d'évaluation"
+      subtitle="Gestion des types d'évaluation et liste des types d'évaluation"
       searchPlaceholder="Rechercher un type..."
       v-model:search="searchQuery"
       :loading="loading"

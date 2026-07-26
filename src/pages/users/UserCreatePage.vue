@@ -80,7 +80,6 @@ async function onSubmit() {
       role: form.role
     }
     await api.post('/api/users', payload)
-    router.push('/users')
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
   } finally {

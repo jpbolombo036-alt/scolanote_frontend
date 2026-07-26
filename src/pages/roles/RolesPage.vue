@@ -6,6 +6,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des rôles"
+      subtitle="Gestion des rôles et liste des rôles"
       searchPlaceholder="Rechercher un rôle..."
       v-model:search="searchQuery"
       :loading="loading"
@@ -15,13 +16,7 @@
       @refresh="loadRoles"
     >
       <template #actions>
-        <button
-          @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
-        >
-          <Plus class="w-4 h-4" />
-          <span>Nouveau rôle</span>
-        </button>
+        <!-- Création de rôles non disponible pour le moment -->
       </template>
 
       <template #default>
@@ -47,10 +42,6 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
-import { Plus, Search, RefreshCw } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 
 const roles = ref([])
 const loading = ref(false)
@@ -80,11 +71,6 @@ async function loadRoles() {
     loading.value = false
   }
 }
-
-function openCreateForm() {
-  router.push('/roles/form')
-}
-
 onMounted(() => {
   loadRoles()
 })

@@ -1,35 +1,15 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-
-
     <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
       <AlertCircle class="w-5 h-5 shrink-0" />
       <span>{{ error }}</span>
     </div>
 
-    <!-- Mobile Header + Search -->
-    <div class="lg:hidden flex gap-2">
-      <div class="relative flex-1">
-        <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Rechercher un enseignant..."
-          class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
-        />
-      </div>
-      <button
-        @click="openCreateForm"
-        class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center"
-      >
-        <UserCheck class="w-5 h-5" />
-      </button>
-    </div>
-
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des enseignants"
+      subtitle="Gestion des enseignants et liste des enseignants"
       searchPlaceholder="Rechercher un enseignant..."
       v-model:search="searchQuery"
       :loading="loading"
@@ -113,82 +93,6 @@
       </template>
     </DataTableCard>
 
-    <!-- Mobile Cards -->
-    <div class="lg:hidden space-y-3">
-      <!-- Loading -->
-      <div v-if="loading" class="py-12 text-center">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-500 border-t-transparent"></div>
-        <p class="text-xs text-slate-400 font-medium mt-3">Chargement...</p>
-      </div>
-
-      <!-- Cards -->
-      <div v-else-if="filteredTeachers.length > 0" class="space-y-3">
-        <div
-          v-for="teacher in filteredTeachers"
-          :key="teacher.id"
-          class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-sm"
-        >
-          <div class="flex items-start justify-between mb-2">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold text-sm">
-                {{ (teacher.nom || 'P').substring(0, 1).toUpperCase() }}
-              </div>
-              <div>
-                <p class="text-sm font-bold text-slate-900 dark:text-white">{{ teacher.nom }} {{ teacher.postnom || '' }}</p>
-                <p class="text-xs text-slate-500 dark:text-slate-400">{{ teacher.specialite || 'Général' }}</p>
-              </div>
-            </div>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 font-semibold text-[10px] border border-blue-500/20">
-              {{ teacher.specialite ? teacher.specialite.substring(0, 3).toUpperCase() : 'GEN' }}
-            </span>
-          </div>
-          <div class="text-xs text-slate-500 dark:text-slate-400 mb-3">
-            {{ teacher.email || 'N/A' }}
-          </div>
-          <div class="flex items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-            <button
-              @click="openEditForm(teacher)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 transition"
-            >
-              <Edit3 class="w-3.5 h-3.5" />
-              Modifier
-            </button>
-            <button
-              @click="confirmDelete(teacher)"
-              class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium text-red-600 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 transition"
-            >
-              <Trash2 class="w-3.5 h-3.5" />
-              Supprimer
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Empty State Mobile -->
-      <EmptyState v-else message="Aucun enseignant trouvé" />
-
-      <!-- Mobile Pagination -->
-      <div v-if="totalPages > 1" class="flex items-center justify-between px-2">
-        <button
-          @click="prevPage"
-          :disabled="currentPage === 0"
-          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Précédent
-        </button>
-        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">
-          {{ currentPage + 1 }}/{{ totalPages }}
-        </span>
-        <button
-          @click="nextPage"
-          :disabled="currentPage >= totalPages - 1"
-          class="flex-1 mx-1 px-4 py-2.5 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 bg-white dark:bg-[#0d1527] hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          Suivant
-        </button>
-      </div>
-    </div>
-
     <ConfirmDialog
       :show="showConfirm"
       title="Supprimer l'enseignant"
@@ -202,14 +106,15 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { useRouter } from 'vue-router'
-import { UserCheck, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter, useRoute } from 'vue-router'
+import { UserCheck, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
 
 const router = useRouter()
+const route = useRoute()
 
 const teachers = ref([])
 const loading = ref(false)
@@ -311,6 +216,12 @@ async function deleteTeacher() {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.path === '/enseignants' && from.path.startsWith('/enseignants/form')) {
+    await loadTeachers()
+  }
+})
 
 onMounted(() => {
   loadTeachers()

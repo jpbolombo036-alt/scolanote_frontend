@@ -11,6 +11,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des trimestres"
+      subtitle="Gestion des trimestres et liste des trimestres"
       searchPlaceholder="Rechercher un trimestre..."
       v-model:search="searchQuery"
       :loading="loading"

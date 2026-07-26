@@ -106,10 +106,11 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
+    const payload = { ...form }
     if (isEdit) {
-      await api.put(`/api/presences/${route.params.id}`, form)
+      await api.put(`/api/presences/${route.params.id}`, payload)
     } else {
-      await api.post('/api/presences', form)
+      await api.post('/api/presences', payload)
     }
     router.push('/presences')
   } catch (e) {

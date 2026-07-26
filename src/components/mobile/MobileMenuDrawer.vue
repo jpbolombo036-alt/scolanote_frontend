@@ -50,26 +50,8 @@
 import { defineProps, defineEmits } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import {
-  LayoutDashboard,
-  School,
-  Calendar,
-  Clock,
-  Layers,
-  BookOpen,
-  UserCheck,
-  Users,
-  FileSpreadsheet,
-  CheckSquare,
-  Star,
-  CheckCircle2,
-  ShieldAlert,
-  FileText,
-  UserCog,
-  KeyRound,
-  LogOut,
-  X
-} from 'lucide-vue-next'
+import { FileText, LogOut, X } from 'lucide-vue-next'
+import { navItems, isNavActive } from '@/config/navigation'
 
 defineProps({
   show: Boolean
@@ -81,28 +63,8 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 
-const navItems = [
-  { name: 'Tableau de bord', path: '/dashboard', icon: LayoutDashboard },
-  { name: 'Élèves', path: '/eleves', icon: Users },
-  { name: 'Classes', path: '/salles', icon: Layers },
-  { name: 'Matières', path: '/matieres', icon: BookOpen },
-  { name: 'Bulletins', path: '/bulletins', icon: FileText },
-  { name: 'Notes', path: '/notes', icon: Star },
-  { name: 'Évaluations', path: '/evaluations', icon: CheckSquare },
-  { name: 'Enseignants', path: '/enseignants', icon: UserCheck },
-  { name: 'Inscriptions', path: '/inscriptions', icon: FileSpreadsheet },
-  { name: 'Présences', path: '/presences', icon: CheckCircle2 },
-  { name: 'Disciplines', path: '/disciplines', icon: ShieldAlert },
-  { name: 'Écoles', path: '/ecoles', icon: School },
-  { name: 'Années scolaires', path: '/annees-academiques', icon: Calendar },
-  { name: 'Trimestres', path: '/trimestres', icon: Clock },
-  { name: 'Périodes', path: '/periodes', icon: Layers },
-  { name: 'Utilisateurs', path: '/users', icon: UserCog },
-  { name: 'Rôles', path: '/roles', icon: KeyRound }
-]
-
 function isActive(path) {
-  return route.path === path || route.path.startsWith(path + '/')
+  return isNavActive(path, route.path)
 }
 
 function logout() {

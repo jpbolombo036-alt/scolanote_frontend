@@ -1,35 +1,15 @@
 <template>
   <div class="space-y-6 font-['Plus_Jakarta_Sans',sans-serif]">
-
-
     <!-- ERROR BANNER -->
     <div v-if="error" class="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 p-4 rounded-2xl text-sm font-medium flex items-center gap-2">
       <AlertCircle class="w-5 h-5 shrink-0" />
       <span>{{ error }}</span>
     </div>
 
-    <!-- Mobile Header + Search -->
-    <div class="lg:hidden flex gap-2">
-      <div class="relative flex-1">
-        <Search class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Rechercher un élève..."
-          class="w-full bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-medium pl-10 pr-4 py-3 rounded-xl outline-none focus:border-emerald-500 transition"
-        />
-      </div>
-      <button
-        @click="openCreateForm"
-        class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-bold px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center"
-      >
-        <UserPlus class="w-5 h-5" />
-      </button>
-    </div>
-
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des élèves"
+      subtitle="Gestion des élèves et liste des élèves"
       searchPlaceholder="Rechercher un élève..."
       v-model:search="searchQuery"
       :loading="loading"
@@ -138,14 +118,15 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { useRouter } from 'vue-router'
-import { UserPlus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { useRouter, useRoute } from 'vue-router'
+import { UserPlus, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
 
 const router = useRouter()
+const route = useRoute()
 
 const students = ref([])
 const loading = ref(false)
@@ -249,6 +230,12 @@ async function deleteStudent() {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.path === '/eleves' && from.path.startsWith('/eleves/form')) {
+    await loadStudents()
+  }
+})
 
 onMounted(() => {
   loadStudents()

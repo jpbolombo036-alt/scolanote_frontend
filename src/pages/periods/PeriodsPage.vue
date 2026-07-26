@@ -11,6 +11,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des périodes"
+      subtitle="Gestion des périodes et liste des périodes"
       searchPlaceholder="Rechercher une période..."
       v-model:search="searchQuery"
       :loading="loading"

@@ -12,6 +12,7 @@
     <!-- DATA TABLE CARD -->
     <DataTableCard
       title="Liste des évaluations"
+      subtitle="Gestion des évaluations et liste des évaluations"
       searchPlaceholder="Rechercher une évaluation..."
       v-model:search="searchQuery"
       :loading="loading"
@@ -80,13 +81,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
 const assessments = ref([])
 const loading = ref(false)
@@ -151,6 +154,12 @@ async function deleteAssessment() {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la suppression'
   }
 }
+
+onBeforeRouteUpdate(async (to, from) => {
+  if (to.path === '/evaluations' && from.path.startsWith('/evaluations/form')) {
+    await loadAssessments()
+  }
+})
 
 onMounted(() => {
   loadAssessments()
