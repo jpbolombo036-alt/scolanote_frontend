@@ -36,3 +36,9 @@ export interface SchoolResponse {
   createdAt?: string
   updatedAt?: string
 }
+
+export interface SchoolCreationResponse {
+  school: SchoolResponse
+  adminUsername: string
+  adminPassword: string
+}

@@ -28,6 +28,26 @@
         <span>🏢</span>
         <span class="ml-3">Classes</span>
       </router-link>
+      <router-link to="/niveaux" class="flex items-center px-4 py-3 hover:bg-gray-800">
+        <span>🎓</span>
+        <span class="ml-3">Niveaux</span>
+      </router-link>
+      <router-link to="/sections" class="flex items-center px-4 py-3 hover:bg-gray-800">
+        <span>🏛️</span>
+        <span class="ml-3">Sections</span>
+      </router-link>
+      <router-link to="/options" class="flex items-center px-4 py-3 hover:bg-gray-800">
+        <span>🔗</span>
+        <span class="ml-3">Options</span>
+      </router-link>
+      <router-link to="/programmes" class="flex items-center px-4 py-3 hover:bg-gray-800">
+        <span>📋</span>
+        <span class="ml-3">Programmes</span>
+      </router-link>
+      <router-link to="/matieres-programme" class="flex items-center px-4 py-3 hover:bg-gray-800">
+        <span>📝</span>
+        <span class="ml-3">Matières de programme</span>
+      </router-link>
       <router-link to="/matieres" class="flex items-center px-4 py-3 hover:bg-gray-800">
         <span>📚</span>
         <span class="ml-3">Matières</span>

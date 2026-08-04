@@ -1,0 +1,49 @@
+
+> scolanote@0.0.1 dev
+> vite --host 127.0.0.1
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m36820[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m3000[22m/[39m
+[2m17:08:08[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/enrollments/EnrollmentFormPage.vue, /src/assets/styles/main.css[22m
+[2m18:26:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.vue, /src/assets/styles/main.css[22m
+[2m18:26:43[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.vue, /src/assets/styles/main.css[22m
+[2m18:28:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.vue, /src/assets/styles/main.css[22m
+[2m18:31:24[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/common/Pagination.vue, /src/assets/styles/main.css[22m
+[2m18:31:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/common/DataTableCard.vue, /src/assets/styles/main.css[22m
+[2m18:31:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/common/DataTableCard.vue, /src/assets/styles/main.css[22m
+[2m18:31:29[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/academic-years/AcademicYearsPage.vue, /src/assets/styles/main.css[22m
+[2m18:31:38[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/assessment-types/AssessmentTypesPage.vue, /src/assets/styles/main.css[22m
+[2m18:31:38[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/assessment-types/AssessmentTypesPage.vue, /src/assets/styles/main.css[22m
+[2m18:31:43[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/assessments/AssessmentsPage.vue, /src/assets/styles/main.css[22m
+[2m18:31:43[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/assessments/AssessmentsPage.vue, /src/assets/styles/main.css[22m
+[2m18:31:47[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/attendances/AttendancesPage.vue, /src/assets/styles/main.css[22m
+[2m18:32:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/classrooms/ClassroomsPage.vue, /src/assets/styles/main.css[22m
+[2m18:32:18[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/curriculum-subjects/CurriculumSubjectsPage.vue, /src/assets/styles/main.css[22m
+[2m18:32:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/curriculums/CurriculumsPage.vue, /src/assets/styles/main.css[22m
+[2m18:32:35[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.vue, /src/assets/styles/main.css[22m
+[2m18:32:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/disciplines/DisciplinesPage.vue, /src/assets/styles/main.css[22m
+[2m18:33:17[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/enrollments/EnrollmentsPage.vue, /src/assets/styles/main.css[22m
+[2m18:33:28[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/grades/GradesPage.vue, /src/assets/styles/main.css[22m
+[2m18:33:36[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/levels/LevelsPage.vue, /src/assets/styles/main.css[22m
+[2m18:33:44[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/options/OptionsPage.vue, /src/assets/styles/main.css[22m
+[2m18:33:49[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/periods/PeriodForm.vue[22m
+[2m18:34:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/periods/PeriodsPage.vue, /src/assets/styles/main.css[22m
+[2m18:34:28[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/attendances/AttendancesPage.vue, /src/assets/styles/main.css[22m
+[2m18:34:31[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/periods/PeriodForm.vue[22m
+[2m18:34:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/attendances/AttendancesPage.vue, /src/assets/styles/main.css[22m
+[2m18:34:32[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/periods/PeriodForm.vue[22m
+[2m18:34:37[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/pages/periods/PeriodForm.vue[22m
+[2m18:35:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/schools/SchoolsPage.vue, /src/assets/styles/main.css[22m
+[2m18:35:20[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/sections/SectionsPage.vue, /src/assets/styles/main.css[22m
+[2m18:35:36[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/students/StudentsPage.vue, /src/assets/styles/main.css[22m
+[2m18:35:42[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/subjects/SubjectsPage.vue, /src/assets/styles/main.css[22m
+[2m18:35:54[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/teachers/TeachersPage.vue, /src/assets/styles/main.css[22m
+[2m18:35:59[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/teaching-assignments/TeachingAssignmentsPage.vue, /src/assets/styles/main.css[22m
+[2m18:36:06[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/trimesters/TrimestersPage.vue, /src/assets/styles/main.css[22m
+[2m18:36:16[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/users/UsersPage.vue, /src/assets/styles/main.css[22m
+[2m18:36:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/users/UsersPage.vue, /src/assets/styles/main.css[22m
+[2m18:36:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/trimesters/TrimestersPage.vue, /src/assets/styles/main.css[22m
+[2m18:36:38[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/trimesters/TrimestersPage.vue, /src/assets/styles/main.css[22m
+[2m18:36:38[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/users/UsersPage.vue, /src/assets/styles/main.css[22m

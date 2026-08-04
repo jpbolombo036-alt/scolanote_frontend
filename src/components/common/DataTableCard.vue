@@ -25,7 +25,7 @@
       </div>
       <button
         type="button"
-        class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-500/25 transition"
+        class="w-full sm:w-auto px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl shadow-md shadow-brand-500/25 transition"
         @click="$emit('refresh')"
       >
         <span class="flex items-center justify-center gap-2">

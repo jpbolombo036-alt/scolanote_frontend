@@ -23,7 +23,7 @@
       <template #actions>
         <button
           @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+          class="bg-brand-500 hover:bg-brand-600 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plus class="w-4 h-4" />
           <span>Nouvelle période</span>
@@ -48,10 +48,20 @@
             <div class="flex items-center justify-end space-x-2">
               <button
                 @click="openEditForm(period)"
-                class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
+                class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
                 title="Modifier"
               >
                 <Edit3 class="w-4 h-4" />
+              </button>
+              <button
+                @click="toggleLock(period)"
+                :class="period.verrouille
+                  ? 'p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition'
+                  : 'p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition'"
+                :title="period.verrouille ? 'Déverrouiller' : 'Verrouiller'"
+              >
+                <Lock v-if="period.verrouille" class="w-4 h-4" />
+                <Unlock v-else class="w-4 h-4" />
               </button>
               <button
                 @click="confirmDelete(period)"
@@ -75,6 +85,16 @@
       @cancel="showConfirm = false"
       @confirm="deletePeriod"
     />
+
+    <!-- CONFIRM LOCK DIALOG -->
+    <ConfirmDialog
+      :show="showLockConfirm"
+      :title="periodToLock?.verrouille ? 'Déverrouiller la période' : 'Verrouiller la période'"
+      :message="`Êtes-vous sûr de vouloir ${periodToLock?.verrouille ? 'déverrouiller' : 'verrouiller'} '${periodToLock?.nom}' ?`"
+      :confirmText="periodToLock?.verrouille ? 'Déverrouiller' : 'Verrouiller'"
+      @cancel="showLockConfirm = false"
+      @confirm="executeLock"
+    />
   </div>
 </template>
 
@@ -84,7 +104,7 @@ import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2, Lock, Unlock } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -96,6 +116,8 @@ const searchQuery = ref('')
 
 const showConfirm = ref(false)
 const periodToDelete = ref(null)
+const showLockConfirm = ref(false)
+const periodToLock = ref(null)
 
 const columns = [
   { key: 'nom', label: 'Nom' },
@@ -149,6 +171,34 @@ async function deletePeriod() {
     await loadPeriods()
   } catch (e) {
     console.error('Erreur lors de la suppression', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
+  }
+}
+
+function confirmLock(period) {
+  periodToLock.value = period
+  showLockConfirm.value = true
+}
+
+async function toggleLock(period) {
+  periodToLock.value = period
+  showLockConfirm.value = true
+}
+
+async function executeLock() {
+  if (!periodToLock.value) return
+  const period = periodToLock.value
+  try {
+    if (period.verrouille) {
+      await api.post(`/api/periodes/${period.id}/deverrouiller`)
+    } else {
+      await api.post(`/api/periodes/${period.id}/verrouiller`)
+    }
+    showLockConfirm.value = false
+    periodToLock.value = null
+    await loadPeriods()
+  } catch (e) {
+    console.error('Erreur lors du verrouillage/déverrouillage', e)
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
   }
 }

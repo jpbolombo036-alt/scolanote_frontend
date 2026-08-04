@@ -8,6 +8,21 @@
         </button>
       </div>
 
+      <div class="px-6 py-4 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/80">
+        <button v-if="period" type="button" @click="onLock" :disabled="lockLoading" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white hover:bg-brand-600 disabled:opacity-50">
+          <Lock class="w-3.5 h-3.5" />
+          Verrouiller
+        </button>
+        <button v-if="period" type="button" @click="onUnlock" :disabled="lockLoading" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500 text-white hover:bg-red-600 disabled:opacity-50">
+          <Unlock class="w-3.5 h-3.5" />
+          Déverrouiller
+        </button>
+        <button v-if="period" type="button" @click="onValidate" :disabled="validateLoading" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-white hover:bg-brand-600 disabled:opacity-50">
+          <Check class="w-3.5 h-3.5" />
+          Valider la clôture
+        </button>
+      </div>
+
       <form @submit.prevent="onSubmit" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
         <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4">
@@ -86,7 +101,8 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { X, Clock, Calendar, AlertCircle, Check } from 'lucide-vue-next'
+import { X, Clock, Calendar, AlertCircle, Check, Lock, Unlock } from 'lucide-vue-next'
+import api from '@/api/axios'
 
 const props = defineProps({
   period: Object,
@@ -96,6 +112,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'save'])
 
 const saving = ref(false)
+const lockLoading = ref(false)
+const validateLoading = ref(false)
 const error = ref(null)
 const trimesters = ref([])
 
@@ -142,6 +160,50 @@ async function onSubmit() {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
   } finally {
     saving.value = false
+  }
+}
+
+async function onLock() {
+  if (!props.period?.id) return
+  lockLoading.value = true
+  error.value = null
+  try {
+    await api.post(`/api/periodes/${props.period.id}/verrouiller`)
+    error.value = null
+    emit('save', { ...form })
+  } catch (e) {
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du verrouillage'
+  } finally {
+    lockLoading.value = false
+  }
+}
+
+async function onUnlock() {
+  if (!props.period?.id) return
+  lockLoading.value = true
+  error.value = null
+  try {
+    await api.post(`/api/periodes/${props.period.id}/deverrouiller`)
+    error.value = null
+    emit('save', { ...form })
+  } catch (e) {
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du déverrouillage'
+  } finally {
+    lockLoading.value = false
+  }
+}
+
+async function onValidate() {
+  if (!props.period?.id) return
+  validateLoading.value = true
+  error.value = null
+  try {
+    await api.get(`/api/periodes/${props.period.id}/valider`)
+    error.value = null
+  } catch (e) {
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la validation'
+  } finally {
+    validateLoading.value = false
   }
 }
 </script>

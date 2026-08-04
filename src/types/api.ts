@@ -20,4 +20,11 @@ export interface LoginResponse {
   accessToken: string
   tokenType: string
   expiresIn: number
+  user?: {
+    id: number
+    username: string
+    roles: string[]
+    schoolId?: number
+    permissions: string[]
+  }
 }

@@ -20,18 +20,22 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import {
-  LayoutDashboard,
-  Users,
-  Star,
-  FileText,
-  Menu
-} from 'lucide-vue-next'
+   LayoutDashboard,
+   Users,
+   GraduationCap,
+   Building2,
+   Star,
+   FileText,
+   Menu
+ } from 'lucide-vue-next'
 
 const route = useRoute()
 
 const navItems = [
   { name: 'Accueil', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Élèves', path: '/eleves', icon: Users },
+  { name: 'Niveaux', path: '/niveaux', icon: GraduationCap },
+  { name: 'Sections', path: '/sections', icon: Building2 },
   { name: 'Notes', path: '/notes', icon: Star },
   { name: 'Bulletins', path: '/bulletins', icon: FileText },
   { name: 'Menu', path: '#', icon: Menu }

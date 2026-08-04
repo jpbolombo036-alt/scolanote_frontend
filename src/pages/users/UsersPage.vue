@@ -20,7 +20,7 @@
       <template #actions>
         <button
           @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+          class="bg-brand-500 hover:bg-brand-600 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <UserPlus class="w-4 h-4" />
           <span>Nouvel utilisateur</span>
@@ -34,7 +34,7 @@
           class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
           <td class="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0">
+            <div class="w-8 h-8 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs shrink-0">
               {{ (user.username || 'U').substring(0, 2).toUpperCase() }}
             </div>
             <span>{{ user.username }}</span>
@@ -58,13 +58,36 @@
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                 : 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'
             ]">
-              <span :class="['w-1.5 h-1.5 rounded-full mr-1.5', user.enabled !== false ? 'bg-emerald-500' : 'bg-red-500']"></span>
+              <span :class="['w-1.5 h-1.5 rounded-full mr-1.5', user.enabled !== false ? 'bg-brand-500' : 'bg-red-500']"></span>
               {{ user.enabled !== false ? 'Actif' : 'Inactif' }}
             </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end space-x-2">
+              <button
+                @click="toggleUserStatus(user)"
+                :class="user.enabled !== false
+                  ? 'p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition'
+                  : 'p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition'"
+                :title="user.enabled !== false ? 'Désactiver' : 'Activer'"
+              >
+                <CheckCircle v-if="user.enabled === false" class="w-4 h-4" />
+                <XCircle v-else class="w-4 h-4" />
+              </button>
+            </div>
           </td>
         </tr>
       </template>
     </DataTableCard>
+
+    <ConfirmDialog
+      :show="showConfirmDisable"
+      :title="userToToggle?.enabled !== false ? 'Désactiver l\'utilisateur' : 'Activer l\'utilisateur'"
+      :message="`Êtes-vous sûr de vouloir ${userToToggle?.enabled !== false ? 'désactiver' : 'activer'} '${userToToggle?.username}' ?`"
+      :confirmText="userToToggle?.enabled !== false ? 'Désactiver' : 'Activer'"
+      @cancel="showConfirmDisable = false"
+      @confirm="executeToggle"
+    />
   </div>
 </template>
 
@@ -73,7 +96,8 @@ import { ref, computed, onMounted } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
-import { AlertCircle, UserPlus } from 'lucide-vue-next'
+import { AlertCircle, UserPlus, CheckCircle, XCircle } from 'lucide-vue-next'
+import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -88,7 +112,8 @@ const columns = [
   { key: 'username', label: 'Nom d\'utilisateur' },
   { key: 'email', label: 'Email' },
   { key: 'roles', label: 'Rôles' },
-  { key: 'enabled', label: 'Statut' }
+  { key: 'enabled', label: 'Statut' },
+  { key: 'actions', label: 'Actions', headerClass: 'text-right' }
 ]
 
 const filteredUsers = computed(() => {
@@ -116,6 +141,32 @@ async function loadUsers() {
 
 function openCreateForm() {
   router.push('/users/nouveau')
+}
+
+const showConfirmDisable = ref(false)
+const userToToggle = ref(null)
+
+function toggleUserStatus(user) {
+  userToToggle.value = user
+  showConfirmDisable.value = true
+}
+
+async function executeToggle() {
+  if (!userToToggle.value) return
+  const user = userToToggle.value
+  try {
+    if (user.enabled !== false) {
+      await api.put(`/api/users/${user.id}`, { enabled: false })
+    } else {
+      await api.post('/auth/activer-utilisateur', null, { params: { username: user.username } })
+    }
+    showConfirmDisable.value = false
+    userToToggle.value = null
+    await loadUsers()
+  } catch (e) {
+    console.error('Erreur lors de la modification du statut', e)
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
+  }
 }
 
 onBeforeRouteUpdate(async (to, from) => {

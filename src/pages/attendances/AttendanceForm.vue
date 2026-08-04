@@ -131,7 +131,7 @@ onMounted(async () => {
       fetch('/api/periodes').then(r => r.json())
     ])
     students.value = studentsRes
-    periods.value = periodsRes
+    periods.value = Array.isArray(periodsRes) ? periodsRes : (periodsRes.content || [])
   } catch (e) {
     console.error('Erreur lors du chargement', e)
   }

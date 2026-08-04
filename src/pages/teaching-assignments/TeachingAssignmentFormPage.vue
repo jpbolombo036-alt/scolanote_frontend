@@ -75,9 +75,9 @@ const form = reactive({
 onMounted(async () => {
   try {
     const [teachersRes, classroomsRes, subjectsRes, assignmentRes] = await Promise.all([
-      api.get('/api/enseignants').then(r => r.data),
-      api.get('/api/salles').then(r => r.data),
-      api.get('/api/matieres').then(r => r.data),
+      api.get('/api/enseignants/all').then(r => r.data),
+      api.get('/api/salles/all').then(r => r.data),
+      api.get('/api/matieres/all').then(r => r.data),
       isEdit ? api.get(`/api/attributions-enseignement/${route.params.id}`).then(r => r.data) : Promise.resolve(null)
     ])
     teachers.value = teachersRes
@@ -95,7 +95,11 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    const payload = { ...form }
+    const payload = {
+      teacherId: Number(form.teacherId),
+      classroomId: Number(form.classroomId),
+      subjectId: Number(form.subjectId)
+    }
     if (isEdit) {
       await api.put(`/api/attributions-enseignement/${route.params.id}`, payload)
     } else {

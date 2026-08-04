@@ -1,4 +1,4 @@
-import api from './axios'
+﻿import api from './axios'
 import type { Assessment, AssessmentRequest, AssessmentResponse, PaginatedResponse } from '@/types'
 
 export async function createAssessment(data: AssessmentRequest): Promise<AssessmentResponse> {
@@ -7,30 +7,30 @@ export async function createAssessment(data: AssessmentRequest): Promise<Assessm
 }
 
 export async function getAssessment(id: number): Promise<AssessmentResponse> {
-  const response = await api.get(`/api/evaluations/${id}`)
+  const response = await api.get('/api/evaluations/' + id)
   return response.data
 }
 
-export async function getAllAssessments(params?: { page?: number; size?: number; sort?: string }): Promise<PaginatedResponse<AssessmentResponse>> {
-  const response = await api.get('/api/evaluations', { params })
+export async function getAllAssessments(): Promise<AssessmentResponse[]> {
+  const response = await api.get('/api/evaluations')
   return response.data
 }
 
-export async function getAssessmentsByAssignment(assignmentId: number): Promise<AssessmentResponse[]> {
-  const response = await api.get(`/api/evaluations/assignment/${assignmentId}`)
+export async function getAssessmentsByAssignment(attributionId: number): Promise<AssessmentResponse[]> {
+  const response = await api.get('/api/evaluations/attribution/' + attributionId)
   return response.data
 }
 
-export async function getAssessmentsByPeriod(periodId: number): Promise<AssessmentResponse[]> {
-  const response = await api.get(`/api/evaluations/period/${periodId}`)
+export async function getAssessmentsByTrimester(trimestreId: number): Promise<AssessmentResponse[]> {
+  const response = await api.get('/api/evaluations/trimestre/' + trimestreId)
   return response.data
 }
 
 export async function updateAssessment(id: number, data: AssessmentRequest): Promise<AssessmentResponse> {
-  const response = await api.put(`/api/evaluations/${id}`, data)
+  const response = await api.put('/api/evaluations/' + id, data)
   return response.data
 }
 
 export async function deleteAssessment(id: number): Promise<void> {
-  await api.delete(`/api/evaluations/${id}`)
+  await api.delete('/api/evaluations/' + id)
 }

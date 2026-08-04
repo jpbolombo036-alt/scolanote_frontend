@@ -24,7 +24,7 @@
       <template #actions>
         <button
           @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+          class="bg-brand-500 hover:bg-brand-600 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plus class="w-4 h-4" />
           <span>Nouvelle école</span>
@@ -38,7 +38,7 @@
           class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
           <td class="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-xs shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-black text-xs shrink-0">
               {{ (school.nom || 'E').substring(0, 2).toUpperCase() }}
             </div>
             <span>{{ school.nom }}</span>
@@ -55,7 +55,7 @@
             <div class="flex items-center justify-end space-x-2">
               <button
                 @click="openEditForm(school)"
-                class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
+                class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
                 title="Modifier"
               >
                 <Edit3 class="w-4 h-4" />

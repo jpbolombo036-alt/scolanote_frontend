@@ -1,30 +1,38 @@
 import {
-  LayoutDashboard,
-  School,
-  Calendar,
-  Clock,
-  Layers,
-  BookOpen,
-  UserCheck,
-  Users,
-  FileSpreadsheet,
-  CheckSquare,
-  Star,
-  CheckCircle2,
-  ShieldAlert,
-  FileText,
-  UserCog,
-  KeyRound,
-  GraduationCap,
-  ClipboardList,
-  ListChecks
-} from 'lucide-vue-next'
+   LayoutDashboard,
+   School,
+   Calendar,
+   Clock,
+   Layers,
+   BookOpen,
+   UserCheck,
+   Users,
+   FileSpreadsheet,
+   CheckSquare,
+   Star,
+   CheckCircle2,
+   ShieldAlert,
+   FileText,
+   UserCog,
+   KeyRound,
+   GraduationCap,
+   ClipboardList,
+   ListChecks,
+   Building2,
+   Network,
+   FileJson,
+   Tags
+ } from 'lucide-vue-next'
 
 export const navItems = [
   { name: 'Tableau de bord', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Élèves', path: '/eleves', icon: Users },
   { name: 'Classes', path: '/salles', icon: Layers },
   { name: 'Niveaux', path: '/niveaux', icon: GraduationCap },
+  { name: 'Sections', path: '/sections', icon: Building2 },
+  { name: 'Options', path: '/options', icon: Network },
+  { name: 'Programmes', path: '/programmes', icon: FileJson },
+  { name: 'Matières de programme', path: '/matieres-programme', icon: Tags },
   { name: 'Matières', path: '/matieres', icon: BookOpen },
   { name: 'Bulletins', path: '/bulletins', icon: FileText },
   { name: 'Notes', path: '/notes', icon: Star },
@@ -43,11 +51,11 @@ export const navItems = [
   { name: 'Rôles', path: '/roles', icon: KeyRound }
 ]
 
-export function isNavActive(path, currentPath) {
+export function isNavActive(path: string, currentPath: string) {
   return currentPath === path || currentPath.startsWith(path + '/')
 }
 
-export function getPageTitle(currentPath) {
+export function getPageTitle(currentPath: string) {
   const current = navItems.find(item => isNavActive(item.path, currentPath))
   return current ? current.name : 'GestBulletin'
 }

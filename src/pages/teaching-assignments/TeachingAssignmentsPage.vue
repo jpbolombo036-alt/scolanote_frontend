@@ -20,7 +20,7 @@
       <template #actions>
         <button
           @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+          class="bg-brand-500 hover:bg-brand-600 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plus class="w-4 h-4" />
           <span class="hidden sm:inline">Nouvelle affectation</span>
@@ -34,14 +34,14 @@
           :key="assignment.id"
           class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
-          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ assignment.teacher?.nom || assignment.teacherId || '-' }}</td>
-          <td class="px-6 py-4">{{ assignment.classroom?.nom || assignment.classroomId || '-' }}</td>
-          <td class="px-6 py-4">{{ assignment.subject?.nom || assignment.subjectId || '-' }}</td>
+          <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ assignment.teacherNom || assignment.teacher?.nom || assignment.teacherId || '-' }}</td>
+          <td class="px-6 py-4">{{ assignment.classroomNom || assignment.classroom?.nom || assignment.classroomId || '-' }}</td>
+          <td class="px-6 py-4">{{ assignment.subjectNom || assignment.subject?.nom || assignment.subjectId || '-' }}</td>
           <td class="px-6 py-4 text-right">
             <div class="flex items-center justify-end space-x-2">
               <button
                 @click="openEditForm(assignment)"
-                class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
+                class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
                 title="Modifier"
               >
                 <Edit3 class="w-4 h-4" />
@@ -121,9 +121,9 @@ const filteredAssignments = computed(() => {
   if (!searchQuery.value) return assignments.value
   const q = searchQuery.value.toLowerCase()
   return assignments.value.filter(a =>
-    (a.teacher?.nom && a.teacher.nom.toLowerCase().includes(q)) ||
-    (a.classroom?.nom && a.classroom.nom.toLowerCase().includes(q)) ||
-    (a.subject?.nom && a.subject.nom.toLowerCase().includes(q))
+    (a.teacherNom && a.teacherNom.toLowerCase().includes(q)) ||
+    (a.classroomNom && a.classroomNom.toLowerCase().includes(q)) ||
+    (a.subjectNom && a.subjectNom.toLowerCase().includes(q))
   )
 })
 

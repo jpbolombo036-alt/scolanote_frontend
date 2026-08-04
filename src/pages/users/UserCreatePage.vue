@@ -34,7 +34,10 @@
           </div>
           <div class="md:col-span-2">
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Rôle <span class="text-red-500">*</span></label>
-            <input v-model="form.role" type="text" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+            <select v-model="form.role" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition">
+              <option value="">Sélectionner</option>
+              <option v-for="r in roles" :key="r.id" :value="r.nom">{{ r.nom }}</option>
+            </select>
           </div>
         </div>
 
@@ -50,7 +53,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios'
 import { AlertCircle } from 'lucide-vue-next'
@@ -66,6 +69,17 @@ const form = reactive({
   telephone: '',
   password: '',
   role: ''
+})
+
+const roles = ref([])
+
+onMounted(async () => {
+  try {
+    const response = await api.get('/api/roles')
+    roles.value = Array.isArray(response.data) ? response.data : (response.data.content || [])
+  } catch (e) {
+    console.error('Erreur lors du chargement des rôles', e)
+  }
 })
 
 async function onSubmit() {

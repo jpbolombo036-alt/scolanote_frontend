@@ -209,6 +209,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
+import { getDashboard } from '@/api/dashboard'
 import {
   Users,
   Layers,
@@ -218,7 +219,8 @@ import {
   Eye,
   Pencil,
   CheckCircle2,
-  UserPlus
+  UserPlus,
+  School
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
@@ -235,7 +237,7 @@ const recentBulletins = ref([])
 const mentionDistribution = ref([])
 const activities = ref([])
 
-const avatarColors = ['bg-brand-500', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500']
+const avatarColors = ['bg-brand-500', 'bg-brand-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500']
 
 const MENTIONS = [
   { label: 'Très Bien', color: '#01B574' },
@@ -450,65 +452,82 @@ function buildMentionDistribution(bulletins) {
     .filter(m => m.percent > 0)
 }
 
-function buildActivities(bulletins, students) {
-  const items = []
+function getActivityIcon(type) {
+  const map = {
+    bulletin: CheckCircle2,
+    student: UserPlus,
+    archive: FileText,
+    grade: Star,
+    classroom: School
+  }
+  return map[type] || FileText
+}
 
-  bulletins.slice(0, 5).forEach((b, i) => {
-    items.push({
-      id: `bulletin-${b.id}-${i}`,
-      text: `Bulletin de ${b.student} enregistré`,
-      time: relativeTime(b.rawDate) || b.date,
-      icon: CheckCircle2,
-      bg: 'bg-emerald-50',
-      color: 'text-emerald-600',
-      sortKey: b.rawDate ? new Date(b.rawDate).getTime() : 0
-    })
-  })
+function getActivityBg(type) {
+  const map = {
+    bulletin: 'bg-emerald-50',
+    student: 'bg-blue-50',
+    archive: 'bg-amber-50',
+    grade: 'bg-violet-50',
+    classroom: 'bg-sky-50'
+  }
+  return map[type] || 'bg-slate-100'
+}
 
-  students.slice(0, 3).forEach((s, i) => {
-    const name = [s.nom, s.postnom, s.prenom].filter(Boolean).join(' ') || s.matricule || `Élève #${s.id}`
-    items.push({
-      id: `student-${s.id}-${i}`,
-      text: `Nouvel élève ajouté : ${name}`,
-      time: relativeTime(s.createdAt || s.dateCreation) || '',
-      icon: UserPlus,
-      bg: 'bg-blue-50',
-      color: 'text-blue-600',
-      sortKey: s.createdAt || s.dateCreation ? new Date(s.createdAt || s.dateCreation).getTime() : 0
-    })
-  })
-
-  return items
-    .sort((a, b) => b.sortKey - a.sortKey)
-    .slice(0, 6)
+function getActivityColor(type) {
+  const map = {
+    bulletin: 'text-emerald-600',
+    student: 'text-blue-600',
+    archive: 'text-amber-600',
+    grade: 'text-violet-600',
+    classroom: 'text-sky-600'
+  }
+  return map[type] || 'text-slate-600'
 }
 
 async function fetchStats() {
   loading.value = true
   try {
-    const [studentsRes, classroomsRes, bulletinsRes] = await Promise.allSettled([
-      api.get('/api/eleves', { params: { page: 0, size: 50, sort: 'id,desc' } }),
-      api.get('/api/salles', { params: { page: 0, size: 1 } }),
-      api.get('/api/bulletins', { params: { page: 0, size: 50, sort: 'id,desc' } })
-    ])
+    const data = await getDashboard()
 
-    stats.value.students = getCount(studentsRes)
-    stats.value.classrooms = getCount(classroomsRes)
-    stats.value.reportCards = getCount(bulletinsRes)
+    stats.value.students = data.stats?.students ?? 0
+    stats.value.classrooms = data.stats?.classrooms ?? 0
+    stats.value.reportCards = data.stats?.reportCards ?? 0
+    stats.value.average = data.stats?.average ?? null
 
-    const bulletinsRaw = getList(bulletinsRes)
-    const studentsRaw = getList(studentsRes)
-    const mapped = bulletinsRaw.map(mapBulletin)
+    recentBulletins.value = (data.recentBulletins || []).map((item, index) => {
+      const moyenne = toMoyenne(item)
+      const initials = (item.student || '')
+        .split(/\s+/)
+        .map(p => p[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase()
+      return {
+        id: item.id ?? index,
+        student: item.student || 'Élève',
+        initials: initials || 'EL',
+        avatarColor: avatarColors[index % avatarColors.length],
+        classe: item.classe || '—',
+        trimestre: item.trimestre || '—',
+        moyenne,
+        mention: normalizeMention(item.mention, moyenne),
+        date: formatDate(item.date),
+        rawDate: item.date || null
+      }
+    })
 
-    recentBulletins.value = mapped.slice(0, 6)
+    mentionDistribution.value = buildMentionDistribution(recentBulletins.value)
 
-    const averages = mapped.map(r => r.moyenne).filter(n => n != null)
-    stats.value.average = averages.length
-      ? averages.reduce((a, b) => a + b, 0) / averages.length
-      : null
-
-    mentionDistribution.value = buildMentionDistribution(mapped)
-    activities.value = buildActivities(mapped, studentsRaw)
+    activities.value = (data.activities || []).map((act, index) => ({
+      id: `activity-${index}`,
+      text: act.text,
+      time: act.time,
+      icon: getActivityIcon(act.type),
+      bg: getActivityBg(act.type),
+      color: getActivityColor(act.type),
+      sortKey: act.time ? new Date(act.time).getTime() : index
+    }))
   } catch (e) {
     console.error('Erreur chargement dashboard:', e)
   } finally {

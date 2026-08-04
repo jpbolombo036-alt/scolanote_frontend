@@ -1,7 +1,7 @@
 import api from './axios'
-import type { School, SchoolRequest, SchoolResponse, PaginatedResponse } from '@/types'
+import type { School, SchoolRequest, SchoolResponse, SchoolCreationResponse, PaginatedResponse } from '@/types'
 
-export async function createSchool(data: SchoolRequest): Promise<SchoolResponse> {
+export async function createSchool(data: SchoolRequest): Promise<SchoolCreationResponse> {
   const response = await api.post('/api/ecoles', data)
   return response.data
 }

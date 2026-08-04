@@ -1,4 +1,4 @@
-import api from './axios'
+﻿import api from './axios'
 import type { Grade, GradeRequest, GradeResponse, PaginatedResponse } from '@/types'
 
 export async function createGrade(data: GradeRequest): Promise<GradeResponse> {
@@ -7,7 +7,7 @@ export async function createGrade(data: GradeRequest): Promise<GradeResponse> {
 }
 
 export async function getGrade(id: number): Promise<GradeResponse> {
-  const response = await api.get(`/api/notes/${id}`)
+  const response = await api.get('/api/notes/' + id)
   return response.data
 }
 
@@ -16,21 +16,26 @@ export async function getAllGrades(params?: { page?: number; size?: number; sort
   return response.data
 }
 
-export async function getGradesByAssessment(assessmentId: number): Promise<GradeResponse[]> {
-  const response = await api.get(`/api/notes/assessment/${assessmentId}`)
+export async function getAllGradesUnpaginated(): Promise<GradeResponse[]> {
+  const response = await api.get('/api/notes/unpaginated')
   return response.data
 }
 
-export async function getGradesByStudent(studentId: number): Promise<GradeResponse[]> {
-  const response = await api.get(`/api/notes/student/${studentId}`)
+export async function getGradesByAssessment(evaluationId: number): Promise<GradeResponse[]> {
+  const response = await api.get('/api/notes/evaluation/' + evaluationId)
+  return response.data
+}
+
+export async function getGradesByStudent(eleveId: number): Promise<GradeResponse[]> {
+  const response = await api.get('/api/notes/eleve/' + eleveId)
   return response.data
 }
 
 export async function updateGrade(id: number, data: GradeRequest): Promise<GradeResponse> {
-  const response = await api.put(`/api/notes/${id}`, data)
+  const response = await api.put('/api/notes/' + id, data)
   return response.data
 }
 
 export async function deleteGrade(id: number): Promise<void> {
-  await api.delete(`/api/notes/${id}`)
+  await api.delete('/api/notes/' + id)
 }

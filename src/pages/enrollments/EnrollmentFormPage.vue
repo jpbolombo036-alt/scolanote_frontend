@@ -18,16 +18,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Élève <span class="text-red-500">*</span></label>
-            <select v-model="form.studentId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+            <select v-model.number="form.studentId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
               <option value="">Sélectionner</option>
-              <option v-for="s in students" :key="s.id" :value="s.id">{{ s.nom }} {{ s.postnom }}</option>
+              <option v-for="s in students" :key="s.id" :value="Number(s.id)">{{ s.nom }} {{ s.postnom }}</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Classe <span class="text-red-500">*</span></label>
-            <select v-model="form.classroomId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
+            <select v-model.number="form.classroomId" required class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-emerald-500 transition appearance-none">
               <option value="">Sélectionner</option>
-              <option v-for="c in classrooms" :key="c.id" :value="c.id">{{ c.nom }}</option>
+              <option v-for="c in classrooms" :key="c.id" :value="Number(c.id)">{{ c.nom }}</option>
             </select>
           </div>
           <div>
@@ -81,7 +81,7 @@ onMounted(async () => {
       isEdit ? api.get(`/api/inscriptions/${route.params.id}`).then(r => r.data) : Promise.resolve(null)
     ])
     students.value = Array.isArray(studentsRes) ? studentsRes : (studentsRes.content || [])
-    classrooms.value = classroomsRes
+    classrooms.value = Array.isArray(classroomsRes) ? classroomsRes : (classroomsRes.content || [])
     if (enrollmentRes) {
       Object.assign(form, enrollmentRes)
     }

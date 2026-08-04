@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { School, SchoolRequest } from '@/types'
+import type { School, SchoolRequest, SchoolCreationResponse } from '@/types'
 import * as schoolsApi from '@/api/schools'
 
 export const useSchoolStore = defineStore('school', () => {
@@ -55,8 +55,8 @@ export const useSchoolStore = defineStore('school', () => {
     loading.value = true
     error.value = null
     try {
-      const created = await schoolsApi.createSchool(data)
-      items.value.push(created)
+      const created = await schoolsApi.createSchool(data) as SchoolCreationResponse
+      items.value.push(created.school)
       return created
     } catch (e: any) {
       error.value = e.message

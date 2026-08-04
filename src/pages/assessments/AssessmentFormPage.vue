@@ -109,7 +109,7 @@ onMounted(async () => {
     ])
     assignments.value = assignmentsRes
     assessmentTypes.value = typesRes
-    periods.value = periodsRes
+    periods.value = Array.isArray(periodsRes) ? periodsRes : (periodsRes.content || [])
     if (assessmentRes) {
       Object.assign(form, assessmentRes)
     }

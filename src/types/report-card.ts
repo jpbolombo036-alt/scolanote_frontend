@@ -38,6 +38,8 @@ export interface ReportCardRequest {
   periodId: number
 }
 
+export type ReportCardStatut = 'BROUILLON' | 'VALIDE_PREFET' | 'VALIDE_DIRECTEUR' | 'SIGNE' | 'PUBLIE'
+
 export interface ReportCardResponse {
   id: number
   enrollmentId: number
@@ -66,6 +68,22 @@ export interface ReportCardResponse {
   application?: string
   dateGeneration?: string
   pdfUrl?: string
-  statut?: string
+  statut?: ReportCardStatut | string
   details?: ReportCardDetail[]
+}
+
+// === Workflow de validation/signature des bulletins (backend: ReportCardWorkflowController) ===
+
+export interface ReportCardWorkflowResponse {
+  id: number
+  statut: ReportCardStatut
+  signatureUrl?: string
+  valideParPrefetAt?: string
+  valideParDirecteurAt?: string
+  signeAt?: string
+  publieAt?: string
+}
+
+export interface ReportCardActionRequest {
+  signatureUrl?: string
 }

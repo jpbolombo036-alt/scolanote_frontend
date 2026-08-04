@@ -77,6 +77,7 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
 import { X, UserCheck, School, BookOpen, AlertCircle, Check } from 'lucide-vue-next'
+import api from '@/api/axios'
 
 const props = defineProps({
   assignment: Object,
@@ -108,9 +109,9 @@ watch(() => props.assignment, (newAssignment) => {
 onMounted(async () => {
   try {
     const [teachersRes, classroomsRes, subjectsRes] = await Promise.all([
-      fetch('/api/enseignants').then(r => r.json()),
-      fetch('/api/salles').then(r => r.json()),
-      fetch('/api/matieres').then(r => r.json())
+      api.get('/api/enseignants/all').then(r => r.data),
+      api.get('/api/salles/all').then(r => r.data),
+      api.get('/api/matieres/all').then(r => r.data)
     ])
     teachers.value = teachersRes
     classrooms.value = classroomsRes
@@ -124,7 +125,11 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    await emit('save', { ...form })
+    await emit('save', {
+      teacherId: Number(form.teacherId),
+      classroomId: Number(form.classroomId),
+      subjectId: Number(form.subjectId)
+    })
   } catch (e) {
     error.value = e.response?.data?.message || 'Erreur'
   } finally {

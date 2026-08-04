@@ -1,1 +1,3 @@
-export const API_BASE_URL = 'https://scolanote-production.up.railway.app'
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+
+export const API_BASE_URL = configuredApiBaseUrl || 'https://scolanote-production.up.railway.app'

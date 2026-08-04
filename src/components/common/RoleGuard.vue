@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!allowed" class="flex items-center justify-center h-96">
+  <div v-if="!isAllowed" class="flex items-center justify-center h-96">
     <div class="text-center">
       <div class="text-6xl mb-4">🔒</div>
       <h2 class="text-2xl font-bold text-gray-900 mb-2">Accès refusé</h2>
@@ -11,7 +11,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
   allowed: {
@@ -20,10 +19,5 @@ const props = defineProps({
   }
 })
 
-const authStore = useAuthStore()
-
-const isAllowed = computed(() => {
-  if (props.allowed) return true
-  return authStore.isDirection
-})
+const isAllowed = computed(() => props.allowed)
 </script>

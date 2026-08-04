@@ -33,7 +33,7 @@
         <!-- Photo fournie -->
         <div class="mt-auto flex-1 flex items-end justify-center min-h-0 pb-2">
           <img
-            src="/images/login-hero.png"
+            src="/images/login-hero%26.png"
             alt="GestBulletin — aperçu de la plateforme"
             class="w-full max-w-lg object-contain drop-shadow-2xl select-none pointer-events-none"
           />

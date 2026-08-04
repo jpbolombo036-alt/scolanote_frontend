@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { isAxiosError } from 'axios'
 import api from '@/api/axios'
 import type { LoginRequest, LoginResponse, UserResponse } from '@/types'
 
@@ -7,6 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
   const user = ref<UserResponse | null>(null)
   const roles = ref<string[]>([])
+  const permissions = ref<string[]>([])
   const schoolId = ref<number | null>(null)
 
   const isAuthenticated = computed(() => !!token.value)
@@ -21,7 +23,17 @@ export const useAuthStore = defineStore('auth', () => {
     const { data } = await api.post('/auth/token', credentials)
     token.value = data.accessToken
     localStorage.setItem('token', data.accessToken)
-    await fetchProfile()
+
+    // The backend login response already includes the minimal user profile.
+    // This makes the roles available immediately without a second request.
+    if (data.user) {
+      user.value = data.user
+      roles.value = data.user.roles || []
+      permissions.value = data.user.permissions || []
+      schoolId.value = data.user.schoolId ?? null
+    } else {
+      await fetchProfile()
+    }
     return data
   }
 
@@ -30,9 +42,10 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await api.get('/auth/me')
       user.value = data
       roles.value = data.roles || []
+      permissions.value = []
       schoolId.value = data.schoolId ?? null
     } catch (e) {
-      const status = e.response?.status
+      const status = isAxiosError(e) ? e.response?.status : undefined
       if (status === 401 || status === 403) {
         logout()
       } else {
@@ -45,9 +58,10 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = null
     user.value = null
     roles.value = []
+    permissions.value = []
     schoolId.value = null
     localStorage.removeItem('token')
   }
 
-  return { token, user, roles, schoolId, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, logout }
+  return { token, user, roles, permissions, schoolId, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, logout }
 })

@@ -138,7 +138,7 @@ onMounted(async () => {
     ])
     assignments.value = assignmentsRes
     assessmentTypes.value = typesRes
-    periods.value = periodsRes
+    periods.value = Array.isArray(periodsRes) ? periodsRes : (periodsRes.content || [])
   } catch (e) {
     console.error('Erreur lors du chargement', e)
   }

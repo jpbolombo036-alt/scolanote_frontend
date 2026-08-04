@@ -21,11 +21,10 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Matricule <span class="text-red-500">*</span></label>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Matricule <span class="text-slate-400 text-[10px]">(laisser vide pour générer automatiquement)</span></label>
               <input
                 v-model="form.matricule"
                 type="text"
-                required
                 placeholder="Ex: ELE-2026-001"
                 class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
               />
@@ -202,11 +201,6 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   
-  if (!form.matricule || !form.matricule.trim()) {
-    error.value = 'Le matricule est requis'
-    saving.value = false
-    return
-  }
   if (!form.nom || !form.nom.trim()) {
     error.value = 'Le nom est requis'
     saving.value = false

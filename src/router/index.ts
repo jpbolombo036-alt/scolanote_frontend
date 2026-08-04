@@ -37,6 +37,20 @@ const routes = [
       { path: 'niveaux', component: () => import('@/pages/levels/LevelsPage.vue') },
       { path: 'niveaux/form', component: () => import('@/pages/levels/LevelFormPage.vue') },
       { path: 'niveaux/form/:id', component: () => import('@/pages/levels/LevelFormPage.vue') },
+      { path: 'sections', component: () => import('@/pages/sections/SectionsPage.vue') },
+      { path: 'sections/form', component: () => import('@/pages/sections/SectionFormPage.vue') },
+      { path: 'sections/form/:id', component: () => import('@/pages/sections/SectionFormPage.vue') },
+      { path: 'options', component: () => import('@/pages/options/OptionsPage.vue') },
+      { path: 'options/form', component: () => import('@/pages/options/OptionFormPage.vue') },
+      { path: 'options/form/:id', component: () => import('@/pages/options/OptionFormPage.vue') },
+      { path: 'programmes', component: () => import('@/pages/curriculums/CurriculumsPage.vue') },
+      { path: 'programmes/form', component: () => import('@/pages/curriculums/CurriculumFormPage.vue') },
+      { path: 'programmes/form/:id', component: () => import('@/pages/curriculums/CurriculumFormPage.vue') },
+      { path: 'matieres-programme', component: () => import('@/pages/curriculum-subjects/CurriculumSubjectsPage.vue') },
+      { path: 'matieres-programme/form', component: () => import('@/pages/curriculum-subjects/CurriculumSubjectFormPage.vue') },
+      { path: 'matieres-programme/form/:id', component: () => import('@/pages/curriculum-subjects/CurriculumSubjectFormPage.vue') },
+      { path: 'mot-de-passe-oublie', component: () => import('@/pages/auth/ForgotPasswordPage.vue'), meta: { guest: true } },
+      { path: 'reinitialiser-mot-de-passe', component: () => import('@/pages/auth/ResetPasswordPage.vue'), meta: { guest: true } },
       { path: 'matieres', component: () => import('@/pages/subjects/SubjectsPage.vue') },
       { path: 'matieres/form', component: () => import('@/pages/subjects/SubjectFormPage.vue') },
       { path: 'matieres/form/:id', component: () => import('@/pages/subjects/SubjectFormPage.vue') },
@@ -72,7 +86,7 @@ const routes = [
       { path: 'bulletins/:id', component: () => import('@/pages/report-cards/ReportCardDetailPage.vue') },
       { path: 'users', component: () => import('@/pages/users/UsersPage.vue') },
       { path: 'users/nouveau', component: () => import('@/pages/users/UserCreatePage.vue') },
-      { path: 'roles', component: () => import('@/pages/roles/RolesPage.vue') },
+      { path: 'roles', component: () => import('@/pages/roles/RolesPage.vue') }
     ]
   }
 ]

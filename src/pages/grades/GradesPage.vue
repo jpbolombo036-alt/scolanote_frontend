@@ -20,7 +20,7 @@
       <template #actions>
         <button
           @click="openCreateForm"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2"
+          class="bg-brand-500 hover:bg-brand-600 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-sm shadow-lg shadow-brand-500/20 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <Plus class="w-4 h-4" />
           <span>Nouvelle note</span>
@@ -36,7 +36,7 @@
           <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ grade.studentNom || '-' }}</td>
           <td class="px-6 py-4">{{ grade.assessment?.titre || grade.assessmentId || '-' }}</td>
           <td class="px-6 py-4">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] border border-emerald-500/20">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold text-[11px] border border-brand-500/20">
               {{ grade.note || '-' }}
             </span>
           </td>
@@ -49,7 +49,7 @@
             <div class="flex items-center justify-end space-x-2">
               <button
                 @click="openEditForm(grade)"
-                class="p-2 text-slate-500 hover:text-emerald-500 dark:text-slate-400 dark:hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
+                class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
                 title="Modifier"
               >
                 <Edit3 class="w-4 h-4" />

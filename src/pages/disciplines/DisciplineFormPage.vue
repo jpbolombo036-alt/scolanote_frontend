@@ -86,7 +86,7 @@ onMounted(async () => {
       isEdit ? api.get(`/api/disciplines/${route.params.id}`).then(r => r.data) : Promise.resolve(null)
     ])
     students.value = Array.isArray(studentsRes) ? studentsRes : (studentsRes.content || [])
-    periods.value = periodsRes
+    periods.value = Array.isArray(periodsRes) ? periodsRes : (periodsRes.content || [])
     if (disciplineRes) {
       Object.assign(form, disciplineRes)
     }
