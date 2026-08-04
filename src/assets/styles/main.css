@@ -8,7 +8,58 @@
   }
 
   body {
-    @apply font-sans text-ink antialiased;
+    @apply font-sans text-ink antialiased bg-surface;
+  }
+
+  html.dark body {
+    @apply bg-slate-950 text-slate-100;
+    color-scheme: dark;
+  }
+}
+
+@layer utilities {
+  .dark .bg-surface {
+    background-color: #07101f !important;
+  }
+
+  .dark [class*="bg-white"] {
+    background-color: #0d1527 !important;
+  }
+
+  .dark [class*="bg-slate-50"] {
+    background-color: #0f172a !important;
+  }
+
+  .dark [class*="bg-slate-100"] {
+    background-color: #111827 !important;
+  }
+
+  .dark [class*="border-slate-100"] {
+    border-color: #1e293b !important;
+  }
+
+  .dark [class*="border-slate-200"] {
+    border-color: #334155 !important;
+  }
+
+  .dark [class*="border-white"] {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .dark [class*="divide-slate-100"] {
+    border-color: #1e293b !important;
+  }
+
+  .dark .text-ink {
+    color: #f8fafc !important;
+  }
+
+  .dark .text-ink-muted {
+    color: #94a3b8 !important;
+  }
+
+  .dark .text-ink-soft {
+    color: #cbd5e1 !important;
   }
 }
 

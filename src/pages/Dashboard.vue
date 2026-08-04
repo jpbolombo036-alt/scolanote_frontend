@@ -35,7 +35,7 @@
     </div>
 
     <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl overflow-hidden">
-      <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100">
+      <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 bg-surface/60 dark:bg-slate-900/80">
         <div class="flex items-center gap-2">
           <FileText class="w-5 h-5 text-brand-500" />
           <h3 class="text-base font-bold text-ink">Derniers bulletins</h3>
