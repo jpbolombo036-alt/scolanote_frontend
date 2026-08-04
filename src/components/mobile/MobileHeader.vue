@@ -1,6 +1,6 @@
 <template>
-  <header class="lg:hidden bg-brand-500 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30">
-    <button @click="$emit('openMenu')" class="p-2 -ml-2 rounded-xl hover:bg-white/10 transition">
+  <header class="lg:hidden bg-brand-500 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30 dark:bg-slate-950 dark:text-slate-100">
+    <button @click="$emit('openMenu')" class="p-2 -ml-2 rounded-xl hover:bg-white/10 dark:hover:bg-slate-800 transition">
       <Menu class="w-6 h-6" />
     </button>
     <div class="flex items-center gap-2">

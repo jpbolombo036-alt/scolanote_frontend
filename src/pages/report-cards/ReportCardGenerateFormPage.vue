@@ -45,8 +45,8 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import api from '@/api/axios'
+import { useRouter } from 'vue-router'
+import { generateBulletins } from '@/api/report-cards'
 import { AlertCircle } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -79,11 +79,19 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    const payload = { ...form }
-    await api.post('/api/bulletins/generer', payload)
+    const payload = {
+      classroomId: Number(form.classroomId),
+      periodId: Number(form.periodId)
+    }
+
+    if (!payload.classroomId || !payload.periodId) {
+      throw new Error('Veuillez sélectionner une classe et une période valides.')
+    }
+
+    await generateBulletins(payload)
     router.push('/bulletins')
   } catch (e) {
-    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
+    error.value = e.response?.data?.error || e.response?.data?.message || e.message || 'Erreur serveur'
   } finally {
     saving.value = false
   }

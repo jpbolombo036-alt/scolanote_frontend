@@ -53,7 +53,7 @@
       <div class="hidden lg:block overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="text-left text-ink-muted text-xs uppercase tracking-wider bg-surface/60">
+            <tr class="text-left text-ink-muted text-xs uppercase tracking-wider bg-surface/60 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-800">
               <th class="px-5 py-3 font-semibold">Élève</th>
               <th class="px-5 py-3 font-semibold">Classe</th>
               <th class="px-5 py-3 font-semibold">Trimestre</th>
@@ -73,7 +73,7 @@
             <tr
               v-for="row in recentBulletins"
               :key="row.id"
-              class="border-t border-slate-50 hover:bg-surface/50 transition"
+              class="border-t border-slate-100 dark:border-slate-800 hover:bg-surface/50 dark:hover:bg-slate-800/30 transition"
             >
               <td class="px-5 py-3.5">
                 <div class="flex items-center gap-3">
