@@ -9,12 +9,25 @@
       </div>
       <h1 class="text-base font-bold">GestBulletin</h1>
     </div>
-    <div class="w-10"></div>
+    <div class="flex items-center gap-2">
+      <button @click="$emit('openMenu')" class="sr-only">menu</button>
+      <button
+        @click="toggleTheme()"
+        :title="isDark ? 'Mode clair' : 'Mode sombre'"
+        class="p-2 rounded-xl text-white/90 hover:bg-white/10 transition"
+      >
+        <Moon v-if="!isDark" class="w-5 h-5" />
+        <Sun v-else class="w-5 h-5" />
+      </button>
+    </div>
   </header>
 </template>
 
 <script setup>
-import { Menu, FileText } from 'lucide-vue-next'
+import { Menu, FileText, Moon, Sun } from 'lucide-vue-next'
+import { useTheme } from '@/composables/useTheme'
+
+const { isDark, toggleTheme } = useTheme()
 
 defineEmits(['openMenu'])
 </script>
