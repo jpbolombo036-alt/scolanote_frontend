@@ -92,6 +92,15 @@
             <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">3</span>
           </button>
 
+          <button
+            @click="toggleTheme()"
+            :title="isDark ? 'Mode clair' : 'Mode sombre'"
+            class="p-2.5 rounded-xl text-ink-soft hover:bg-surface transition"
+          >
+            <Moon v-if="!isDark" class="w-5 h-5" />
+            <Sun v-else class="w-5 h-5" />
+          </button>
+
           <div class="flex items-center gap-2.5 pl-1">
             <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center">
               {{ userInitials }}
@@ -128,7 +137,9 @@ import {
   LogOut,
   Bell,
   Search,
-  FileText
+  FileText,
+  Moon,
+  Sun
 } from 'lucide-vue-next'
 
 import MobileHeader from '@/components/mobile/MobileHeader.vue'
@@ -174,4 +185,8 @@ function logout() {
   authStore.logout()
   router.push('/login')
 }
+
+// Theme
+import { useTheme } from '@/composables/useTheme'
+const { isDark, toggleTheme } = useTheme()
 </script>
