@@ -1,7 +1,7 @@
 <template>
-  <div class="h-screen overflow-hidden bg-surface font-sans text-ink selection:bg-brand-500 selection:text-white">
+  <div class="min-h-screen bg-surface font-sans text-ink selection:bg-brand-500 selection:text-white">
     <!-- Mobile Header -->
-    <MobileHeader @open-menu="mobileMenuOpen = true" />
+    <MobileHeader @open-menu="mobileMenuOpen = true" @logout="logout" />
 
     <!-- Desktop Sidebar -->
     <aside
@@ -59,7 +59,7 @@
     <MobileMenuDrawer :show="mobileMenuOpen" @close="mobileMenuOpen = false" />
 
     <!-- MAIN CONTENT -->
-    <div class="h-screen flex flex-col min-w-0 transition-all duration-300" :class="isCollapsed ? 'lg:ml-20' : 'lg:ml-64'">
+    <div class="min-h-screen flex flex-col min-w-0 transition-all duration-300" :class="isCollapsed ? 'lg:ml-20' : 'lg:ml-64'">
       <header
         class="hidden lg:flex fixed top-0 right-0 h-20 bg-white/90 backdrop-blur border-b border-slate-100 px-4 sm:px-6 items-center justify-between z-30 transition-all duration-300"
         :class="isCollapsed ? 'left-20' : 'left-64'"
