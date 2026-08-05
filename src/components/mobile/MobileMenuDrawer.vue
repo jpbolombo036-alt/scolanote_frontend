@@ -1,7 +1,7 @@
 <template>
   <div class="lg:hidden fixed inset-0 z-50" v-if="show">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="$emit('close')"></div>
-    <div class="absolute left-0 top-0 h-full w-72 bg-white dark:bg-slate-950 shadow-2xl transform transition-transform duration-300">
+    <div class="absolute left-0 top-0 h-full w-72 bg-white dark:bg-slate-950 shadow-2xl transform transition-transform duration-300 border-r border-slate-200 dark:border-slate-800">
       <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-brand-500 text-white flex items-center justify-center">
@@ -17,7 +17,7 @@
         </button>
       </div>
 
-      <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-8rem)]">
+      <nav class="px-3 pt-3 pb-2 space-y-1 overflow-y-auto max-h-[calc(100vh-16rem)]">
         <router-link
           v-for="item in navItems"
           :key="item.path"
@@ -33,24 +33,13 @@
         </router-link>
       </nav>
 
-      <div class="absolute bottom-0 left-0 right-0 p-3 border-t border-slate-100 dark:border-slate-800">
-        <button
-          @click="logout"
-          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-        >
-          <LogOut class="w-5 h-5" />
-          <span>Déconnexion</span>
-        </button>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { FileText, LogOut, X } from 'lucide-vue-next'
+import { useRoute } from 'vue-router'
 import { navItems, isNavActive } from '@/config/navigation'
 
 defineProps({
@@ -60,15 +49,8 @@ defineProps({
 defineEmits(['close'])
 
 const route = useRoute()
-const router = useRouter()
-const authStore = useAuthStore()
 
 function isActive(path) {
   return isNavActive(path, route.path)
-}
-
-function logout() {
-  authStore.logout()
-  router.push('/login')
 }
 </script>

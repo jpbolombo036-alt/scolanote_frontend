@@ -32,3 +32,14 @@ export interface CurrentUserResponse {
   roles: string[]
   schoolId?: number
 }
+
+export interface ProfileUpdateRequest {
+  username?: string
+  email?: string
+  telephone?: string
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string
+  newPassword: string
+}

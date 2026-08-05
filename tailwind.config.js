@@ -6,6 +6,17 @@ export default {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
+    borderRadius: {
+      none: '0px',
+      sm: '0.125rem',
+      DEFAULT: '0.25rem',
+      md: '0.375rem',
+      lg: '0.5rem',
+      xl: '0.75rem',
+      '2xl': '1rem',
+      '3xl': '1.25rem',
+      full: '9999px',
+    },
     extend: {
       colors: {
         brand: {
@@ -49,9 +60,6 @@ export default {
         card: '0 4px 12px rgba(0, 0, 0, 0.05)',
         soft: '0 10px 30px rgba(0, 61, 168, 0.08)',
       },
-      borderRadius: {
-        xl2: '12px',
-      }
     },
   },
   plugins: [],

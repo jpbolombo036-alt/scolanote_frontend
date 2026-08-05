@@ -43,25 +43,16 @@
 
       <div class="p-3 border-t border-white/10 dark:border-slate-700">
         <button
-          @click="logout"
-          :class="[
-            'w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-medium border border-white/25 text-white hover:bg-white/10 transition dark:border-slate-700 dark:hover:bg-slate-800/70',
-            isCollapsed ? 'px-2' : ''
-          ]"
+          @click="isCollapsed = !isCollapsed"
+          class="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-medium border border-white/25 text-white hover:bg-white/10 transition dark:border-slate-700 dark:hover:bg-slate-800/70"
+          :title="isCollapsed ? 'Agrandir' : 'Réduire'"
         >
-          <LogOut class="w-4 h-4 shrink-0" />
-          <span v-if="!isCollapsed">Déconnexion</span>
+          <span v-if="isCollapsed">&#x2192;</span>
+          <ChevronLeft v-if="!isCollapsed" class="w-4 h-4" />
+          <ChevronRight v-else class="w-4 h-4" />
         </button>
       </div>
 
-      <button
-        @click="isCollapsed = !isCollapsed"
-        class="absolute top-24 -right-3 w-6 h-6 rounded-full bg-white text-brand-600 shadow-md border border-slate-100 flex items-center justify-center z-50 hover:scale-105 transition dark:bg-slate-800 dark:text-white dark:border-slate-700"
-        :title="isCollapsed ? 'Agrandir' : 'Réduire'"
-      >
-        <ChevronLeft v-if="!isCollapsed" class="w-3.5 h-3.5" />
-        <ChevronRight v-else class="w-3.5 h-3.5" />
-      </button>
     </aside>
 
     <!-- Mobile Menu Drawer -->
@@ -92,24 +83,62 @@
             <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">3</span>
           </button>
 
-          <button
-            @click="toggleTheme()"
-            :title="isDark ? 'Mode clair' : 'Mode sombre'"
-            class="p-2.5 rounded-xl text-ink-soft hover:bg-surface transition"
-          >
-            <Moon v-if="!isDark" class="w-5 h-5" />
-            <Sun v-else class="w-5 h-5" />
-          </button>
+          <div class="flex items-center gap-2.5 pl-1 relative">
+            <div ref="userMenuTrigger">
+              <button
+                @click.stop="toggleUserMenu"
+                class="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm hover:bg-slate-50 transition"
+              >
+                <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center">
+                  {{ userInitials }}
+                </div>
+                <div class="hidden sm:block leading-tight text-left">
+                  <p class="text-sm font-semibold text-ink">{{ displayName }}</p>
+                  <p class="text-xs text-ink-muted">{{ displayRole }}</p>
+                </div>
+                <ChevronDown class="w-4 h-4 text-ink-muted hidden sm:block" />
+              </button>
 
-          <div class="flex items-center gap-2.5 pl-1">
-            <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-bold text-xs flex items-center justify-center">
-              {{ userInitials }}
+              <transition name="fade-slide">
+                <div
+                  v-if="isUserMenuOpen"
+                  ref="userMenuPanel"
+                  class="absolute right-0 z-50 mt-3 w-[300px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5"
+                  @click.stop
+                >
+                  <div class="px-4 py-3 border-b border-slate-100">
+                    <p class="text-sm font-semibold text-ink truncate">{{ displayName }}</p>
+                    <p class="text-xs text-ink-muted truncate">{{ displayRole }}</p>
+                  </div>
+                  <div class="py-2">
+                    <button
+                      type="button"
+                      @click="goToProfile"
+                      class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-ink hover:bg-slate-50 transition"
+                    >
+                      <User class="w-4 h-4 text-ink-muted" />
+                      <span>Mon profil</span>
+                    </button>
+                    <button
+                      type="button"
+                      @click="toggleThemeMenu"
+                      class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-ink hover:bg-slate-50 transition"
+                    >
+                      <Moon class="w-4 h-4 text-ink-muted" />
+                      <span>{{ isDark ? 'Mode clair' : 'Mode sombre' }}</span>
+                    </button>
+                    <button
+                      type="button"
+                      @click="logout"
+                      class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-slate-50 transition"
+                    >
+                      <LogOut class="w-4 h-4" />
+                      <span>Déconnexion</span>
+                    </button>
+                  </div>
+                </div>
+              </transition>
             </div>
-            <div class="hidden sm:block leading-tight">
-              <p class="text-sm font-semibold text-ink">{{ displayName }}</p>
-              <p class="text-xs text-ink-muted">{{ displayRole }}</p>
-            </div>
-            <ChevronDown class="w-4 h-4 text-ink-muted hidden sm:block" />
           </div>
         </div>
       </header>
@@ -127,19 +156,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  LogOut,
   Bell,
   Search,
   FileText,
   Moon,
-  Sun
+  Sun,
+  User,
+  LogOut
 } from 'lucide-vue-next'
 
 import MobileHeader from '@/components/mobile/MobileHeader.vue'
@@ -152,10 +182,55 @@ const router = useRouter()
 const authStore = useAuthStore()
 const isCollapsed = ref(false)
 const mobileMenuOpen = ref(false)
+const isUserMenuOpen = ref(false)
+const userMenuTrigger = ref(null)
+const userMenuPanel = ref(null)
 
 function isActive(path) {
   return isNavActive(path, route.path)
 }
+
+function toggleUserMenu() {
+  isUserMenuOpen.value = !isUserMenuOpen.value
+}
+
+function closeUserMenu() {
+  isUserMenuOpen.value = false
+}
+
+function goToProfile() {
+  closeUserMenu()
+  router.push('/profil')
+}
+
+function toggleThemeMenu() {
+  toggleTheme()
+  closeUserMenu()
+}
+
+function onDocumentPointer(event) {
+  const target = event.target
+  if (!isUserMenuOpen.value || !(target instanceof Node)) {
+    return
+  }
+
+  if (
+    !userMenuTrigger.value?.contains(target) &&
+    !userMenuPanel.value?.contains(target)
+  ) {
+    closeUserMenu()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('mousedown', onDocumentPointer)
+  document.addEventListener('touchstart', onDocumentPointer)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', onDocumentPointer)
+  document.removeEventListener('touchstart', onDocumentPointer)
+})
 
 const currentPageTitle = computed(() => getPageTitle(route.path))
 
@@ -190,3 +265,20 @@ function logout() {
 import { useTheme } from '@/composables/useTheme'
 const { isDark, toggleTheme } = useTheme()
 </script>
+
+<style scoped>
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <div class="lg:hidden bg-brand-500 rounded-2xl p-5 text-white">
+    <div class="lg:hidden bg-brand-500 rounded-xl p-5 text-white">
       <p class="text-sm font-medium text-blue-100">Bonjour,</p>
       <h1 class="text-2xl font-bold mt-1">{{ authStore.user?.username || 'Utilisateur' }} 👋</h1>
       <p class="text-sm text-blue-100 mt-1">Bienvenue sur GestBulletin</p>
@@ -15,7 +15,7 @@
       <div
         v-for="card in statCards"
         :key="card.label"
-        class="bg-white dark:bg-[#0d1527] rounded-2xl shadow-card border border-slate-100/80 dark:border-slate-800 p-4 lg:p-5"
+        class="bg-white dark:bg-[#0d1527] rounded-xl shadow-card border border-slate-100/80 dark:border-slate-800 p-4 lg:p-5"
       >
         <div class="flex items-start justify-between">
           <div>
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl overflow-hidden">
+    <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-xl overflow-hidden">
       <div class="px-4 lg:px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 bg-surface/60 dark:bg-slate-900/80">
         <div class="flex items-center gap-2">
           <FileText class="w-5 h-5 text-brand-500" />
@@ -143,7 +143,7 @@
     </div>
 
     <div class="hidden lg:grid grid-cols-2 gap-5">
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl p-5">
+      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-xl p-5">
         <h3 class="text-base font-bold text-ink mb-6">Répartition des mentions</h3>
         <div v-if="!mentionDistribution.length" class="py-10 text-center text-sm text-ink-muted">
           Aucune donnée de mention pour le moment
@@ -183,7 +183,7 @@
         </div>
       </div>
 
-      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-lg shadow-slate-200/50 dark:shadow-xl p-5">
+      <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-xl p-5">
         <h3 class="text-base font-bold text-ink mb-5">Activités récentes</h3>
         <div v-if="!activities.length" class="py-10 text-center text-sm text-ink-muted">
           Aucune activité récente

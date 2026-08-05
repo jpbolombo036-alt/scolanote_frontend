@@ -84,6 +84,7 @@ const routes = [
       { path: 'bulletins', component: () => import('@/pages/report-cards/ReportCardsPage.vue') },
       { path: 'bulletins/nouveau', component: () => import('@/pages/report-cards/ReportCardGenerateFormPage.vue') },
       { path: 'bulletins/:id', component: () => import('@/pages/report-cards/ReportCardDetailPage.vue') },
+      { path: 'profil', name: 'profile', component: () => import('@/pages/profile/ProfilePage.vue') },
       { path: 'users', component: () => import('@/pages/users/UsersPage.vue') },
       { path: 'users/nouveau', component: () => import('@/pages/users/UserCreatePage.vue') },
       { path: 'roles', component: () => import('@/pages/roles/RolesPage.vue') }

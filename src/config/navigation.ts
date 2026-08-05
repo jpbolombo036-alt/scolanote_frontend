@@ -26,6 +26,7 @@ import {
 
 export const navItems = [
   { name: 'Tableau de bord', path: '/dashboard', icon: LayoutDashboard },
+  { name: 'Mon profil', path: '/profil', icon: UserCog },
   { name: 'Élèves', path: '/eleves', icon: Users },
   { name: 'Classes', path: '/salles', icon: Layers },
   { name: 'Niveaux', path: '/niveaux', icon: GraduationCap },

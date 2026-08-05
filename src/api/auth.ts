@@ -1,5 +1,5 @@
 import api from './axios'
-import type { LoginRequest, LoginResponse, RegisterAgentRequest, RegisterAgentResponse, PasswordResetRequest, PasswordResetConfirm } from '@/types'
+import type { LoginRequest, LoginResponse, RegisterAgentRequest, RegisterAgentResponse, PasswordResetRequest, PasswordResetConfirm, ProfileUpdateRequest, ChangePasswordRequest } from '@/types'
 
 export async function login(data: LoginRequest): Promise<LoginResponse> {
   const response = await api.post('/auth/token', data)
@@ -18,6 +18,16 @@ export async function forgotPassword(email: string): Promise<string> {
 
 export async function resetPassword(token: string, newPassword: string): Promise<string> {
   const response = await api.post('/auth/reinitialiser-mot-de-passe', { token, newPassword })
+  return response.data
+}
+
+export async function updateProfile(data: ProfileUpdateRequest) {
+  const response = await api.put('/auth/me', data)
+  return response.data
+}
+
+export async function changePassword(data: ChangePasswordRequest) {
+  const response = await api.post('/auth/change-password', data)
   return response.data
 }
 

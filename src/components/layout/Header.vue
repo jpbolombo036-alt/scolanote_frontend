@@ -33,6 +33,7 @@ const title = computed(() => {
     '/presences': 'Présences',
     '/disciplines': 'Disciplines',
     '/bulletins': 'Bulletins',
+    '/profil': 'Mon profil',
     '/users': 'Utilisateurs',
     '/roles': 'Rôles'
   }
