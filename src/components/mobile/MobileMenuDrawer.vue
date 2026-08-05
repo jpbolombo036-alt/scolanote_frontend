@@ -33,24 +33,44 @@
         </router-link>
       </nav>
 
+      <div class="px-3 py-4 border-t border-slate-100 dark:border-slate-800">
+        <button
+          type="button"
+          @click="logout"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+        >
+          <LogOut class="w-5 h-5" />
+          <span>Déconnexion</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { LogOut, FileText, X } from 'lucide-vue-next'
 import { navItems, isNavActive } from '@/config/navigation'
 
-defineProps({
-  show: Boolean
-})
-
-defineEmits(['close'])
+const emit = defineEmits(['close'])
 
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
 
 function isActive(path) {
   return isNavActive(path, route.path)
 }
+
+function logout() {
+  authStore.logout()
+  router.push('/login')
+  emit('close')
+}
+
+const props = defineProps({
+  show: Boolean
+})
 </script>

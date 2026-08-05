@@ -45,7 +45,8 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import api from '@/api/axios'
 import { generateBulletins } from '@/api/report-cards'
 import { AlertCircle } from 'lucide-vue-next'
 

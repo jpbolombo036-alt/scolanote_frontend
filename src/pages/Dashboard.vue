@@ -220,7 +220,8 @@ import {
   Pencil,
   CheckCircle2,
   UserPlus,
-  School
+  School,
+  Star
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
@@ -240,6 +241,7 @@ const activities = ref([])
 const avatarColors = ['bg-brand-500', 'bg-brand-500', 'bg-violet-500', 'bg-amber-500', 'bg-rose-500', 'bg-sky-500']
 
 const MENTIONS = [
+  { label: 'Excellent', color: '#0B8C4C' },
   { label: 'Très Bien', color: '#01B574' },
   { label: 'Bien', color: '#0061FF' },
   { label: 'Assez Bien', color: '#FFB547' },
@@ -318,10 +320,10 @@ function getList(res) {
 
 function mentionFromAverage(avg) {
   if (avg == null || Number.isNaN(avg)) return '—'
-  if (avg >= 16) return 'Très Bien'
-  if (avg >= 14) return 'Bien'
-  if (avg >= 12) return 'Assez Bien'
-  if (avg >= 10) return 'Passable'
+  if (avg >= 85) return 'Excellent'
+  if (avg >= 70) return 'Très Bien'
+  if (avg >= 60) return 'Bien'
+  if (avg >= 50) return 'Passable'
   return 'Insuffisant'
 }
 
@@ -332,6 +334,8 @@ function normalizeMention(raw, moyenne) {
   if (known) return known.label
   // Variantes courtes éventuelles
   const aliases = {
+    excellent: 'Excellent',
+    ex: 'Excellent',
     tb: 'Très Bien',
     'tres bien': 'Très Bien',
     'très bien': 'Très Bien',
