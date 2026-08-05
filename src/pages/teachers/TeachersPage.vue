@@ -51,6 +51,13 @@
           <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ teacher.email || '-' }}</td>
           <td class="px-6 py-4 text-right">
             <div class="flex items-center justify-end space-x-2">
+              <router-link
+                :to="`/enseignants/${teacher.id}`"
+                class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
+                title="Voir"
+              >
+                <Eye class="w-4 h-4" />
+              </router-link>
               <button
                 @click="openEditForm(teacher)"
                 class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
@@ -111,7 +118,7 @@ import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { useRouter, useRoute } from 'vue-router'
-import { UserCheck, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { UserCheck, AlertCircle, Edit3, Trash2, Eye } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()

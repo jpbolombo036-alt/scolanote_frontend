@@ -78,10 +78,10 @@
             <tr v-for="detail in reportCard.details" :key="detail.id">
               <td class="px-4 py-3">{{ detail.subjectNom }}</td>
               <td class="px-4 py-3">{{ detail.coefficient }}</td>
-              <td class="px-4 py-3">{{ detail.moyenne }}</td>
+              <td class="px-4 py-3">{{ formatMoyenne(detail.moyenne) }}</td>
               <td class="px-4 py-3">{{ detail.rangMatiere }}</td>
-              <td class="px-4 py-3">{{ detail.points }} / {{ detail.maximum }}</td>
-              <td class="px-4 py-3">{{ detail.pourcentage }}%</td>
+              <td class="px-4 py-3">{{ formatMoyenne(detail.points) }} / {{ formatMoyenne(detail.maximum) }}</td>
+              <td class="px-4 py-3">{{ formatMoyenne(detail.pourcentage) }}%</td>
               <td class="px-4 py-3">{{ detail.observation }}</td>
             </tr>
           </tbody>
@@ -90,12 +90,12 @@
 
       <div class="bg-white shadow rounded-lg p-6">
         <h3 class="text-lg font-semibold mb-4">Résumé</h3>
-        <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-4">
           <div>
-            <span class="font-semibold">Total points:</span> {{ reportCard.totalPoints }} / {{ reportCard.maximumPoints }}
+            <span class="font-semibold">Total points:</span> {{ formatMoyenne(reportCard.totalPoints) }} / {{ formatMoyenne(reportCard.maximumPoints) }}
           </div>
           <div>
-            <span class="font-semibold">Pourcentage:</span> {{ reportCard.pourcentage }}%
+            <span class="font-semibold">Pourcentage:</span> {{ formatMoyenne(reportCard.pourcentage) }}%
           </div>
           <div>
             <span class="font-semibold">Rang:</span> {{ reportCard.rang }}
@@ -118,6 +118,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+
+function formatMoyenne(avg) {
+  if (avg == null || Number.isNaN(Number(avg))) return '—'
+  return Number(avg).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 import { useAuthStore } from '@/stores/auth'
 import {
   getReportCard,

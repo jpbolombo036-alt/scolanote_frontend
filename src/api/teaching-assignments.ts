@@ -21,6 +21,11 @@ export async function getTeachingAssignmentsByClassroom(classroomId: number): Pr
   return response.data
 }
 
+export async function getTeachingAssignmentsByTeacher(teacherId: number): Promise<TeachingAssignmentResponse[]> {
+  const response = await api.get(`/api/attributions-enseignement/enseignant/${teacherId}`)
+  return response.data
+}
+
 export async function updateTeachingAssignment(id: number, data: TeachingAssignmentRequest): Promise<TeachingAssignmentResponse> {
   const response = await api.put(`/api/attributions-enseignement/${id}`, data)
   return response.data

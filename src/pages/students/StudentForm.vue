@@ -89,7 +89,7 @@
         </div>
 
         <!-- Contact -->
-        <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+        <div class="bg-white dark:bg-[#0d1527] border border-slate-200/80 dark:border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4">
             <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center">
               <Phone class="w-4 h-4" />

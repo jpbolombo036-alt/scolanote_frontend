@@ -17,7 +17,7 @@ export async function getAllDisciplines(params?: { page?: number; size?: number;
 }
 
 export async function getDisciplinesByStudent(studentId: number): Promise<DisciplineResponse[]> {
-  const response = await api.get(`/api/disciplines/student/${studentId}`)
+  const response = await api.get(`/api/disciplines/eleve/${studentId}`)
   return response.data
 }
 

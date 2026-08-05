@@ -24,6 +24,12 @@ export async function getReportCardsByEnrollment(enrollmentId: number): Promise<
   return response.data
 }
 
+/** Génère le bulletin (si absent) pour une inscription (élève) et une période */
+export async function generateBulletinForEnrollment(enrollmentId: number, periodId: number): Promise<ReportCardResponse> {
+  const response = await api.post(`/api/bulletins/inscription/${enrollmentId}/generer`, { periodId })
+  return response.data
+}
+
 /** Bulletins d'un trimestre (le backend expose /trimestre/{trimestreId}) */
 export async function getReportCardsByTrimester(trimestreId: number): Promise<ReportCardResponse[]> {
   const response = await api.get(`/api/bulletins/trimestre/${trimestreId}`)

@@ -74,7 +74,7 @@
           <td class="px-6 py-4">{{ reportCard.periodNom || reportCard.period?.nom || '-' }}</td>
           <td class="px-6 py-4">
             <span class="font-extrabold text-emerald-600 dark:text-emerald-400">
-              {{ reportCard.pourcentage || reportCard.moyenne || 0 }}%
+              {{ formatMoyenne(reportCard.pourcentage ?? reportCard.moyenne) }}%
             </span>
           </td>
           <td class="px-6 py-4">
@@ -127,6 +127,11 @@ import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import { FileText, Sparkles, AlertCircle, Download } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
+
+function formatMoyenne(avg) {
+  if (avg == null || Number.isNaN(Number(avg))) return '—'
+  return Number(avg).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 
 const router = useRouter()
 const route = useRoute()
