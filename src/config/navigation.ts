@@ -52,6 +52,10 @@ export const navItems = [
   { name: 'Années scolaires', path: '/annees-academiques', icon: Calendar, group: 'Structure' },
   { name: 'Trimestres', path: '/trimestres', icon: Clock, group: 'Structure' },
   { name: 'Périodes', path: '/periodes', icon: Layers, group: 'Structure' },
+  { name: 'Rapports', path: '/rapports', icon: FileText, group: 'Rapports & Données' },
+  { name: 'Exports', path: '/exports', icon: FileJson, group: 'Rapports & Données' },
+  { name: 'Import / Export', path: '/imports', icon: FileSpreadsheet, group: 'Rapports & Données' },
+  { name: 'Sauvegardes', path: '/sauvegardes', icon: Network, group: 'Rapports & Données' },
   { name: 'Utilisateurs', path: '/users', icon: UserCog, group: 'Personnes' },
   { name: 'Rôles', path: '/roles', icon: KeyRound, group: 'Administration' },
 
