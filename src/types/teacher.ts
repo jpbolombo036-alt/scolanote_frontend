@@ -41,4 +41,7 @@ export interface TeacherResponse {
   etat?: string
   createdAt?: string
   updatedAt?: string
+  accountCreated?: boolean
+  accountUsername?: string
+  accountLoginHint?: string
 }

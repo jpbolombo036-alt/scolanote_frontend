@@ -15,6 +15,22 @@
       <span>{{ error }}</span>
     </div>
 
+    <div v-if="successMessage" class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 p-4 rounded-2xl text-sm font-medium flex items-start gap-2">
+      <CheckCircle2 class="w-5 h-5 shrink-0 mt-0.5" />
+      <div>
+        <p class="font-bold mb-1">Professeur créé avec succès</p>
+        <p v-if="createdTeacher?.accountCreated" class="text-xs opacity-90">
+          Compte de connexion créé automatiquement.<br/>
+          <strong>Identifiant :</strong> {{ createdTeacher.accountUsername || createdTeacher.email }}<br/>
+          <strong>Mot de passe temporaire :</strong> 12345678<br/>
+          {{ createdTeacher.accountLoginHint || '' }}
+        </p>
+        <p v-else class="text-xs opacity-90">
+          {{ createdTeacher?.accountLoginHint || 'Le compte de connexion n\'a pas pu être créé automatiquement. Contactez l\'administrateur.' }}
+        </p>
+      </div>
+    </div>
+
     <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl p-6 md:p-8 w-full">
       <form @submit.prevent="onSubmit" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -59,7 +75,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
-import { AlertCircle } from 'lucide-vue-next'
+import { AlertCircle, CheckCircle2 } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -67,6 +83,8 @@ const router = useRouter()
 const isEdit = !!route.params.id
 const saving = ref(false)
 const error = ref(null)
+const successMessage = ref('')
+const createdTeacher = ref(null)
 
 const form = reactive({
   nom: '',
@@ -90,14 +108,24 @@ onMounted(async () => {
 async function onSubmit() {
   saving.value = true
   error.value = null
+  successMessage.value = ''
+  createdTeacher.value = null
   try {
     const payload = { ...form }
+    let response
     if (isEdit) {
-      await api.put(`/api/enseignants/${route.params.id}`, payload)
+      response = await api.put(`/api/enseignants/${route.params.id}`, payload)
     } else {
-      await api.post('/api/enseignants', payload)
+      response = await api.post('/api/enseignants', payload)
     }
-    router.push('/enseignants')
+    createdTeacher.value = response.data
+    successMessage.value = 'Professeur enregistré avec succès'
+    form.nom = ''
+    form.postnom = ''
+    form.prenom = ''
+    form.specialite = ''
+    form.telephone = ''
+    form.email = ''
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
   } finally {
