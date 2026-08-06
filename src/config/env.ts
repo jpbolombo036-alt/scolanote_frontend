@@ -1,3 +1,3 @@
 const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
 
-export const API_BASE_URL = configuredApiBaseUrl || 'https://scolanote-production.up.railway.app'
+export const API_BASE_URL = configuredApiBaseUrl || 'https://app.gestbulletin.com'
