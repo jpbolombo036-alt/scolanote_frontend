@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const roles = ref<string[]>([])
   const permissions = ref<string[]>([])
   const schoolId = ref<number | null>(null)
+  const passwordResetRequired = ref(false)
 
   const isAuthenticated = computed(() => !!token.value)
   const isDirection = computed(() => roles.value.some(r => ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET'].includes(r)))
@@ -24,13 +25,12 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = data.accessToken
     localStorage.setItem('token', data.accessToken)
 
-    // The backend login response already includes the minimal user profile.
-    // This makes the roles available immediately without a second request.
     if (data.user) {
       user.value = data.user
       roles.value = data.user.roles || []
       permissions.value = data.user.permissions || []
       schoolId.value = data.user.schoolId ?? null
+      passwordResetRequired.value = data.user.passwordResetRequired ?? false
     } else {
       await fetchProfile()
     }
@@ -44,6 +44,7 @@ export const useAuthStore = defineStore('auth', () => {
       roles.value = data.roles || []
       permissions.value = []
       schoolId.value = data.schoolId ?? null
+      passwordResetRequired.value = false
     } catch (e) {
       const status = isAxiosError(e) ? e.response?.status : undefined
       if (status === 401 || status === 403) {
@@ -54,14 +55,19 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  function clearPasswordResetRequired() {
+    passwordResetRequired.value = false
+  }
+
   function logout() {
     token.value = null
     user.value = null
     roles.value = []
     permissions.value = []
     schoolId.value = null
+    passwordResetRequired.value = false
     localStorage.removeItem('token')
   }
 
-  return { token, user, roles, permissions, schoolId, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, fetchProfile, logout }
+  return { token, user, roles, permissions, schoolId, passwordResetRequired, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, fetchProfile, logout, clearPasswordResetRequired }
 })

@@ -98,36 +98,37 @@ async function saveProfile() {
   }
 }
 
-async function changePassword() {
-  pwdMessage.value = ''
-  pwdError.value = false
+  async function changePassword() {
+    pwdMessage.value = ''
+    pwdError.value = false
 
-  if (!pwd.currentPassword || !pwd.newPassword) {
-    pwdError.value = true
-    pwdMessage.value = 'Veuillez remplir tous les champs.'
-    return
-  }
+    if (!pwd.currentPassword || !pwd.newPassword) {
+      pwdError.value = true
+      pwdMessage.value = 'Veuillez remplir tous les champs.'
+      return
+    }
 
-  if (pwd.newPassword !== pwd.confirmNewPassword) {
-    pwdError.value = true
-    pwdMessage.value = 'Les mots de passe ne correspondent pas.'
-    return
-  }
+    if (pwd.newPassword !== pwd.confirmNewPassword) {
+      pwdError.value = true
+      pwdMessage.value = 'Les mots de passe ne correspondent pas.'
+      return
+    }
 
-  changing.value = true
-  try {
-    await changePassword({ currentPassword: pwd.currentPassword, newPassword: pwd.newPassword })
-    pwdMessage.value = 'Mot de passe modifié avec succès.'
-    pwd.currentPassword = ''
-    pwd.newPassword = ''
-    pwd.confirmNewPassword = ''
-  } catch (err: any) {
-    pwdError.value = true
-    pwdMessage.value = err?.response?.data?.message || err?.message || 'Erreur lors du changement de mot de passe.'
-  } finally {
-    changing.value = false
+    changing.value = true
+    try {
+      await changePassword({ currentPassword: pwd.currentPassword, newPassword: pwd.newPassword })
+      pwdMessage.value = 'Mot de passe modifié avec succès.'
+      pwd.currentPassword = ''
+      pwd.newPassword = ''
+      pwd.confirmNewPassword = ''
+      auth.clearPasswordResetRequired()
+    } catch (err: any) {
+      pwdError.value = true
+      pwdMessage.value = err?.response?.data?.message || err?.message || 'Erreur lors du changement de mot de passe.'
+    } finally {
+      changing.value = false
+    }
   }
-}
 </script>
 
 <style scoped>

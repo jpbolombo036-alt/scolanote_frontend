@@ -62,6 +62,9 @@
           </div>
 
           <form @submit.prevent="login" class="space-y-5">
+            <div v-if="authStore.passwordResetRequired" class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3">
+              <strong>Mot de passe temporaire :</strong> vous devez changer votre mot de passe après la connexion. Vous serez redirigé vers votre profil.
+            </div>
             <div>
               <label class="block text-sm font-semibold text-ink mb-1.5">Nom d'utilisateur</label>
               <div class="relative">
@@ -182,16 +185,17 @@ function fillAdminHint() {
   form.value.username = form.value.username || 'admin'
 }
 
-async function login() {
-  loading.value = true
-  error.value = null
-  try {
-    await authStore.login(form.value)
-    router.push('/dashboard')
-  } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur de connexion. Veuillez vérifier vos identifiants.'
-  } finally {
-    loading.value = false
+  async function login() {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await authStore.login(form.value)
+      const destination = response.user?.passwordResetRequired ? '/profil' : '/dashboard'
+      router.push(destination)
+    } catch (e) {
+      error.value = e.response?.data?.message || 'Erreur de connexion. Veuillez vérifier vos identifiants.'
+    } finally {
+      loading.value = false
+    }
   }
-}
 </script>

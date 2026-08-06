@@ -26,5 +26,6 @@ export interface LoginResponse {
     roles: string[]
     schoolId?: number
     permissions: string[]
+    passwordResetRequired?: boolean
   }
 }

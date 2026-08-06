@@ -144,6 +144,16 @@
       </header>
 
       <main class="flex-1 overflow-y-auto pt-14 lg:pt-20 bg-surface pb-14 lg:pb-0">
+        <div v-if="authStore.passwordResetRequired" class="bg-amber-50 border-b border-amber-200 px-4 sm:px-6 lg:px-8 py-3">
+          <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <ShieldAlert class="w-5 h-5 text-amber-600" />
+              <p class="text-sm font-medium text-amber-800">
+                Vous utilisez un mot de passe temporaire. Veuillez le changer dans <router-link to="/profil" class="underline font-semibold">votre profil</router-link>.
+              </p>
+            </div>
+          </div>
+        </div>
         <div class="p-4 sm:p-6 lg:p-8">
           <router-view />
         </div>
@@ -169,7 +179,8 @@ import {
   Moon,
   Sun,
   User,
-  LogOut
+  LogOut,
+  ShieldAlert
 } from 'lucide-vue-next'
 
 import MobileHeader from '@/components/mobile/MobileHeader.vue'
