@@ -41,7 +41,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
