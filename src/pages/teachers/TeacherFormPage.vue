@@ -21,6 +21,7 @@
         <p class="font-bold mb-1">Professeur créé avec succès</p>
         <p v-if="createdTeacher?.accountCreated" class="text-xs opacity-90">
           Compte de connexion créé automatiquement.<br/>
+          <strong>ID utilisateur :</strong> {{ createdTeacher.accountUserId }}<br/>
           <strong>Identifiant :</strong> {{ createdTeacher.accountUsername || createdTeacher.email }}<br/>
           <strong>Mot de passe temporaire :</strong> 12345678<br/>
           {{ createdTeacher.accountLoginHint || '' }}
