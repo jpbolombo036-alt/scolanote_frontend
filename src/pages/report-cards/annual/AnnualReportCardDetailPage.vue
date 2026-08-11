@@ -5,7 +5,18 @@
         <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Bulletin annuel</h1>
         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Accueil / Bulletins annuels / Détail</p>
       </div>
-      <button @click="$router.back()" class="px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Retour</button>
+      <div class="flex items-center gap-2">
+        <button
+          v-if="reportCard"
+          @click="downloadPdf"
+          :disabled="downloading"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-500 text-white text-xs font-semibold hover:bg-brand-600 shadow-md shadow-brand-500/25 transition disabled:opacity-50"
+        >
+          <Download class="w-4 h-4" />
+          <span>{{ downloading ? 'Téléchargement...' : 'Télécharger PDF' }}</span>
+        </button>
+        <button @click="$router.back()" class="px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Retour</button>
+      </div>
     </div>
 
     <div v-if="loading" class="text-center py-8">
@@ -96,12 +107,14 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '@/api/axios'
-import { Eye, AlertCircle } from 'lucide-vue-next'
+import { Download, Eye, AlertCircle } from 'lucide-vue-next'
+import { downloadAcademicYearPdf } from '@/api/report-cards'
 
 const route = useRoute()
 const reportCard = ref(null)
 const loading = ref(false)
 const error = ref(null)
+const downloading = ref(false)
 
 function formatMoyenne(avg) {
   if (avg == null || Number.isNaN(Number(avg))) return '—'
@@ -134,4 +147,24 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+async function downloadPdf() {
+  downloading.value = true
+  error.value = null
+  try {
+    const blob = await downloadAcademicYearPdf(Number(route.params.id))
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `bulletin-annuel-${route.params.id}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+  } catch (e) {
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du téléchargement du PDF'
+  } finally {
+    downloading.value = false
+  }
+}
 </script>

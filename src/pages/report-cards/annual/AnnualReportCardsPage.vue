@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import Pagination from '@/components/common/Pagination.vue'
@@ -87,6 +87,8 @@ const reportCards = ref([])
 const loading = ref(false)
 const error = ref(null)
 const searchQuery = ref('')
+const pollTimer = ref(null)
+const isPolling = ref(false)
 
 const pagination = ref({
   page: 0,
@@ -157,9 +159,14 @@ async function loadReportCards() {
       }
     })
     const data = response.data
+    const previousTotal = pagination.value.totalElements
     reportCards.value = data.content || []
     pagination.value.totalPages = data.totalPages || 1
     pagination.value.totalElements = data.totalElements || 0
+
+    if (isPolling.value && data.totalElements > previousTotal && previousTotal > 0) {
+      stopPolling()
+    }
   } catch (e) {
     reportCards.value = []
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du chargement des bulletins annuels'
@@ -168,11 +175,28 @@ async function loadReportCards() {
   }
 }
 
-function onPageChange(page) {
-  if (page < 0 || page >= pagination.value.totalPages) return
-  pagination.value.page = page
-  loadReportCards()
+function startPolling() {
+  if (pollTimer.value) return
+  isPolling.value = true
+  pollTimer.value = setInterval(() => {
+    loadReportCards()
+  }, 4000)
 }
 
-onMounted(loadReportCards)
+function stopPolling() {
+  if (pollTimer.value) {
+    clearInterval(pollTimer.value)
+    pollTimer.value = null
+  }
+  isPolling.value = false
+}
+
+onMounted(() => {
+  loadReportCards()
+  startPolling()
+})
+
+onBeforeUnmount(() => {
+  stopPolling()
+})
 </script>
