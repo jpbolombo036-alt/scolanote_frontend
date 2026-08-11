@@ -21,6 +21,7 @@ export interface EnrollmentResponse {
   id: number
   studentId: number
   classroomId: number
+  classroomNom?: string
   dateInscription?: string
   numeroOrdre?: number
   etat?: string

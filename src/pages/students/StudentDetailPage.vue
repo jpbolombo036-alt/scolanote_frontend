@@ -118,7 +118,7 @@
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Période</p>
-                  <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{{ reportCard.periodNom || reportCard.trimestreNom || '—' }}</p>
+                   <p class="mt-1 text-sm font-semibold text-slate-900 dark:text-white">{{ reportCard.periodNom || reportCard.trimesterNom || '—' }}</p>
                 </div>
                 <span class="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-semibold uppercase text-slate-600 dark:text-slate-300">{{ reportCard.statut || reportCard.mention || '—' }}</span>
               </div>
@@ -180,21 +180,21 @@ const fullName = computed(() => {
   return [student.value.nom, student.value.postnom, student.value.prenom].filter(Boolean).join(' ') || '—'
 })
 
-function formatNumber(value) {
+function formatNumber(value: number | string | null | undefined): string {
   if (value == null || Number.isNaN(Number(value))) return '—'
   return Number(value).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function formatDate(value) {
+function formatDate(value: string | number | Date | null | undefined): string {
   if (!value) return '—'
   try {
     return new Date(value).toLocaleDateString('fr-FR')
   } catch {
-    return value
+    return String(value)
   }
 }
 
-async function loadStudentRelatedData(studentId) {
+async function loadStudentRelatedData(studentId: number | string) {
   relatedLoading.value = true
   relatedError.value = null
   try {
@@ -208,7 +208,7 @@ async function loadStudentRelatedData(studentId) {
     } else {
       reportCards.value = []
     }
-  } catch (e) {
+  } catch (e: any) {
     relatedError.value = e.response?.data?.message || 'Erreur lors du chargement des données associées'
   } finally {
     relatedLoading.value = false
@@ -234,8 +234,8 @@ async function loadStudent() {
     if (student.value?.id) {
       await loadStudentRelatedData(student.value.id)
     }
-  } catch (e) {
-    error.value = e.response?.data?.message || 'Erreur lors du chargement des informations de l\'élève'
+  } catch (e: any) {
+    error.value = e.response?.data?.message || "Erreur lors du chargement des informations de l'élève"
   } finally {
     loading.value = false
   }
@@ -262,7 +262,7 @@ async function onGenerateBulletin(enrollmentId: number) {
     await generateBulletinForEnrollment(enrollmentId, periodId)
     // refresh
     if (student.value?.id) await loadStudentRelatedData(student.value.id)
-  } catch (e) {
+  } catch (e: any) {
     alert(e.response?.data?.message || e.message || 'Erreur lors de la génération')
   }
 }

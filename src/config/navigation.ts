@@ -40,6 +40,7 @@ export const navItems: NavItem[] = [
   { name: 'Élèves', path: '/eleves', icon: Users, bottom: true, requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET', 'ENSEIGNANT'], requiredPermissions: ['ELEVE_GERER'] },
   { name: 'Affectations', path: '/attributions', icon: ClipboardList, bottom: true, group: 'Personnes', requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET', 'ENSEIGNANT'], requiredPermissions: ['AFFECTATION_GERER'] },
   { name: 'Bulletins', path: '/bulletins', icon: FileText, bottom: true, requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET', 'ENSEIGNANT'], requiredPermissions: ['BULLETIN_GENERER'] },
+  { name: 'Bulletins annuels', path: '/bulletins-annuels', icon: FileText, group: 'Évaluations', requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET', 'ENSEIGNANT'], requiredPermissions: ['BULLETIN_ANNUEL_GENERER'] },
   { name: 'Notes', path: '/notes', icon: Star, bottom: true, requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET', 'ENSEIGNANT'], requiredPermissions: ['NOTE_GERER'] },
   { name: 'Inscriptions', path: '/inscriptions', icon: FileSpreadsheet, bottom: true, requiredRoles: ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET', 'ENSEIGNANT'], requiredPermissions: ['INSCRIPTION_GERER'] },
 
@@ -71,11 +72,14 @@ export const navItems: NavItem[] = [
 const DIRECTION_ROLES = ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET']
 
 function hasAccess(item: NavItem, roles: string[] = [], permissions: string[] = []): boolean {
-  if (!item.requiredRoles || item.requiredRoles.length === 0) {
-    if (!item.requiredPermissions || item.requiredPermissions.length === 0) {
+  const requiredRoles = item.requiredRoles ?? []
+  const requiredPermissions = item.requiredPermissions ?? []
+
+  if (requiredRoles.length === 0) {
+    if (requiredPermissions.length === 0) {
       return true
     }
-    if (permissions.some(p => item.requiredPermissions.includes(p))) {
+    if (permissions.some(p => requiredPermissions.includes(p))) {
       return true
     }
     if (roles.some(r => DIRECTION_ROLES.includes(r))) {
@@ -86,11 +90,11 @@ function hasAccess(item: NavItem, roles: string[] = [], permissions: string[] = 
   if (roles.some(r => DIRECTION_ROLES.includes(r))) {
     return true
   }
-  if (!roles.some(r => item.requiredRoles.includes(r))) {
+  if (!roles.some(r => requiredRoles.includes(r))) {
     return false
   }
-  if (item.requiredPermissions && item.requiredPermissions.length > 0) {
-    if (permissions.some(p => item.requiredPermissions.includes(p))) {
+  if (requiredPermissions.length > 0) {
+    if (permissions.some(p => requiredPermissions.includes(p))) {
       return true
     }
     if (roles.some(r => DIRECTION_ROLES.includes(r))) {

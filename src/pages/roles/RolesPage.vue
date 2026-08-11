@@ -46,10 +46,10 @@ import { ref, computed, onMounted } from 'vue'
 import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 
-const roles = ref([])
-const loading = ref(false)
-const error = ref<string | null>(null)
-const searchQuery = ref('')
+  const roles = ref<Array<{ id: number; nom?: string; name?: string }>>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  const searchQuery = ref('')
 
 const columns = [
   { key: 'id', label: 'ID' },

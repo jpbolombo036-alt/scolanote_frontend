@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { updateProfile, changePassword } from '@/api/auth'
+import { updateProfile, changePassword as changePasswordApi } from '@/api/auth'
 
 const auth = useAuthStore()
 
@@ -116,7 +116,7 @@ async function saveProfile() {
 
     changing.value = true
     try {
-      await changePassword({ currentPassword: pwd.currentPassword, newPassword: pwd.newPassword })
+      await changePasswordApi({ currentPassword: pwd.currentPassword, newPassword: pwd.newPassword })
       pwdMessage.value = 'Mot de passe modifié avec succès.'
       pwd.currentPassword = ''
       pwd.newPassword = ''

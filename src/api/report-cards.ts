@@ -1,4 +1,4 @@
-﻿﻿import api from './axios'
+﻿import api from './axios'
 import type {
   ReportCardRequest,
   ReportCardResponse,
@@ -76,19 +76,29 @@ export async function downloadPdf(id: number): Promise<Blob> {
 
 /** Récupère un bulletin annuel par son ID */
 export async function getAcademicYearReportCard(id: number): Promise<AcademicYearReportCardResponse> {
-  const response = await api.get(`/api/bulletins-annuels/${id}`) // Supposons un nouvel endpoint pour les annuels
+  const response = await api.get(`/api/bulletins-annuels/${id}`)
+  return response.data
+}
+
+/** Liste paginée des bulletins annuels */
+export async function getAcademicYearReportCards(params?: {
+  page?: number
+  size?: number
+  sort?: string
+}): Promise<PaginatedResponse<AcademicYearReportCardResponse>> {
+  const response = await api.get('/api/bulletins-annuels', { params })
   return response.data
 }
 
 /** Récupère les bulletins annuels pour une inscription (élève) */
 export async function getAcademicYearReportCardsByEnrollment(enrollmentId: number): Promise<AcademicYearReportCardResponse[]> {
-  const response = await api.get(`/api/bulletins-annuels/inscription/${enrollmentId}`) // Supposons un nouvel endpoint
+  const response = await api.get(`/api/bulletins-annuels/inscription/${enrollmentId}`)
   return response.data
 }
 
 /** Télécharge le PDF d'un bulletin annuel */
 export async function downloadAcademicYearPdf(id: number): Promise<Blob> {
-  const response = await api.post(`/api/bulletins-annuels/${id}/pdf`, {}, { responseType: 'blob' }) // Supposons un nouvel endpoint
+  const response = await api.post(`/api/bulletins-annuels/${id}/pdf`, {}, { responseType: 'blob' })
   return response.data
 }
 

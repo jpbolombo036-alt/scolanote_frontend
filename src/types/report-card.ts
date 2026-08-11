@@ -87,3 +87,58 @@ export interface ReportCardWorkflowResponse {
 export interface ReportCardActionRequest {
   signatureUrl?: string
 }
+
+export interface AcademicYearGenerationRequest {
+  classroomId: number
+  academicYearId: number
+}
+
+export interface AcademicYearReportCardResponse {
+  id: number
+  enrollmentId: number
+  studentId?: number
+  studentNom?: string
+  studentMatricule?: string
+  eleveNomComplet?: string
+  elevePrenom?: string
+  eleveNom?: string
+  classroomId?: number
+  classroomNom?: string
+  academicYearId?: number
+  academicYearNom?: string
+  moyenne?: number
+  pourcentage?: number
+  totalPoints?: number
+  maximumPoints?: number
+  rang?: number
+  mention?: string
+  decision?: string
+  details?: AcademicYearReportCardDetailResponse[]
+  pdfUrl?: string
+  dateGeneration?: string
+  statut?: string
+  totalAbsences?: number
+  totalRetards?: number
+  conduite?: string
+  application?: string
+}
+
+export interface AcademicYearReportCardDetailResponse {
+  id: number
+  reportCardId: number
+  subjectId?: number
+  subjectNom?: string
+  subjectCode?: string
+  coefficient?: number
+  moyenne?: number
+  rangMatiere?: number
+  points?: number
+  maximum?: number
+  pourcentage?: number
+  observation?: string
+  appreciation?: string
+  moyenneT1?: number
+  moyenneT2?: number
+  moyenneT3?: number
+  moyenneExamen?: number
+}

@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdminRole = computed(() => roles.value.includes('ADMIN'))
   const isDirecteur = computed(() => roles.value.includes('DIRECTEUR'))
   const isPrefet = computed(() => roles.value.includes('PREFET'))
-  canGenerateAcademicYearBulletins = computed(() => permissions.value.includes('BULLETIN_ANNUEL_GENERER'))
+  const canGenerateAcademicYearBulletins = computed(() => permissions.value.includes('BULLETIN_ANNUEL_GENERER'))
   const isEnseignant = computed(() => roles.value.includes('ENSEIGNANT'))
 
   async function login(credentials: LoginRequest): Promise<LoginResponse> {

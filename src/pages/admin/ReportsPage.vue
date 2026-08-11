@@ -32,7 +32,7 @@ onMounted(async () => {
 async function download(key: string) {
   try {
     const response: AxiosResponse<ArrayBuffer> = await generateReport(key)
-    const contentType = response.headers['content-type'] || 'application/octet-stream'
+    const contentType = (response.headers['content-type'] as string | undefined) || 'application/octet-stream'
     const disposition = response.headers['content-disposition'] as string | undefined
     const filename = disposition?.match(/filename="?([^";]+)"?/)?.[1] || `${key}`
     const blob = new Blob([response.data], { type: contentType })
