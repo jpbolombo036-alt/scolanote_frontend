@@ -24,7 +24,7 @@
 
         <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-11rem)] scrollbar-hide">
           <router-link
-            v-for="item in navItems"
+            v-for="item in getFilteredNavItems(authStore.roles, authStore.permissions)"
             :key="item.path"
             :to="item.path"
             :class="[
@@ -186,7 +186,7 @@ import {
 import MobileHeader from '@/components/mobile/MobileHeader.vue'
 import MobileMenuDrawer from '@/components/mobile/MobileMenuDrawer.vue'
 import BottomNav from '@/components/mobile/BottomNav.vue'
-import { navItems, isNavActive, getPageTitle } from '@/config/navigation'
+import { getFilteredNavItems, isNavActive, getPageTitle } from '@/config/navigation'
 
 const route = useRoute()
 const router = useRouter()
@@ -243,7 +243,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('touchstart', onDocumentPointer)
 })
 
-const currentPageTitle = computed(() => getPageTitle(route.path))
+const currentPageTitle = computed(() => getPageTitle(route.path, authStore.roles, authStore.permissions))
 
 const userInitials = computed(() => {
   const username = authStore.user?.username || 'JS'
@@ -293,4 +293,5 @@ const { isDark, toggleTheme } = useTheme()
   transform: translateY(0);
 }
 </style>
+
 

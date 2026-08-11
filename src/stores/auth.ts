@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAdminRole = computed(() => roles.value.includes('ADMIN'))
   const isDirecteur = computed(() => roles.value.includes('DIRECTEUR'))
   const isPrefet = computed(() => roles.value.includes('PREFET'))
+  canGenerateAcademicYearBulletins = computed(() => permissions.value.includes('BULLETIN_ANNUEL_GENERER'))
   const isEnseignant = computed(() => roles.value.includes('ENSEIGNANT'))
 
   async function login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -25,15 +26,13 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = data.accessToken
     localStorage.setItem('token', data.accessToken)
 
-    if (data.user) {
-      user.value = data.user
-      roles.value = data.user.roles || []
-      permissions.value = data.user.permissions || []
-      schoolId.value = data.user.schoolId ?? null
-      passwordResetRequired.value = data.user.passwordResetRequired ?? false
-    } else {
-      await fetchProfile()
-    }
+    // Idéalement, la réponse de /auth/token contient déjà tout
+    user.value = data.user
+    roles.value = data.user.roles || []
+    permissions.value = data.user.permissions || [] // Assurez-vous que le backend envoie bien les permissions
+    schoolId.value = data.user.schoolId ?? null
+    passwordResetRequired.value = data.user.passwordResetRequired ?? false
+
     return data
   }
 
@@ -42,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
       const { data } = await api.get('/auth/me')
       user.value = data
       roles.value = data.roles || []
-      permissions.value = []
+      permissions.value = data.permissions || []
       schoolId.value = data.schoolId ?? null
       passwordResetRequired.value = false
     } catch (e) {
@@ -69,5 +68,5 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token')
   }
 
-  return { token, user, roles, permissions, schoolId, passwordResetRequired, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, login, fetchProfile, logout, clearPasswordResetRequired }
+  return { token, user, roles, permissions, schoolId, passwordResetRequired, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, canGenerateAcademicYearBulletins, login, fetchProfile, logout, clearPasswordResetRequired }
 })

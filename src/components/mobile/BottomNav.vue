@@ -18,9 +18,11 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { getBottomNavItems, isNavActive } from '@/config/navigation'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
-const bottomItems = getBottomNavItems()
+const authStore = useAuthStore()
+const bottomItems = getBottomNavItems(authStore.roles, authStore.permissions)
 
 function isActive(path: string) {
   return isNavActive(path, route.path)
@@ -32,3 +34,4 @@ function isActive(path: string) {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 </style>
+

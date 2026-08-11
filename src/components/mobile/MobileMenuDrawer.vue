@@ -65,14 +65,17 @@
 import { defineProps, defineEmits } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+
 import { LogOut, FileText, X, User } from 'lucide-vue-next'
-import { navItems, isNavActive } from '@/config/navigation'
+import { getFilteredNavItems, isNavActive } from '@/config/navigation'
+
 
 const emit = defineEmits(['close'])
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+
 
 function isActive(path) {
   return isNavActive(path, route.path)
@@ -93,7 +96,7 @@ import { computed, ref } from 'vue'
 
 const groupedNav = computed(() => {
   const groups = new Map()
-  navItems.forEach(item => {
+  getFilteredNavItems(authStore.roles, authStore.permissions).forEach(item => {
     if (item.skipInGroups) return
     const g = item.group || 'Général'
     if (!groups.has(g)) groups.set(g, [])
@@ -120,3 +123,4 @@ function isOpen(name) {
   return !!openGroups.value[name]
 }
 </script>
+

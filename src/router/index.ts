@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { canAccessPath } from '@/config/navigation'
 
 const routes = [
   {
@@ -84,6 +86,7 @@ const routes = [
       { path: 'disciplines/form', component: () => import('@/pages/disciplines/DisciplineFormPage.vue') },
       { path: 'disciplines/form/:id', component: () => import('@/pages/disciplines/DisciplineFormPage.vue') },
       { path: 'bulletins', component: () => import('@/pages/report-cards/ReportCardsPage.vue') },
+      { path: 'bulletins/mes-bulletins', name: 'mes-bulletins', component: () => import('@/pages/report-cards/MyReportCardsPage.vue') },
       { path: 'bulletins/nouveau', component: () => import('@/pages/report-cards/ReportCardGenerateFormPage.vue') },
       { path: 'bulletins/:id', component: () => import('@/pages/report-cards/ReportCardDetailPage.vue') },
       { path: 'rapports', component: () => import('@/pages/admin/ReportsPage.vue') },

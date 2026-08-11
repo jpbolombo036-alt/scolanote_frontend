@@ -5,7 +5,7 @@
     </div>
     <nav class="mt-4">
       <router-link
-        v-for="item in navItems"
+      v-for="item in getFilteredNavItems(authStore.roles, authStore.permissions)"
         :key="item.path"
         :to="item.path"
         class="flex items-center px-4 py-3 rounded-r-full transition-colors duration-150"
@@ -20,11 +20,14 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { navItems, isNavActive } from '@/config/navigation'
+import { useAuthStore } from '@/stores/auth'
+import { getFilteredNavItems, isNavActive } from '@/config/navigation'
 
 const route = useRoute()
+const authStore = useAuthStore()
 
 function isActive(path: string) {
   return isNavActive(path, route.path)
 }
 </script>
+

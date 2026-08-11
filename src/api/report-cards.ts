@@ -1,9 +1,12 @@
-import api from './axios'
+﻿﻿import api from './axios'
 import type {
   ReportCardRequest,
   ReportCardResponse,
   ReportCardWorkflowResponse,
   ReportCardActionRequest,
+  AcademicYearReportCardResponse,
+  AcademicYearGenerationRequest,
+  AcademicYearReportCardDetailResponse,
   PaginatedResponse,
 } from '@/types'
 
@@ -11,6 +14,12 @@ import type {
 
 export async function generateBulletins(data: ReportCardRequest): Promise<ReportCardResponse[]> {
   const response = await api.post('/api/bulletins/generer', data)
+  return response.data
+}
+
+/** Lance la génération asynchrone des bulletins annuels pour une classe et une année scolaire */
+export async function generateAcademicYearBulletins(data: AcademicYearGenerationRequest): Promise<{ message: string }> {
+  const response = await api.post('/api/bulletins/generer-annuel-async', data)
   return response.data
 }
 
@@ -52,9 +61,34 @@ export async function getAllReportCardsUnpaginated(): Promise<ReportCardResponse
   return response.data
 }
 
+/** Bulletins de l'utilisateur connecté (élève ou parent), optionnellement filtrés par trimestre */
+export async function getMyReportCards(trimestreId?: number): Promise<ReportCardResponse[]> {
+  const params = trimestreId ? { trimestreId } : {}
+  const response = await api.get('/api/bulletins/mes-bulletins', { params })
+  return response.data
+}
+
 /** Génère (si absent) et télécharge le PDF du bulletin */
 export async function downloadPdf(id: number): Promise<Blob> {
   const response = await api.post(`/api/bulletins/${id}/pdf`, {}, { responseType: 'blob' })
+  return response.data
+}
+
+/** Récupère un bulletin annuel par son ID */
+export async function getAcademicYearReportCard(id: number): Promise<AcademicYearReportCardResponse> {
+  const response = await api.get(`/api/bulletins-annuels/${id}`) // Supposons un nouvel endpoint pour les annuels
+  return response.data
+}
+
+/** Récupère les bulletins annuels pour une inscription (élève) */
+export async function getAcademicYearReportCardsByEnrollment(enrollmentId: number): Promise<AcademicYearReportCardResponse[]> {
+  const response = await api.get(`/api/bulletins-annuels/inscription/${enrollmentId}`) // Supposons un nouvel endpoint
+  return response.data
+}
+
+/** Télécharge le PDF d'un bulletin annuel */
+export async function downloadAcademicYearPdf(id: number): Promise<Blob> {
+  const response = await api.post(`/api/bulletins-annuels/${id}/pdf`, {}, { responseType: 'blob' }) // Supposons un nouvel endpoint
   return response.data
 }
 
