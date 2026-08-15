@@ -11,6 +11,10 @@ export const useAuthStore = defineStore('auth', () => {
   const permissions = ref<string[]>([])
   const schoolId = ref<number | null>(null)
   const passwordResetRequired = ref(false)
+  // Indique si le profil (rôles/permissions) a déjà été chargé au moins une
+  // fois. Après un rafraîchissement du navigateur, le token est conservé dans
+  // localStorage mais le profil reste vide : on recharge via fetchProfile().
+  const sessionLoaded = ref(false)
 
   const isAuthenticated = computed(() => !!token.value)
   const isDirection = computed(() => roles.value.some(r => ['SUPER_ADMIN', 'ADMIN', 'DIRECTEUR', 'PREFET'].includes(r)))
@@ -32,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
     permissions.value = data.user.permissions || [] // Assurez-vous que le backend envoie bien les permissions
     schoolId.value = data.user.schoolId ?? null
     passwordResetRequired.value = data.user.passwordResetRequired ?? false
+    sessionLoaded.value = true
 
     return data
   }
@@ -44,6 +49,7 @@ export const useAuthStore = defineStore('auth', () => {
       permissions.value = data.permissions || []
       schoolId.value = data.schoolId ?? null
       passwordResetRequired.value = false
+      sessionLoaded.value = true
     } catch (e) {
       const status = isAxiosError(e) ? e.response?.status : undefined
       if (status === 401 || status === 403) {
@@ -65,8 +71,9 @@ export const useAuthStore = defineStore('auth', () => {
     permissions.value = []
     schoolId.value = null
     passwordResetRequired.value = false
+    sessionLoaded.value = false
     localStorage.removeItem('token')
   }
 
-  return { token, user, roles, permissions, schoolId, passwordResetRequired, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, canGenerateAcademicYearBulletins, login, fetchProfile, logout, clearPasswordResetRequired }
+  return { token, user, roles, permissions, schoolId, passwordResetRequired, sessionLoaded, isAuthenticated, isDirection, isSuperAdmin, isAdminRole, isDirecteur, isPrefet, isEnseignant, canGenerateAcademicYearBulletins, login, fetchProfile, logout, clearPasswordResetRequired }
 })

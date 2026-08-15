@@ -106,7 +106,8 @@ const routes = [
 
 const router = createRouter({ history: createWebHistory(), routes })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
+  const authStore = useAuthStore()
   const token = localStorage.getItem('token')
 
   if (to.meta.requiresAuth && !token) {
@@ -119,6 +120,17 @@ router.beforeEach((to, _from, next) => {
 
   if (to.meta.guest && token) {
     return next('/dashboard')
+  }
+
+  // Après un rafraîchissement du navigateur, le token est conservé dans
+  // localStorage mais les rôles/permissions ne sont pas encore chargés.
+  // Sans ce rechargement, le sidebar (et la navigation) restent vides.
+  if (token && to.meta.requiresAuth && !authStore.sessionLoaded) {
+    await authStore.fetchProfile()
+    // Session expirée/invalide pendant le rechargement : retour au login
+    if (!authStore.isAuthenticated) {
+      return next('/login')
+    }
   }
 
   next()
