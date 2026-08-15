@@ -17,6 +17,21 @@
         </div>
 
         <div class="sm:col-span-2">
+          <label class="block text-sm text-ink-muted mb-1">Nom</label>
+          <input v-model="form.nom" type="text" class="w-full input-base" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-ink-muted mb-1">Postnom</label>
+          <input v-model="form.postnom" type="text" class="w-full input-base" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-ink-muted mb-1">Prénom</label>
+          <input v-model="form.prenom" type="text" class="w-full input-base" />
+        </div>
+
+        <div class="sm:col-span-2">
           <label class="block text-sm text-ink-muted mb-1">Téléphone</label>
           <input v-model="form.telephone" type="text" class="w-full input-base" />
         </div>
@@ -63,7 +78,7 @@ import { updateProfile, changePassword as changePasswordApi } from '@/api/auth'
 
 const auth = useAuthStore()
 
-const form = reactive({ username: '', email: '', telephone: '' })
+const form = reactive({ username: '', email: '', telephone: '', nom: '', postnom: '', prenom: '' })
 const pwd = reactive({ currentPassword: '', newPassword: '', confirmNewPassword: '' })
 
 const saving = ref(false)
@@ -79,6 +94,9 @@ onMounted(() => {
     form.username = u.username || ''
     form.email = (u as any).email || ''
     form.telephone = (u as any).telephone || ''
+    form.nom = (u as any).nom || ''
+    form.postnom = (u as any).postnom || ''
+    form.prenom = (u as any).prenom || ''
   }
 })
 
@@ -87,7 +105,7 @@ async function saveProfile() {
   saveError.value = false
   saving.value = true
   try {
-    await updateProfile({ username: form.username, email: form.email, telephone: form.telephone })
+    await updateProfile({ username: form.username, email: form.email, telephone: form.telephone, nom: form.nom, postnom: form.postnom, prenom: form.prenom })
     await auth.fetchProfile()
     saveMessage.value = 'Profil mis à jour.'
   } catch (err: any) {

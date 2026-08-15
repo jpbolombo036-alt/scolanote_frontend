@@ -113,6 +113,18 @@
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Adresse</label>
             <input v-model="form.adresse" type="text" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
           </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nom du parent <span class="text-slate-400 text-[10px]">(pour le compte PARENT)</span></label>
+            <input v-model="form.nomParent" type="text" placeholder="Ex: Kasongo" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Postnom du parent</label>
+            <input v-model="form.postnomParent" type="text" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Prénom du parent</label>
+            <input v-model="form.prenomParent" type="text" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
+          </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Téléphone parent</label>
             <input v-model="form.telephoneParent" type="text" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
@@ -208,6 +220,9 @@ const form = reactive({
   adresse: '',
   telephoneParent: '',
   emailParent: '',
+  nomParent: '',
+  postnomParent: '',
+  prenomParent: '',
   etat: 'actif'
 })
 

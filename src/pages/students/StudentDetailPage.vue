@@ -136,6 +136,10 @@
       <div class="bg-white dark:bg-[#0d1527] border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg p-6">
         <h2 class="text-base font-bold text-slate-900 dark:text-white mb-4">Informations parentales</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="lg:col-span-2">
+            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Nom du parent</p>
+            <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-white">{{ parentFullName }}</p>
+          </div>
           <div>
             <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Téléphone parent</p>
             <p class="mt-2 text-sm font-semibold text-slate-900 dark:text-white">{{ student.telephoneParent || '—' }}</p>
@@ -178,6 +182,11 @@ const periods = ref<any[]>([])
 const fullName = computed(() => {
   if (!student.value) return '—'
   return [student.value.nom, student.value.postnom, student.value.prenom].filter(Boolean).join(' ') || '—'
+})
+
+const parentFullName = computed(() => {
+  if (!student.value) return '—'
+  return [student.value.nomParent, student.value.postnomParent, student.value.prenomParent].filter(Boolean).join(' ') || '—'
 })
 
 function formatNumber(value: number | string | null | undefined): string {

@@ -98,6 +98,33 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nom du parent <span class="text-slate-400 text-[10px]">(pour le compte PARENT)</span></label>
+              <input
+                v-model="form.nomParent"
+                type="text"
+                placeholder="Nom du parent..."
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-lg px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Postnom parent</label>
+              <input
+                v-model="form.postnomParent"
+                type="text"
+                placeholder="Postnom du parent..."
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-lg px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Prénom parent</label>
+              <input
+                v-model="form.prenomParent"
+                type="text"
+                placeholder="Prénom du parent..."
+                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-lg px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
+              />
+            </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Téléphone parent</label>
               <input
@@ -174,6 +201,9 @@ const form = reactive({
   adresse: '',
   telephoneParent: '',
   emailParent: '',
+  nomParent: '',
+  postnomParent: '',
+  prenomParent: '',
   etat: 'actif'
 })
 
@@ -192,6 +222,9 @@ watch(() => props.student, (newStudent) => {
       adresse: '',
       telephoneParent: '',
       emailParent: '',
+      nomParent: '',
+      postnomParent: '',
+      prenomParent: '',
       etat: 'actif'
     })
   }

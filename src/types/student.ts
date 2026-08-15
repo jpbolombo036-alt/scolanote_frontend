@@ -10,6 +10,9 @@ export interface Student {
   adresse?: string
   telephoneParent?: string
   emailParent?: string
+  nomParent?: string
+  postnomParent?: string
+  prenomParent?: string
   etat: string
   createdAt?: string
   updatedAt?: string
@@ -26,6 +29,9 @@ export interface StudentRequest {
   adresse?: string
   telephoneParent?: string
   emailParent?: string
+  nomParent?: string
+  postnomParent?: string
+  prenomParent?: string
   etat?: string
 }
 
@@ -41,7 +47,11 @@ export interface StudentResponse {
   adresse?: string
   telephoneParent?: string
   emailParent?: string
+  nomParent?: string
+  postnomParent?: string
+  prenomParent?: string
   etat: string
   createdAt?: string
   updatedAt?: string
 }
+

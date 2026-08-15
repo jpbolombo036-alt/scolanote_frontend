@@ -37,6 +37,9 @@ export interface ProfileUpdateRequest {
   username?: string
   email?: string
   telephone?: string
+  nom?: string
+  postnom?: string
+  prenom?: string
 }
 
 export interface ChangePasswordRequest {
