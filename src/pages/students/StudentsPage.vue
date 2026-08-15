@@ -77,6 +77,13 @@
                 <Edit3 class="w-4 h-4" />
               </button>
               <button
+                @click="openInscriptionForm(student)"
+                class="p-2 text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-400 hover:bg-teal-500/10 rounded-lg transition"
+                title="Inscrire"
+              >
+                <ClipboardList class="w-4 h-4" />
+              </button>
+              <button
                 @click="confirmDelete(student)"
                 class="p-2 text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
                 title="Supprimer"
@@ -130,7 +137,7 @@ import api from '@/api/axios'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
 import { useRouter, useRoute } from 'vue-router'
-import { UserPlus, AlertCircle, Edit3, Trash2, Eye } from 'lucide-vue-next'
+import { UserPlus, AlertCircle, Edit3, Trash2, Eye, ClipboardList } from 'lucide-vue-next'
 
 const router = useRouter()
 const route = useRoute()
@@ -218,6 +225,10 @@ function openCreateForm() {
 
 function openEditForm(student) {
   router.push(`/eleves/form/${student.id}`)
+}
+
+function openInscriptionForm(student) {
+  router.push(`/inscriptions/form?studentId=${student.id}`)
 }
 
 function confirmDelete(student) {
