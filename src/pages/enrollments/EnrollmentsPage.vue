@@ -39,9 +39,9 @@
           class="hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-colors"
         >
           <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">
-            {{ enrollment.student?.nom || enrollment.studentId || '-' }}
+            {{ studentFullName(enrollment) }}
           </td>
-          <td class="px-6 py-4">{{ enrollment.classroom?.nom || enrollment.classroomId || '-' }}</td>
+          <td class="px-6 py-4">{{ classroomName(enrollment) }}</td>
           <td class="px-6 py-4">{{ enrollment.dateInscription || '-' }}</td>
           <td class="px-6 py-4 text-right">
             <div class="flex items-center justify-end space-x-2">
@@ -91,6 +91,8 @@ const enrollments = ref([])
 const loading = ref(false)
 const error = ref(null)
 const searchQuery = ref('')
+const studentsMap = ref({})
+const classroomsMap = ref({})
 
 const showConfirm = ref(false)
 const enrollmentToDelete = ref(null)
@@ -106,10 +108,56 @@ const filteredEnrollments = computed(() => {
   if (!searchQuery.value) return enrollments.value
   const q = searchQuery.value.toLowerCase()
   return enrollments.value.filter(e =>
-    (e.student?.nom && e.student.nom.toLowerCase().includes(q)) ||
-    (e.classroom?.nom && e.classroom.nom.toLowerCase().includes(q))
+    studentFullName(e).toLowerCase().includes(q) ||
+    classroomName(e).toLowerCase().includes(q)
   )
 })
+
+// Affiche le nom complet de l'élève d'une inscription, même si le backend
+// renvoie uniquement un studentId (résolution via la liste des élèves).
+function studentFullName(enrollment) {
+  const inlineNom = enrollment.student?.nom || enrollment.studentNom || enrollment.eleveNom || enrollment.nom
+  if (inlineNom) {
+    const post = enrollment.student?.postnom || enrollment.studentPostnom || enrollment.elevePostnom || ''
+    const pre = enrollment.student?.prenom || enrollment.studentPrenom || enrollment.elevePrenom || ''
+    return [inlineNom, post, pre].filter(Boolean).join(' ')
+  }
+  return studentsMap.value[enrollment.studentId] || (enrollment.studentId != null ? `ID ${enrollment.studentId}` : '-')
+}
+
+function classroomName(enrollment) {
+  const inlineNom = enrollment.classroom?.nom || enrollment.classroomNom || enrollment.classeNom
+  if (inlineNom) return inlineNom
+  return classroomsMap.value[enrollment.classroomId] || (enrollment.classroomId != null ? `ID ${enrollment.classroomId}` : '-')
+}
+
+async function loadStudentsMap() {
+  try {
+    const res = await api.get('/api/eleves')
+    const list = Array.isArray(res.data) ? res.data : (res.data.content || [])
+    const map = {}
+    for (const s of list) {
+      map[s.id] = [s.nom, s.postnom || '', s.prenom || ''].filter(Boolean).join(' ')
+    }
+    studentsMap.value = map
+  } catch {
+    // Silencieux : l'affichage retombe alors sur les IDs
+  }
+}
+
+async function loadClassroomsMap() {
+  try {
+    const res = await api.get('/api/salles')
+    const list = Array.isArray(res.data) ? res.data : (res.data.content || [])
+    const map = {}
+    for (const c of list) {
+      map[c.id] = c.nom
+    }
+    classroomsMap.value = map
+  } catch {
+    // Silencieux : l'affichage retombe alors sur les IDs
+  }
+}
 
 async function loadEnrollments() {
   loading.value = true
@@ -152,5 +200,7 @@ async function deleteEnrollment() {
 
 onMounted(() => {
   loadEnrollments()
+  loadStudentsMap()
+  loadClassroomsMap()
 })
 </script>
