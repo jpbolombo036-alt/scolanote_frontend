@@ -11,15 +11,11 @@
     "start": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.0",
-    "vue-router": "^4.2.0",
-    "pinia": "^2.1.0",
     "axios": "^1.6.0",
-    "@vee-validate/i18n": "^4.12.0",
-    "vee-validate": "^4.12.0",
-    "@vee-validate/rules": "^4.12.0",
     "lucide-vue-next": "^0.400.0",
-    "recharts": "^2.10.0"
+    "pinia": "^2.1.0",
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
