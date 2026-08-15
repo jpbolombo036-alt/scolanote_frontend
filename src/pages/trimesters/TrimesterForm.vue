@@ -41,13 +41,11 @@
               </div>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre</label>
-              <input
-                v-model.number="form.ordre"
-                type="number"
-                placeholder="Ex: 1"
-                class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition"
-              />
+              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre <span class="text-slate-400 text-[10px]">(serveur)</span></label>
+              <div class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium flex items-center gap-2">
+                <Hash class="w-4 h-4 text-slate-400 shrink-0" />
+                <span class="text-slate-400">Attribué automatiquement par le serveur</span>
+              </div>
             </div>
             <div>
               <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date fin</label>
@@ -83,7 +81,8 @@
 
 <script setup>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { X, Calendar, School, AlertCircle, Check } from 'lucide-vue-next'
+import { X, Calendar, School, AlertCircle, Check, Hash } from 'lucide-vue-next'
+import api from '@/api/axios'
 
 const props = defineProps({
   trimester: Object,
@@ -99,7 +98,6 @@ const academicYears = ref([])
 const form = reactive({
   academicYearId: '',
   nom: '',
-  ordre: null,
   dateDebut: '',
   dateFin: ''
 })
@@ -111,7 +109,6 @@ watch(() => props.trimester, (newTrimester) => {
     Object.assign(form, {
       academicYearId: '',
       nom: '',
-      ordre: null,
       dateDebut: '',
       dateFin: ''
     })
@@ -132,7 +129,8 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    await emit('save', { ...form })
+    const payload = { ...form }
+    await emit('save', payload)
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'
   } finally {

@@ -45,8 +45,30 @@
           </td>
           <td class="px-6 py-4">{{ assessment.periodNom || '-' }}</td>
           <td class="px-6 py-4">{{ assessment.noteMax || '-' }}</td>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center px-2.5 py-1 rounded-lg font-semibold text-[11px] border"
+              :class="assessment.publie
+                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                : 'bg-slate-500/10 text-slate-500 dark:text-slate-400 border-slate-500/20'"
+            >
+              {{ assessment.publie ? 'Publié' : 'Non publié' }}
+            </span>
+          </td>
           <td class="px-6 py-4 text-right">
             <div class="flex items-center justify-end space-x-2">
+              <button
+                @click="togglePublication(assessment)"
+                :disabled="publicationLoading === assessment.id"
+                class="p-2 rounded-lg transition disabled:opacity-50"
+                :class="assessment.publie
+                  ? 'text-emerald-500 hover:text-slate-500 hover:bg-slate-500/10'
+                  : 'text-slate-500 hover:text-emerald-500 dark:text-slate-400 hover:bg-emerald-500/10'"
+                :title="assessment.publie ? 'Dépublier (masquer aux élèves/parents)' : 'Publier (visible aux élèves/parents)'"
+              >
+                <EyeOff v-if="assessment.publie" class="w-4 h-4" />
+                <Eye v-else class="w-4 h-4" />
+              </button>
               <button
                 @click="openEditForm(assessment)"
                 class="p-2 text-slate-500 hover:text-brand-500 dark:text-slate-400 dark:hover:text-brand-400 hover:bg-brand-500/10 rounded-lg transition"
@@ -83,9 +105,10 @@
 import { ref, computed, onMounted } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
 import api from '@/api/axios'
+import { setAssessmentPublication } from '@/api/assessments'
 import DataTableCard from '@/components/common/DataTableCard.vue'
 import ConfirmDialog from '@/components/common/ConfirmDialog.vue'
-import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2 } from 'lucide-vue-next'
+import { Plus, Search, RefreshCw, AlertCircle, Edit3, Trash2, Eye, EyeOff } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -104,8 +127,11 @@ const columns = [
   { key: 'assessmentType', label: 'Type' },
   { key: 'period', label: 'Période' },
   { key: 'noteMax', label: 'Note max' },
+  { key: 'publie', label: 'Visibilité' },
   { key: 'actions', label: 'Actions', headerClass: 'text-right' }
 ]
+
+const publicationLoading = ref(null)
 
 const filteredAssessments = computed(() => {
   if (!searchQuery.value) return assessments.value
@@ -135,6 +161,23 @@ function openCreateForm() {
 
 function openEditForm(assessment) {
   router.push(`/evaluations/form/${assessment.id}`)
+}
+
+/**
+ * Publie / dépublie une évaluation : rend ses notes visibles (ou les masque)
+ * pour les comptes « famille » (parents/élèves).
+ */
+async function togglePublication(assessment) {
+  publicationLoading.value = assessment.id
+  error.value = null
+  try {
+    const updated = await setAssessmentPublication(assessment.id, !assessment.publie)
+    assessment.publie = updated.publie
+  } catch (e) {
+    error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la publication'
+  } finally {
+    publicationLoading.value = null
+  }
 }
 
 function confirmDelete(assessment) {

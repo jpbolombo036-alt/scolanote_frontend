@@ -26,6 +26,22 @@ export interface GradeResponse {
   note?: number
   absence?: boolean
   observation?: string
+  matiere?: string
+  coefficient?: number
   createdAt?: string
   updatedAt?: string
+}
+
+/**
+ * Élève n'ayant pas encore de note pour une évaluation donnée.
+ * Retourné par GET /api/notes/evaluation/{evaluationId}/manquants
+ * (trié par numéro d'ordre — ordre d'appel).
+ */
+export interface MissingGradeStudent {
+  studentId: number
+  matricule?: string
+  nom: string
+  postnom?: string
+  prenom?: string
+  numeroOrdre?: number
 }

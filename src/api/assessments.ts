@@ -34,3 +34,12 @@ export async function updateAssessment(id: number, data: AssessmentRequest): Pro
 export async function deleteAssessment(id: number): Promise<void> {
   await api.delete('/api/evaluations/' + id)
 }
+
+/**
+ * Publie ou dépublie une évaluation : rend ses notes visibles (ou les masque)
+ * pour les comptes « famille » (parents/élèves).
+ */
+export async function setAssessmentPublication(id: number, publie: boolean): Promise<AssessmentResponse> {
+  const response = await api.patch(`/api/evaluations/${id}/publication`, { publie })
+  return response.data
+}

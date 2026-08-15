@@ -33,16 +33,14 @@
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date inscription</label>
             <input v-model="form.dateInscription" type="date" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
-          </div>
-          <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Numéro d'ordre <span class="text-slate-400 text-[10px]">(automatique)</span></label>
-              <div class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium flex items-center gap-2">
-                <Hash class="w-4 h-4 text-slate-400 shrink-0" />
-                <span v-if="loadingNumeroOrdre" class="text-slate-400">Calcul…</span>
-                <span v-else-if="autoNumeroOrdre" class="font-bold text-brand-600 dark:text-brand-400">N° {{ autoNumeroOrdre }}</span>
-                <span v-else class="text-slate-400">—</span>
-              </div>
-            </div>
+           </div>
+           <div>
+               <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Numéro d'ordre <span class="text-slate-400 text-[10px]">(serveur)</span></label>
+               <div class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium flex items-center gap-2">
+                 <Hash class="w-4 h-4 text-slate-400 shrink-0" />
+                 <span class="text-slate-400">Attribué automatiquement par le serveur</span>
+               </div>
+             </div>
         </div>
 
         <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800/80">
@@ -61,7 +59,6 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
 import { AlertCircle, Hash } from 'lucide-vue-next'
-import { useNumeroOrdre } from '@/composables/useNumeroOrdre'
 
 const route = useRoute()
 const router = useRouter()
@@ -76,11 +73,7 @@ const form = reactive({
   studentId: '',
   classroomId: '',
   dateInscription: '',
-  numeroOrdre: null
 })
-
-// Numéro d'ordre calculé automatiquement selon les inscriptions de la classe
-const { numeroOrdre: autoNumeroOrdre, loading: loadingNumeroOrdre } = useNumeroOrdre(() => (isEdit ? null : form.classroomId))
 
 onMounted(async () => {
   try {
@@ -109,9 +102,6 @@ async function onSubmit() {
   error.value = null
   try {
     const payload = { ...form }
-    if (!isEdit) {
-      payload.numeroOrdre = autoNumeroOrdre.value ?? null
-    }
     if (isEdit) {
       await api.put(`/api/inscriptions/${route.params.id}`, payload)
     } else {

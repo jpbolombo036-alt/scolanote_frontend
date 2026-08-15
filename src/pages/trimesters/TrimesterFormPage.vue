@@ -27,10 +27,13 @@
               <option v-for="year in academicYears" :key="year.id" :value="year.id">{{ year.libelle }}</option>
             </select>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre</label>
-            <input v-model.number="form.ordre" type="number" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
-          </div>
+            <div>
+             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Ordre <span class="text-slate-400 text-[10px]">(serveur)</span></label>
+             <div class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium flex items-center gap-2">
+               <Hash class="w-4 h-4 text-slate-400 shrink-0" />
+               <span class="text-slate-400">Attribué automatiquement par le serveur</span>
+             </div>
+           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Date fin</label>
             <input v-model="form.dateFin" type="date" class="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-4 py-3 text-xs font-medium outline-none focus:border-emerald-500 transition" />
@@ -52,7 +55,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
-import { AlertCircle } from 'lucide-vue-next'
+import { AlertCircle, Hash } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -65,7 +68,6 @@ const academicYears = ref([])
 const form = reactive({
   academicYearId: '',
   nom: '',
-  ordre: null,
   dateDebut: '',
   dateFin: ''
 })
