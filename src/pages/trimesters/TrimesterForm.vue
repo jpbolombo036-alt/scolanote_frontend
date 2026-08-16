@@ -83,6 +83,7 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { X, Calendar, School, AlertCircle, Check, Hash } from 'lucide-vue-next'
 import api from '@/api/axios'
+import { useNumeroOrdre } from '@/composables/useNumeroOrdre'
 
 const props = defineProps({
   trimester: Object,
@@ -90,6 +91,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'save'])
+
+const { cleanPayload } = useNumeroOrdre()
 
 const saving = ref(false)
 const error = ref(null)
@@ -129,7 +132,7 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    const payload = { ...form }
+    const payload = cleanPayload({ ...form })
     await emit('save', payload)
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur'

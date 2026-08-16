@@ -66,9 +66,11 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
 import { AlertCircle, Hash } from 'lucide-vue-next'
+import { useNumeroOrdre } from '@/composables/useNumeroOrdre'
 
 const route = useRoute()
 const router = useRouter()
+const { cleanPayload } = useNumeroOrdre()
 
 const isEdit = !!route.params.id
 const saving = ref(false)
@@ -95,11 +97,10 @@ onMounted(async () => {
     if (isEdit) {
       const res = await api.get(`/api/matieres-programme/${route.params.id}`)
       const cs = res.data
-      Object.assign(form, {
+       Object.assign(form, {
         curriculumId: cs.curriculumId || null,
         subjectId: cs.subjectId || null,
         coefficient: cs.coefficient ?? null,
-        ordre: cs.ordre ?? null,
         obligatoire: cs.obligatoire ?? false
         })
     }
@@ -112,7 +113,7 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    const payload = { ...form }
+    const payload = cleanPayload({ ...form })
     if (isEdit) {
       await api.put(`/api/matieres-programme/${route.params.id}`, payload)
     } else {

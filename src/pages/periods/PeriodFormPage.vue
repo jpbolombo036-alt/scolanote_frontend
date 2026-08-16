@@ -68,9 +68,11 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '@/api/axios'
 import { AlertCircle, Hash } from 'lucide-vue-next'
+import { useNumeroOrdre } from '@/composables/useNumeroOrdre'
 
 const route = useRoute()
 const router = useRouter()
+const { cleanPayload } = useNumeroOrdre()
 
 const isEdit = !!route.params.id
 const saving = ref(false)
@@ -110,7 +112,7 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    const payload = { ...form }
+    const payload = cleanPayload({ ...form })
     if (isEdit) {
       await api.put(`/api/periodes/${route.params.id}`, payload)
     } else {

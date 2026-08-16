@@ -106,6 +106,7 @@
 import { ref, reactive, watch, onMounted } from 'vue'
 import { X, Clock, Calendar, AlertCircle, Check, Lock, Unlock, Hash } from 'lucide-vue-next'
 import api from '@/api/axios'
+import { useNumeroOrdre } from '@/composables/useNumeroOrdre'
 
 const props = defineProps({
   period: Object,
@@ -113,6 +114,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'save'])
+
+const { cleanPayload } = useNumeroOrdre()
 
 const saving = ref(false)
 const lockLoading = ref(false)
@@ -156,7 +159,7 @@ async function onSubmit() {
   saving.value = true
   error.value = null
   try {
-    const payload = { ...form }
+    const payload = cleanPayload({ ...form })
     await emit('save', payload)
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors de la sauvegarde'
@@ -172,7 +175,7 @@ async function onLock() {
   try {
     await api.post(`/api/periodes/${props.period.id}/verrouiller`)
     error.value = null
-    emit('save', { ...form })
+    emit('save', cleanPayload({ ...form }))
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du verrouillage'
   } finally {
@@ -187,7 +190,7 @@ async function onUnlock() {
   try {
     await api.post(`/api/periodes/${props.period.id}/deverrouiller`)
     error.value = null
-    emit('save', { ...form })
+    emit('save', cleanPayload({ ...form }))
   } catch (e) {
     error.value = e.response?.data?.error || e.response?.data?.message || 'Erreur lors du déverrouillage'
   } finally {
